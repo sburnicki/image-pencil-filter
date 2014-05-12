@@ -9,9 +9,10 @@
  */
 #include <stdio.h>
 #include <stdlib.h>
+#include "ConvolutionFilter.h"
 
 int main(void) {
-	printf("foo");
+	printf("foo\n");
 
 	return 0;
 }
