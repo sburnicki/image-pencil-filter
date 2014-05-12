@@ -18,25 +18,43 @@ public:
 				  int image_width, int image_height);
 
 	// Uses the given gpu image data. Expects the data to be already
-	// allocated and uploaded.
+	// allocated and uploaded to the gpu.
 	// Useful to process an image that is already on the device
 	void UseImage(float *gpu_image_data,
 				  int image_width, int image_height);
 
+	// Creates and uploads a kernel image, which is used for the convolution
 	void SetKernel(float *cpu_kernel_data,
 				   int kernel_width, int kernel_height);
 
+	// Uses the given gpu kernel data. Expects the data to be already
+	// allocated and uploaded to the gpu.
+	// Useful to process the image with an kernel, which is already on the device
 	void UseKernel(float *gpu_kernel_data,
 				   int kernel_width, int kernel_height);
 
+	void Run();
+
+
+
+
 private:
+	// little helper functions
 	int image_pixel_count();
 	int kernel_pixel_count();
 	int image_byte_count();
 	int kernel_byte_count();
 
+	// Kernel declarations
+	__global__ void SimpleConvolutionKernel(const float *source_image,
+											const flaot *kernel,
+											float *result,
+											int image_width, int image_height,
+											int kernel_width, int kernel_height);
+
 	int image_width_, image_height_;
 	int kernel_width_, kernel_height_;
+	bool free_image_, free_kernel_;
 	float *gpu_image_data_;
 	float *gpu_kernel_data_;
 	float *gpu_result_data_;

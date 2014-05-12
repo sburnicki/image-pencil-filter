@@ -11,11 +11,16 @@
 
 ConvolutionFilter::ConvolutionFilter() {
 	image_width_ = image_height_ = 0;
+	free_image_ = free_kernel_ = false;
 }
 
 
 ConvolutionFilter::~ConvolutionFilter() {
-	// TODO Auto-generated destructor stub
+	cudaFree(gpu_result_data_);
+	if (free_image_)
+		cudaFree(gpu_image_data_);
+	if (free_kernel_)
+		cudaFree(gpu_kernel_data_);
 }
 
 void ConvolutionFilter::SetImage(float* cpu_image_data, int image_width,
@@ -68,6 +73,20 @@ int ConvolutionFilter::image_byte_count() {
 	return image_pixel_count() * sizeof(float);
 }
 
+void ConvolutionFilter::Run() {
+	SimpleConvolutionKernel(gpu_image_data_,
+							gpu_kernel_data_,
+							gpu_result_data_,
+							image_width_, image_height_,
+							kernel_width_, kernel_height_);
+}
+
 int ConvolutionFilter::kernel_byte_count() {
 	return kernel_pixel_count() * sizeof(float);
+}
+
+__global__ void ConvolutionFilter::SimpleConvolutionKernel(const float* source_image,
+		const flaot* kernel, float* result, int image_width, int image_height,
+		int kernel_width, int kernel_height) {
+
 }
