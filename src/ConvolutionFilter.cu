@@ -9,6 +9,19 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+// Used Kernel functions
+
+__global__ void SimpleConvolutionKernel(const float* source_image,
+										const float* kernel,
+										float* result,
+										int image_width,
+										int image_height,
+										int kernel_width, int kernel_height) {
+	// TODO
+
+}
+
+
 ConvolutionFilter::ConvolutionFilter() {
 	image_width_ = image_height_ = 0;
 	free_image_ = free_kernel_ = false;
@@ -74,19 +87,18 @@ int ConvolutionFilter::image_byte_count() {
 }
 
 void ConvolutionFilter::Run() {
-	SimpleConvolutionKernel<<<TODO,TODO>>(gpu_image_data_,
-							gpu_kernel_data_,
-							gpu_result_data_,
-							image_width_, image_height_,
-							kernel_width_, kernel_height_);
+	dim3 thread_block_size(256, 256, 1);
+	dim3 block_grid_size(1 + image_width_ / thread_block_size.x,
+						 1 + image_height_ / thread_block_size.y,
+						 1);
+	SimpleConvolutionKernel<<<block_grid_size, thread_block_size>>>(
+			gpu_image_data_,
+			gpu_kernel_data_,
+			gpu_result_data_,
+			image_width_, image_height_,
+			kernel_width_, kernel_height_);
 }
 
 int ConvolutionFilter::kernel_byte_count() {
 	return kernel_pixel_count() * sizeof(float);
-}
-
-__global__ void ConvolutionFilter::SimpleConvolutionKernel(const float* source_image,
-		const float* kernel, float* result, int image_width, int image_height,
-		int kernel_width, int kernel_height) {
-
 }

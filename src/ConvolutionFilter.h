@@ -36,8 +36,6 @@ public:
 	void Run();
 
 
-
-
 private:
 	// little helper functions
 	int image_pixel_count();
@@ -45,12 +43,7 @@ private:
 	int image_byte_count();
 	int kernel_byte_count();
 
-	// Kernel declarations
-	__global__ void SimpleConvolutionKernel(const float *source_image,
-											const flaot *kernel,
-											float *result,
-											int image_width, int image_height,
-											int kernel_width, int kernel_height);
+
 
 	int image_width_, image_height_;
 	int kernel_width_, kernel_height_;
