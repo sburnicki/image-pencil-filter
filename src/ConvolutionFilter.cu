@@ -10,14 +10,37 @@
 #include <stdlib.h>
 
 // Used Kernel functions
+__device__ int clamp(int value, int mi, int ma) {
+	return max(mi, min(ma, value));
+}
 
+// very basic convolution kernel (no optimizations)
 __global__ void SimpleConvolutionKernel(const float* source_image,
 										const float* kernel,
 										float* result,
 										int image_width,
 										int image_height,
 										int kernel_width, int kernel_height) {
-	// TODO
+	// create shared memory for image and kernel
+	__shared__ float shared_kernel[64*64];
+
+	// read kernel to shared memory
+	int thread_id_in_block = threadIdx.x + threadIdx.y * blockDim.x;
+	if (thread_id_in_block < kernel_width * kernel_height)
+		shared_kernel[thread_id_in_block] = kernel[thread_id_in_block];
+	// curent coordinate
+	int x = threadIdx.x + blockDim.x * blockIdx.x;
+	int y = threadIdx.y + blockDim.y * blockIdx.y;
+
+	// calculate convolution
+	for (int j = 0; j < kernel_height; j++) {
+		for (int i = 0; i < kernel_width; i++) {
+			int image_x = clamp(x + i - kernel_width/2, 0, image_width - 1);
+			int image_y = clamp(y + i - kernel_width/2, 0, image_height - 1);
+			int image_index = image_x + image_y * image_width;
+			result[x + image_width * y] = source_image[image_index] * shared_kernel[thread_id_in_block];
+		}
+	}
 
 }
 
@@ -87,7 +110,7 @@ int ConvolutionFilter::image_byte_count() {
 }
 
 void ConvolutionFilter::Run() {
-	dim3 thread_block_size(256, 256, 1);
+	dim3 thread_block_size(64, 64, 1);
 	dim3 block_grid_size(1 + image_width_ / thread_block_size.x,
 						 1 + image_height_ / thread_block_size.y,
 						 1);
