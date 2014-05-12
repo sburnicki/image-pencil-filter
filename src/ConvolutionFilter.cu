@@ -74,7 +74,7 @@ int ConvolutionFilter::image_byte_count() {
 }
 
 void ConvolutionFilter::Run() {
-	SimpleConvolutionKernel(gpu_image_data_,
+	SimpleConvolutionKernel<<<TODO,TODO>>(gpu_image_data_,
 							gpu_kernel_data_,
 							gpu_result_data_,
 							image_width_, image_height_,
@@ -86,7 +86,7 @@ int ConvolutionFilter::kernel_byte_count() {
 }
 
 __global__ void ConvolutionFilter::SimpleConvolutionKernel(const float* source_image,
-		const flaot* kernel, float* result, int image_width, int image_height,
+		const float* kernel, float* result, int image_width, int image_height,
 		int kernel_width, int kernel_height) {
 
 }
