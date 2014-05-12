@@ -22,8 +22,8 @@ __global__ void convertRGBToYUV(unsigned char* image, int image_size, int comps)
 	{
 		int idx = pixel*comps;
 		float r = (float) image[idx];
-		float g = (float) image[idx];
-		float b = (float) image[idx];
+		float g = (float) image[idx+1];
+		float b = (float) image[idx+2];
 		float y = 0.299 * r + 0.587 * g + 0.114 * b;
 		image[idx] = y;
 		image[idx+1] = (b - y) * 0.493;
@@ -58,6 +58,8 @@ __global__ void extractGrayscale(unsigned char* grayscale, unsigned char *image,
 	while (pixel < image_size)
 	{
 		grayscale[pixel] = image[pixel*comps];
+
+		pixel += MAX_BLOCKS * MAX_THREADS;
 	}
 }
 
@@ -75,6 +77,12 @@ int main(int argc, char* argv[]) {
 	// load image, allocate space on GPU
 	unsigned char * image = jpgd::decompress_jpeg_image_from_file(infilename, &width, &height, &comps, 3);
 	image_size = width * height;
+	if (comps != 3)
+	{
+		std::cout << "Currently only images with 3 components are supported." << std::endl;
+		free(image);
+		return 1;
+	}
 
 	unsigned char * gpuImage;
 	cudaMalloc((void**) &gpuImage, image_size * comps * sizeof(unsigned char));
@@ -92,7 +100,7 @@ int main(int argc, char* argv[]) {
     cudaMalloc((void**) &gpuGrayscale, image_size * sizeof(unsigned char));
     extractGrayscale<<<blockGrid, threadBlock>>>(gpuGrayscale, gpuImage, image_size, comps);
 
-    // just for testing: erase U and V
+    // TODO: use the grayscale, then modify gpuImage in the end
 
 	// convert to RGB
     convertYUVToRGB<<<blockGrid, threadBlock>>>(gpuImage, image_size, comps);
@@ -105,6 +113,10 @@ int main(int argc, char* argv[]) {
 	{
 		std::cout << "Error writing the image." << std::endl;
 	}
+
+	free(image);
+	cudaFree(gpuGrayscale);
+	cudaFree(gpuImage);
 
 	return 0;
 }
