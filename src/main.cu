@@ -77,10 +77,10 @@ __global__ void extractGrayscale(float* grayscale, float *image, int image_size,
  * TODO: Fix bank conflicts and do general optimization
  */
 __global__ void CalculateGradientImage(
-    const unsigned char *kGrayscaleImage,
+    const float *kGrayscaleImage,
     const int kImageSize,
     const int kImageWidth,
-    unsigned char *gradient_image) {
+    float *gradient_image) {
   // Calculate pixel position
   int pixel_pos_this = blockDim.x * blockIdx.x + threadIdx.x;
 
@@ -105,8 +105,8 @@ __global__ void CalculateGradientImage(
       int dy = pixel_top   - pixel_this;
 
       // Calculate the gradient for this point
-      gradient_image[pixel_pos_this] = static_cast<char>(
-        sqrt( static_cast<float>( (dx * dx + dy * dy) ) )
+      gradient_image[pixel_pos_this] =  sqrt(
+          static_cast<float>( (dx * dx + dy * dy) )
       );
     }
 
@@ -162,8 +162,8 @@ int main(int argc, char* argv[]) {
     extractGrayscale<<<blockGrid, threadBlock>>>(gpuGrayscale, gpuFloatImage, image_size, comps);
 
     // Calculate gradient image
-    unsigned char *gpu_gradient_image;
-    cudaMalloc((void**) &gpu_gradient_image, image_size * sizeof(unsigned char));
+    float *gpu_gradient_image;
+    cudaMalloc((void**) &gpu_gradient_image, image_size * sizeof(float));
     CalculateGradientImage<<<blockGrid, threadBlock>>>(
         gpuGrayscale,
         image_size,
