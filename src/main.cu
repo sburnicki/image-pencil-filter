@@ -15,7 +15,7 @@
 #define MAX_BLOCKS 256
 #define MAX_THREADS 256
 
-__global__ void convertRGBToYUV(unsigned char* image, int image_size, int comps)
+__global__ void convertRGBToYUV(float *outputImage, unsigned char* image, int image_size, int comps)
 {
 	int pixel = blockDim.x * blockIdx.x + threadIdx.x;
 	while (pixel < image_size)
@@ -25,15 +25,15 @@ __global__ void convertRGBToYUV(unsigned char* image, int image_size, int comps)
 		float g = (float) image[idx+1];
 		float b = (float) image[idx+2];
 		float y = 0.299 * r + 0.587 * g + 0.114 * b;
-		image[idx] = y;
-		image[idx+1] = (b - y) * 0.493;
-		image[idx+2] = (r - y) * 0.877;
+		outputImage[idx] = y;
+		outputImage[idx+1] = (b - y) * 0.493;
+		outputImage[idx+2] = (r - y) * 0.877;
 
 		pixel += MAX_BLOCKS * MAX_THREADS;
 	}
 }
 
-__global__ void convertYUVToRGB(unsigned char* image, int image_size, int comps)
+__global__ void convertYUVToRGB(unsigned char* outputImage, float *image, int image_size, int comps)
 {
 	int pixel = blockDim.x * blockIdx.x + threadIdx.x;
 	while (pixel < image_size)
@@ -44,15 +44,15 @@ __global__ void convertYUVToRGB(unsigned char* image, int image_size, int comps)
 		float v = (float) image[idx+2];
 		float r = y+v/0.877;
 		float b = y+u/0.493;
-		image[idx] = r;
-		image[idx+1] = 1.704 * y - 0.509 * r - 0.194*b;
-		image[idx+2] = b;
+		outputImage[idx] = r;
+		outputImage[idx+1] = 1.704 * y - 0.509 * r - 0.194*b;
+		outputImage[idx+2] = b;
 
 		pixel += MAX_BLOCKS * MAX_THREADS;
 	}
 }
 
-__global__ void extractGrayscale(unsigned char* grayscale, unsigned char *image, int image_size, int comps)
+__global__ void extractGrayscale(float* grayscale, float *image, int image_size, int comps)
 {
 	int pixel = blockDim.x * blockIdx.x + threadIdx.x;
 	while (pixel < image_size)
@@ -131,26 +131,35 @@ int main(int argc, char* argv[]) {
 	image_size = width * height;
 	if (comps != 3)
 	{
-		std::cout << "Currently only images with 3 components are supported." << std::endl;
+		if (comps == 0)
+		{
+			std::cout << "Loading the image failed! Wrong path?." << std::endl;
+		}
+		else
+		{
+			std::cout << "Currently only images with 3 components are supported." << std::endl;
+		}
 		free(image);
 		return 1;
 	}
 
-	unsigned char * gpuImage;
-	cudaMalloc((void**) &gpuImage, image_size * comps * sizeof(unsigned char));
+	unsigned char * gpuCharImage;
+	float * gpuFloatImage;
+    float * gpuGrayscale;
+	cudaMalloc((void**) &gpuCharImage, image_size * comps * sizeof(unsigned char));
+	cudaMalloc((void**) &gpuFloatImage, image_size * comps * sizeof(float));
+	cudaMalloc((void**) &gpuGrayscale, image_size * sizeof(float));
 
 	// upload to gpu
-    cudaMemcpy(gpuImage, image, image_size * comps * sizeof(unsigned char), cudaMemcpyHostToDevice);
+    cudaMemcpy(gpuCharImage, image, image_size * comps * sizeof(unsigned char), cudaMemcpyHostToDevice);
 
 	// convert to YUV
     dim3 blockGrid(MAX_BLOCKS);
     dim3 threadBlock(MAX_THREADS);
-    convertRGBToYUV<<<blockGrid, threadBlock>>>(gpuImage, image_size, comps);
+    convertRGBToYUV<<<blockGrid, threadBlock>>>(gpuFloatImage, gpuCharImage, image_size, comps);
 
     // extract grayscale
-    unsigned char * gpuGrayscale;
-    cudaMalloc((void**) &gpuGrayscale, image_size * sizeof(unsigned char));
-    extractGrayscale<<<blockGrid, threadBlock>>>(gpuGrayscale, gpuImage, image_size, comps);
+    extractGrayscale<<<blockGrid, threadBlock>>>(gpuGrayscale, gpuFloatImage, image_size, comps);
 
     // Calculate gradient image
     unsigned char *gpu_gradient_image;
@@ -164,10 +173,10 @@ int main(int argc, char* argv[]) {
     // TODO: use the grayscale, then modify gpuImage in the end
 
 	// convert to RGB
-    convertYUVToRGB<<<blockGrid, threadBlock>>>(gpuImage, image_size, comps);
+    convertYUVToRGB<<<blockGrid, threadBlock>>>(gpuCharImage, gpuFloatImage, image_size, comps);
 
 	// download image
-    cudaMemcpy(image, gpuImage, image_size * comps * sizeof(unsigned char), cudaMemcpyDeviceToHost);
+    cudaMemcpy(image, gpuCharImage, image_size * comps * sizeof(unsigned char), cudaMemcpyDeviceToHost);
 
 	// write image
 	if(!jpge::compress_image_to_jpeg_file(outfilename, width, height, comps, image))
@@ -178,7 +187,8 @@ int main(int argc, char* argv[]) {
 	free(image);
 	cudaFree(gpu_gradient_image);
 	cudaFree(gpuGrayscale);
-	cudaFree(gpuImage);
+	cudaFree(gpuFloatImage);
+	cudaFree(gpuCharImage);
 
 	return 0;
 }
