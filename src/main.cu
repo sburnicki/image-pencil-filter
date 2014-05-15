@@ -52,6 +52,46 @@ __global__ void convertYUVToRGB(unsigned char* outputImage, float *image, int im
 	}
 }
 
+/**
+ * \brief Kernel to transform the gradient image into a RGB image
+ *
+ *        This kernel is only for testing the gradient image output.
+ *
+ * \param kGradientImage  The input gradient image
+ * \param kImageSize      The size of the image in pixel
+ * \param rgb_image       RGB output image
+ */
+__global__ void ConvertGradienToRGB(
+    const float *kGradientImage,
+    const int kImageSize,
+    const int kImageComponents,
+    unsigned char *rgb_image) {
+  // Calculate pixel position
+  int pixel_pos_this = blockDim.x * blockIdx.x + threadIdx.x;
+
+  // Calculate RGB value if pixel exists
+  while (pixel_pos_this < kImageSize)
+  {
+    // Transform to YUV
+    float y = kGradientImage[pixel_pos_this];
+    float u = 0.0;
+    float v = 0.0;
+
+    // Calculate RGB
+    float r = y + v / 0.877;
+    float b = y + u / 0.493;
+
+    // Save RGB
+    int pixel_pos_output = pixel_pos_this * kImageComponents;
+    rgb_image[pixel_pos_output]     = r;
+    rgb_image[pixel_pos_output + 1] = 1.704 * y - 0.509 * r - 0.194 * b;
+    rgb_image[pixel_pos_output + 2] = b;
+
+    // Calculate next pixel position
+    pixel_pos_this += MAX_BLOCKS * MAX_THREADS;
+  }
+}
+
 __global__ void extractGrayscale(float* grayscale, float *image, int image_size, int comps)
 {
 	int pixel = blockDim.x * blockIdx.x + threadIdx.x;
@@ -170,10 +210,15 @@ int main(int argc, char* argv[]) {
         width,
         gpu_gradient_image);
 
-    // TODO: use the grayscale, then modify gpuImage in the end
+    // Output grayscale image
+    ConvertGradienToRGB<<<blockGrid, threadBlock>>>(
+        gpu_gradient_image,
+        image_size,
+        comps,
+        gpuCharImage);
 
 	// convert to RGB
-    convertYUVToRGB<<<blockGrid, threadBlock>>>(gpuCharImage, gpuFloatImage, image_size, comps);
+    //convertYUVToRGB<<<blockGrid, threadBlock>>>(gpuCharImage, gpuFloatImage, image_size, comps);
 
 	// download image
     cudaMemcpy(image, gpuCharImage, image_size * comps * sizeof(unsigned char), cudaMemcpyDeviceToHost);
