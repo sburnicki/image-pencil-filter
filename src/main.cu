@@ -112,7 +112,7 @@ __global__ void extractGrayscale(float* grayscale, float *image, int image_size,
  * \param kGrayscaleImage The input grayscale image
  * \param kImageSize      The size of the image in pixel
  * \param kImageWidth     The size of one line in the input image
- * \param gradient_image  Output array with image_size elements
+ * \param gradient_image  Gradient output image
  *
  * TODO: Fix bank conflicts and do general optimization
  */
