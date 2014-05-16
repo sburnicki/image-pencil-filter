@@ -52,6 +52,46 @@ __global__ void convertYUVToRGB(unsigned char* outputImage, float *image, int im
 	}
 }
 
+/**
+ * \brief Kernel to transform the gradient image into a RGB image
+ *
+ *        This kernel is only for testing the gradient image output.
+ *
+ * \param kGradientImage  The input gradient image
+ * \param kImageSize      The size of the image in pixel
+ * \param rgb_image       RGB output image
+ */
+__global__ void ConvertGradienToRGB(
+    const float *kGradientImage,
+    const int kImageSize,
+    const int kImageComponents,
+    unsigned char *rgb_image) {
+  // Calculate pixel position
+  int pixel_pos_this = blockDim.x * blockIdx.x + threadIdx.x;
+
+  // Calculate RGB value if pixel exists
+  while (pixel_pos_this < kImageSize)
+  {
+    // Transform to YUV
+    float y = kGradientImage[pixel_pos_this];
+    float u = 0.0;
+    float v = 0.0;
+
+    // Calculate RGB
+    float r = y + v / 0.877;
+    float b = y + u / 0.493;
+
+    // Save RGB
+    int pixel_pos_output = pixel_pos_this * kImageComponents;
+    rgb_image[pixel_pos_output]     = r;
+    rgb_image[pixel_pos_output + 1] = 1.704 * y - 0.509 * r - 0.194 * b;
+    rgb_image[pixel_pos_output + 2] = b;
+
+    // Calculate next pixel position
+    pixel_pos_this += MAX_BLOCKS * MAX_THREADS;
+  }
+}
+
 __global__ void extractGrayscale(float* grayscale, float *image, int image_size, int comps)
 {
 	int pixel = blockDim.x * blockIdx.x + threadIdx.x;
@@ -61,6 +101,58 @@ __global__ void extractGrayscale(float* grayscale, float *image, int image_size,
 
 		pixel += MAX_BLOCKS * MAX_THREADS;
 	}
+}
+
+/**
+ * \brief Kernel to calculate the forward gradient from a grayscale image
+ *
+ *        The bottom line and the very right line will be zero, as it is
+ *        impossible to calculate the forward gradient for these points.
+ *
+ * \param kGrayscaleImage The input grayscale image
+ * \param kImageSize      The size of the image in pixel
+ * \param kImageWidth     The size of one line in the input image
+ * \param gradient_image  Gradient output image
+ *
+ * TODO: Fix bank conflicts and do general optimization
+ */
+__global__ void CalculateGradientImage(
+    const float *kGrayscaleImage,
+    const int kImageSize,
+    const int kImageWidth,
+    float *gradient_image) {
+  // Calculate pixel position
+  int pixel_pos_this = blockDim.x * blockIdx.x + threadIdx.x;
+
+  // Calculate gradient if pixel exists
+  while (pixel_pos_this < kImageSize) {
+    // Calculate forward pixels positions
+    int pixel_pos_right = pixel_pos_this + 1;
+    int pixel_pos_top   = pixel_pos_this + kImageWidth;
+
+    // Set bottom and very right pixels to zero
+    gradient_image[pixel_pos_this] = 0;
+
+    // Calculate gradient if forward pixels exist
+    if (pixel_pos_right < kImageSize && pixel_pos_top < kImageSize) {
+      // Retrieve points value
+      int pixel_this  = kGrayscaleImage[pixel_pos_this];
+      int pixel_right = kGrayscaleImage[pixel_pos_right];
+      int pixel_top   = kGrayscaleImage[pixel_pos_top];
+
+      // Calculate difference between this and forward points
+      int dx = pixel_right - pixel_this;
+      int dy = pixel_top   - pixel_this;
+
+      // Calculate the gradient for this point
+      gradient_image[pixel_pos_this] =  sqrt(
+          static_cast<float>( (dx * dx + dy * dy) )
+      );
+    }
+
+    // Calculate next pixel position
+    pixel_pos_this += MAX_BLOCKS * MAX_THREADS;
+  }
 }
 
 int main(int argc, char* argv[]) {
@@ -109,10 +201,24 @@ int main(int argc, char* argv[]) {
     // extract grayscale
     extractGrayscale<<<blockGrid, threadBlock>>>(gpuGrayscale, gpuFloatImage, image_size, comps);
 
-    // TODO: use the grayscale, then modify gpuImage in the end
+    // Calculate gradient image
+    float *gpu_gradient_image;
+    cudaMalloc((void**) &gpu_gradient_image, image_size * sizeof(float));
+    CalculateGradientImage<<<blockGrid, threadBlock>>>(
+        gpuGrayscale,
+        image_size,
+        width,
+        gpu_gradient_image);
+
+    // Output grayscale image
+    ConvertGradienToRGB<<<blockGrid, threadBlock>>>(
+        gpu_gradient_image,
+        image_size,
+        comps,
+        gpuCharImage);
 
 	// convert to RGB
-    convertYUVToRGB<<<blockGrid, threadBlock>>>(gpuCharImage, gpuFloatImage, image_size, comps);
+    //convertYUVToRGB<<<blockGrid, threadBlock>>>(gpuCharImage, gpuFloatImage, image_size, comps);
 
 	// download image
     cudaMemcpy(image, gpuCharImage, image_size * comps * sizeof(unsigned char), cudaMemcpyDeviceToHost);
@@ -124,6 +230,7 @@ int main(int argc, char* argv[]) {
 	}
 
 	free(image);
+	cudaFree(gpu_gradient_image);
 	cudaFree(gpuGrayscale);
 	cudaFree(gpuFloatImage);
 	cudaFree(gpuCharImage);
