@@ -8,10 +8,10 @@
 #ifndef CONVOLUTIONFILTER_H_
 #define CONVOLUTIONFILTER_H_
 
-class ConvolutionFilter {
+class ScetchFilter {
 public:
-	ConvolutionFilter();
-	virtual ~ConvolutionFilter();
+	ScetchFilter();
+	virtual ~ScetchFilter();
 
 	// Creates and uploads the image data from the given cpu_image
 	void SetImage(float *cpu_image_data,
@@ -23,15 +23,15 @@ public:
 	void UseImage(float *gpu_image_data,
 				  int image_width, int image_height);
 
-	// Creates and uploads a kernel image, which is used for the convolution
-	void SetKernel(float *cpu_kernel_data,
-				   int kernel_width, int kernel_height);
+	// set the strength of the scetch lines in pixels
+	void set_line_strength(int line_strength);
 
-	// Uses the given gpu kernel data. Expects the data to be already
-	// allocated and uploaded to the gpu.
-	// Useful to process the image with an kernel, which is already on the device
-	void UseKernel(float *gpu_kernel_data,
-				   int kernel_width, int kernel_height);
+	// set the length of the scetch lines in pixels
+	void set_line_length(int line_length);
+
+	// set the number of used lines for the scetch algorithm.
+	// The angle between all possible lines will be 360/linecount
+	void set_line_count(int line_count);
 
 	void Run();
 
@@ -39,17 +39,13 @@ public:
 private:
 	// little helper functions
 	int image_pixel_count();
-	int kernel_pixel_count();
 	int image_byte_count();
-	int kernel_byte_count();
-
-
 
 	int image_width_, image_height_;
-	int kernel_width_, kernel_height_;
-	bool free_image_, free_kernel_;
+	int line_length_, line_count_;
+	float line_radius_;
+	bool free_image_;
 	float *gpu_image_data_;
-	float *gpu_kernel_data_;
 	float *gpu_result_data_;
 };
 
