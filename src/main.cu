@@ -9,7 +9,7 @@
  */
 #include <stdio.h>
 #include <stdlib.h>
-#include "ConvolutionFilter.h"
+#include "ScetchFilter.h"
 
 int main(void) {
 	printf("foo\n");
