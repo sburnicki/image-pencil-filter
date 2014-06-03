@@ -7,10 +7,13 @@
  * this software and related documentation outside the terms of the EULA
  * is strictly prohibited.
  */
+
 #include <iostream>
 
 #include "../lib/jpge.h"
 #include "../lib/jpgd.h"
+
+#include "ScetchFilter.h"
 
 #define MAX_BLOCKS 256
 #define MAX_THREADS 256
@@ -196,26 +199,53 @@ int main(int argc, char* argv[]) {
 	// convert to YUV
     dim3 blockGrid(MAX_BLOCKS);
     dim3 threadBlock(MAX_THREADS);
+    std::cout << "Converting RGB to YUV" << std::endl;
     convertRGBToYUV<<<blockGrid, threadBlock>>>(gpuFloatImage, gpuCharImage, image_size, comps);
 
     // extract grayscale
+    std::cout << "Extracting grayscale Image" << std::endl;
     extractGrayscale<<<blockGrid, threadBlock>>>(gpuGrayscale, gpuFloatImage, image_size, comps);
 
     // Calculate gradient image
     float *gpu_gradient_image;
     cudaMalloc((void**) &gpu_gradient_image, image_size * sizeof(float));
+
+    std::cout << "Calculating the Gradient" << std::endl;
     CalculateGradientImage<<<blockGrid, threadBlock>>>(
         gpuGrayscale,
         image_size,
         width,
         gpu_gradient_image);
 
+
+
+    std::cout << "Calculating the scetch filter" << std::endl;
+    // Apply Scetch Filter
+    ScetchFilter scetch_filter;
+    scetch_filter.UseImage(gpu_gradient_image, width, height);
+    scetch_filter.set_line_count(7);
+    scetch_filter.set_line_length(40);
+    scetch_filter.set_line_strength(1);
+    scetch_filter.set_gamma(1.4);
+    scetch_filter.Run();
+
+
+//    std::cout << "Running scetch filter debug tests" << std::endl;
+//    std::string debug_message;
+//    if (!scetch_filter.TestGpuFunctions(&debug_message)) {
+//    	std::cerr << "scetch filter test failed with message:" << std::endl <<
+//    			debug_message << std::endl;
+//    }
+
+    std::cout << "Create rgb image from greyscale image" << std::endl;
+
     // Output grayscale image
     ConvertGradienToRGB<<<blockGrid, threadBlock>>>(
-        gpu_gradient_image,
+        scetch_filter.get_gpu_result_data(),
         image_size,
         comps,
         gpuCharImage);
+
 
 	// convert to RGB
     //convertYUVToRGB<<<blockGrid, threadBlock>>>(gpuCharImage, gpuFloatImage, image_size, comps);
@@ -234,6 +264,4 @@ int main(int argc, char* argv[]) {
 	cudaFree(gpuGrayscale);
 	cudaFree(gpuFloatImage);
 	cudaFree(gpuCharImage);
-
-	return 0;
 }
