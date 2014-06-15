@@ -222,7 +222,7 @@ int main(int argc, char* argv[]) {
     std::cout << "Calculating the scetch filter" << std::endl;
     // Apply Scetch Filter
     ScetchFilter scetch_filter;
-    scetch_filter.UseImage(gpu_gradient_image, width, height);
+    scetch_filter.SetImageFromGpu(gpu_gradient_image, width, height);
     scetch_filter.set_line_count(7);
     scetch_filter.set_line_length(40);
     scetch_filter.set_line_strength(1);
@@ -241,7 +241,7 @@ int main(int argc, char* argv[]) {
 
     // Output grayscale image
     ConvertGradienToRGB<<<blockGrid, threadBlock>>>(
-        scetch_filter.get_gpu_result_data(),
+        scetch_filter.GetGpuResultData(),
         image_size,
         comps,
         gpuCharImage);
