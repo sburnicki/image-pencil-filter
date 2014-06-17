@@ -108,41 +108,11 @@ __global__ void SimpleScetchKernel(
 }
 
 
-ScetchFilter::ScetchFilter() {
-	image_width_ = image_height_ = 0;
+ScetchFilter::ScetchFilter() : ImageFilter() {
 	line_length_ = 20;
 	line_strength_ = 1;
 	line_count_  = 4;
-	free_image_  = false;
 	gamma_ = 1.f;
-	gpu_image_data_ = gpu_result_data_ = NULL;
-}
-
-
-ScetchFilter::~ScetchFilter() {
-	cudaFree(gpu_result_data_);
-	if (free_image_)
-		cudaFree(gpu_image_data_);
-}
-
-void ScetchFilter::SetImage(float* cpu_image_data, int image_width,
-		int image_height) {
-	image_width_ = image_width;
-	image_height_ = image_height;
-	// allocate gpu memory
-	cudaMalloc((void**) &gpu_image_data_, image_byte_count());
-	cudaMalloc((void**) &gpu_result_data_, image_byte_count());
-	// copy data to gpu
-	cudaMemcpy(gpu_image_data_, cpu_image_data, image_byte_count(),
-			cudaMemcpyHostToDevice);
-}
-
-void ScetchFilter::UseImage(float* gpu_image_data, int image_width,
-		int image_height) {
-	image_width_ = image_width;
-	image_height_ = image_height;
-	gpu_image_data_ = gpu_image_data;
-	cudaMalloc((void**) &gpu_result_data_, image_byte_count());
 }
 
 
@@ -162,51 +132,38 @@ void ScetchFilter::set_gamma(float gamma) {
 	gamma_ = gamma;
 }
 
-
-float *ScetchFilter::get_gpu_result_data() {
-	return gpu_result_data_;
-}
-
-float *ScetchFilter::GetCpuResultData() {
-	float *image = new float[image_pixel_count()];
-	cudaMemcpy(image, gpu_result_data_, image_byte_count(), cudaMemcpyDeviceToHost);
-	return image;
-}
-
-int ScetchFilter::image_pixel_count() {
-	return image_height_ * image_width_;
-}
-
-int ScetchFilter::image_byte_count() {
-	return image_pixel_count() * sizeof(float);
-}
-
 void ScetchFilter::Run() {
+	int imageh = GetImageHeight();
+	int imagew = GetImageWidth();
 	dim3 thread_block_size(32, 32, 1);
-	dim3 block_grid_size(1 + image_width_ / thread_block_size.x,
-			1 + image_height_ / thread_block_size.y,
+	dim3 block_grid_size(1 + imagew / thread_block_size.x,
+			1 + imageh / thread_block_size.y,
 			1);
 	SimpleScetchKernel<<<block_grid_size, thread_block_size>>>(
-			gpu_image_data_,
-			gpu_result_data_,
-			image_width_, image_height_,
+			GetGpuImageData(),
+			GetGpuResultData(),
+			imagew, imageh,
 			line_length_, line_strength_, line_count_,
 			gamma_);
 }
+
+
 
 bool ScetchFilter::TestGpuFunctions(std::string *message) {
 	int** lines = new int*[line_count_];
 	float** weights = new float*[line_count_];
 	int max_line_pixel_count = line_strength_ * line_length_;
+	int image_width = GetImageWidth();
+	int image_height = GetImageHeight();
 
 	// check if max_line_pixel_count is big enough
-	for (int x = 0; x < image_width_; x++) {
-		for (int y = 0; x < image_width_; x++) {
+	for (int x = 0; x < image_width; x++) {
+		for (int y = 0; x < image_width; x++) { // <<< wtf, is this correct?
 			for (int i = 0; i < line_count_; i++) {
 				lines[i] = new int[max_line_pixel_count];
 				weights[i] = new float[max_line_pixel_count];
 				float line_anle = static_cast<float>(i) * (M_PI / line_count_);
-				int line_pixels_count = LinePixels(x, y, line_anle, image_width_, image_height_,
+				int line_pixels_count = LinePixels(x, y, line_anle, image_width, image_height,
 						line_length_, line_strength_,
 						lines[i], weights[i]);
 				if (line_pixels_count > max_line_pixel_count) {
@@ -226,13 +183,13 @@ bool ScetchFilter::TestGpuFunctions(std::string *message) {
 		lines[i] = new int[max_line_pixel_count];
 		weights[i] = new float[max_line_pixel_count];
 		float line_anle = static_cast<float>(i) * (M_PI / line_count_);
-		int line_pixels_count = LinePixels(100, 100, line_anle, image_width_, image_height_,
+		int line_pixels_count = LinePixels(100, 100, line_anle, image_width, image_height,
 				line_length_, line_strength_,
 				lines[i], weights[i]);
 
 		// create an image for the line, where all line pixels are black, rest white
-		unsigned char *line_data = new unsigned char[image_width_*image_height_*3];
-		memset(line_data, 255, image_width_*image_height_*3);
+		unsigned char *line_data = new unsigned char[image_width*image_height*3];
+		memset(line_data, 255, image_width*image_height*3);
 		for (int j = 0; j < line_pixels_count; j++) {
 			int pixel_index = lines[i][j];
 			line_data[3 * pixel_index + 0] = 0;
@@ -242,7 +199,7 @@ bool ScetchFilter::TestGpuFunctions(std::string *message) {
 		char line_no[16];
 		sprintf(line_no, "%d", i);
 		std::string outfilename = std::string("resources/line") + line_no + "_pixel(100,100).jpg";
-		if(!jpge::compress_image_to_jpeg_file(outfilename.c_str(), image_width_, image_height_, 3, line_data))
+		if(!jpge::compress_image_to_jpeg_file(outfilename.c_str(), image_width, image_height, 3, line_data))
 		{
 			(*message) = "Error while writing image to disk";
 			return false;
