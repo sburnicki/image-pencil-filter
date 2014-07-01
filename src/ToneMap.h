@@ -17,16 +17,18 @@ class ToneMap
 public:
 	ToneMap(int numTones = DEF_NUM_TONES);
 
-	float getTone(int v);
-	int findTone(float prob);
+	float getProbability(int v);
 	void setP1Params(float sigmaB);
 	void setP2Params(float muA, float muB);
 	void setP3Params(float sigmaD, float muD);
+	void setPWeigths(int omega1, int omega2, int omega3);
+	const std::vector<float> &getTonemap() const;
 
 private:
-	float getP1Tone(int v);
-	float getP2Tone(int v);
-	float getP3Tone(int v);
+	float getP1(int v);
+	float getP2(int v);
+	float getP3(int v);
+	void initMap();
 
 	int num_tones_;
 
@@ -35,6 +37,8 @@ private:
 	float param_mu_b_;
 	float param_sigma_d_;
 	float param_mu_d_;
+	float param_omegas_[3];
+	float normalization_;
 
 	std::vector<float> tonemap_;
 };

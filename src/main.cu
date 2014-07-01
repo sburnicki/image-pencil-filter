@@ -14,6 +14,7 @@
 #include "../lib/jpgd.h"
 
 #include "ScetchFilter.h"
+#include "ToneMappingFilter.h"
 
 #define MAX_BLOCKS 256
 #define MAX_THREADS 256
@@ -330,6 +331,7 @@ int main(int argc, char* argv[]) {
 
     cudaThreadSynchronize();
 
+    /*
     // TODO: Only for testing purpose, remove for production
     int histogram[256];
     int accumulative_histogram[256];
@@ -358,10 +360,19 @@ int main(int argc, char* argv[]) {
       sum += histogram[i];
     }
     std::cout << "Control Sum: " << sum << std::endl;
+    */
+
+
+    std::cout << "Calculating the tone mapping filter" << std::endl;
+    // Apply Scetch Filter
+    ToneMappingFilter tone_filter(256, gpu_accumulative_histogram);
+    tone_filter.SetImageFromGpu(gpuGrayscale, width, height);
+    tone_filter.Run();
+
 
     // Output grayscale image
     ConvertGradienToRGB<<<blockGrid, threadBlock>>>(
-        scetch_filter.GetGpuResultData(),
+    	tone_filter.GetGpuResultData(),
         image_size,
         comps,
         gpuCharImage);
