@@ -158,6 +158,81 @@ __global__ void CalculateGradientImage(
   }
 }
 
+/**
+ * \brief Kernel to calculate the histogram from a grayscale image
+ * \param kGrayscaleImage         The input grayscale image
+ * \param kImageSize              The size of the image in pixel
+ * \param histogram               Histogram output
+ * \param accumulative_histogramm Accumulative histogram output
+ *
+ * TODO: Check this out - http://developer.download.nvidia.com/compute/cuda/\
+ *                        1.1-Beta/x86_website/projects/histogram64/doc/\
+ *                        histogram.pdf
+ */
+__global__ void CalculateHistogram(
+    const float *kGrayscaleImage,
+    const int kImageSize,
+    int *histogram,
+    int *accumulative_histogram) {
+  __shared__ int shared_histogram[256];
+  __shared__ int shared_accumulative_histogram[256];
+
+  // Calculate ID and pixel position
+  int tid       = threadIdx.x;
+  int pixel_pos = blockDim.x * blockIdx.x + tid;
+
+  // Clear histogram
+  if (pixel_pos < 256) {
+      histogram[pixel_pos] = 0;
+      accumulative_histogram[pixel_pos] = 0;
+  }
+  if (tid < 256) {
+    shared_histogram[tid] = 0;
+    shared_accumulative_histogram[tid] = 0;
+  }
+  __syncthreads();
+
+  // Calculate partial histogram if pixel exists
+  while (pixel_pos < kImageSize) {
+    int value = kGrayscaleImage[pixel_pos];
+
+    // Increment position of value in histogram
+    // TODO Remove sanity check if sure
+    if (value < 256 && value >= 0) {
+      atomicAdd(&shared_histogram[value], 1);
+    }
+
+    // Calculate next pixel position
+    pixel_pos += MAX_BLOCKS * MAX_THREADS;
+  }
+  __syncthreads();
+
+  // Calculate partial histogram and accumulate result to global memory
+  if (tid < 256) {
+    shared_accumulative_histogram[tid] = shared_histogram[tid];
+
+    // TODO: Fix the commented code block and delete the uncommented slower one
+    //       The result is too big in this faster solution
+    //for (int i = 1; i <= tid; i *= 2) {
+    //  __syncthreads();
+    //  shared_accumulative_histogram[tid]
+    //      += shared_accumulative_histogram[tid - i];
+    //}
+    __syncthreads();
+    int sum = 0;
+    for (int i = 0; i <= tid; i++) {
+      sum += shared_accumulative_histogram[i];
+    }
+    __syncthreads();
+    shared_accumulative_histogram[tid] = sum;
+
+    // Copy result to global memory
+    __syncthreads();
+    atomicAdd(&histogram[tid], shared_histogram[tid]);
+    atomicAdd(&accumulative_histogram[tid], shared_accumulative_histogram[tid]);
+  }
+}
+
 int main(int argc, char* argv[]) {
 	int width, height, comps, image_size;
 
@@ -239,6 +314,51 @@ int main(int argc, char* argv[]) {
 
     std::cout << "Create rgb image from greyscale image" << std::endl;
 
+    // Calculate histogram
+    int * gpu_histogram;
+    int * gpu_accumulative_histogram;
+    cudaMalloc((void**) &gpu_histogram, 256 * sizeof(int));
+    cudaMalloc((void**) &gpu_accumulative_histogram, 256 * sizeof(int));
+
+    std::cout << "Calculating the histogram of the grayscale image"
+              << std::endl;
+    CalculateHistogram<<<blockGrid, threadBlock>>>(
+        gpuGrayscale,
+        image_size,
+        gpu_histogram,
+        gpu_accumulative_histogram);
+
+    cudaThreadSynchronize();
+
+    // TODO: Only for testing purpose, remove for production
+    int histogram[256];
+    int accumulative_histogram[256];
+    cudaMemcpy(
+        &histogram,
+        gpu_histogram,
+        256 * sizeof(int),
+        cudaMemcpyDeviceToHost);
+    cudaMemcpy(
+        &accumulative_histogram,
+        gpu_accumulative_histogram,
+        256 * sizeof(int),
+        cudaMemcpyDeviceToHost);
+    std::cout << "Histogram: ";
+    for (int i = 0; i <= 255; i++) {
+      std::cout << " " << histogram[i];
+    }
+    std::cout << std::endl;
+    std::cout << "Accumulative histogram: ";
+    for (int i = 0; i <= 255; i++) {
+      std::cout << " " << accumulative_histogram[i];
+    }
+    std::cout << std::endl;
+    int sum = 0;
+    for (int i = 0; i <= 255; i++) {
+      sum += histogram[i];
+    }
+    std::cout << "Control Sum: " << sum << std::endl;
+
     // Output grayscale image
     ConvertGradienToRGB<<<blockGrid, threadBlock>>>(
         scetch_filter.GetGpuResultData(),
@@ -260,6 +380,8 @@ int main(int argc, char* argv[]) {
 	}
 
 	free(image);
+	cudaFree(gpu_histogram);
+	cudaFree(gpu_accumulative_histogram);
 	cudaFree(gpu_gradient_image);
 	cudaFree(gpuGrayscale);
 	cudaFree(gpuFloatImage);
