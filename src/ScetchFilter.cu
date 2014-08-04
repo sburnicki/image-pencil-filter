@@ -116,7 +116,7 @@ __device__ __host__ void CalculateCoordinatesInSharedMemoryBlock(
     int x, int y,
     int thread_x, int thread_y,
     float rotation_angle,
-    int &shared_x, int &shared_y) {
+    int *shared_x, int *shared_y) {
 // TODO(Raphael) To be continued
 }
 
@@ -141,7 +141,7 @@ __global__ void HighSpeedScetchKernel(
   // first copy in the pixels of the trivial mappings of the threads to pixels:
   int x_image = threadIdx.x + blockDim.x * blockIdx.x;
   int y_image = threadIdx.y + blockDim.y * blockIdx.y;
-  image_block[overhang + threadIdx.x][overhang + threadIdx.y] = image[PixelIndexOf(x, y, image_width)];
+  image_block[overhang + threadIdx.x][overhang + threadIdx.y] = image[PixelIndexOf(x_image, y_image, image_width)];
   // then copy the 4 left overhanging regions clockwise starting left
   int thread_number = threadIdx.x + blockDim.x * threadIdx.y;
   // left overhang (complete)
@@ -185,8 +185,8 @@ __global__ void HighSpeedScetchKernel(
   }
 
   // calculate line convolution for all directions
-  angle_step = M_PI / line_count;
-  for (int line_index = 0; direction_index < line_count; direction_index++) {
+  float angle_step = M_PI / line_count;
+  for (int line_index = 0; line_index < line_count; line_index++) {
     float rotation_angle = angle_step * line_index;
     int n_pixels = 0;
     float sum = 0.f;
@@ -202,7 +202,7 @@ __global__ void HighSpeedScetchKernel(
       }
     }
     // do the convolution
-    image[PixelIndexOf(x, y, image_width)] = sum / n_pixels;
+    image[PixelIndexOf(x_image, y_image, image_width)] = sum / n_pixels;
   }
 }
 
@@ -250,7 +250,7 @@ void ScetchFilter::Run() {
       line_length_, line_strength_, line_count_,
       gamma_);
 
-
+/* TODO
   dim3 high_speed_grid_size = block_grid_size;
   dim3 high_speed_block_size = thread_block_size;
   HighSpeedScetchKernel<<<high_speed_grid_size, high_speed_block_size>>>(
@@ -263,6 +263,7 @@ void ScetchFilter::Run() {
       line_count_,
       rotation_offset_,
       gamma_);
+      */
 }
 
 
