@@ -25,6 +25,11 @@ public:
 	// The angle between all possible lines will be 360/linecount
 	void set_line_count(int line_count);
 
+  // sets the offset angle of the lines that are used for convolution
+  // the given angle is in RADIANTS, not degree!
+  // default ist 0: the first line is horizontal.
+  void set_line_rotation_offset(float offste_angle);
+
 	// set the gamma value for the lines
 	// usefull to darken lines for images with weak gradient magnitudes
 	void set_gamma(float gamma);
@@ -39,6 +44,7 @@ private:
 	int line_length_, line_count_;
 	float line_strength_;
 	float gamma_;
+  float rotation_offset_;
 };
 
 #endif /* CONVOLUTIONFILTER_H_ */
