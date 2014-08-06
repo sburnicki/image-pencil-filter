@@ -299,9 +299,9 @@ int main(int argc, char* argv[]) {
     ScetchFilter scetch_filter;
     scetch_filter.SetImageFromGpu(gpu_gradient_image, width, height);
     scetch_filter.set_line_count(7);
-    scetch_filter.set_line_length(40);
+    scetch_filter.set_line_length(20);
     scetch_filter.set_line_strength(1);
-    scetch_filter.set_gamma(1.4);
+    scetch_filter.set_gamma(1);
     scetch_filter.Run();
 
 

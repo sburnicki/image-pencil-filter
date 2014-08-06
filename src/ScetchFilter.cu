@@ -24,100 +24,120 @@
 
 // Used Kernel functions
 __device__ __host__ int clamp(int value, int mi, int ma) {
-	return max(mi, min(ma, value));
+  return max(mi, min(ma, value));
 }
 
 __device__ __host__ int PixelIndexOf(int x, int y, int width) {
-	return x + y * width;
+  return x + y * width;
 }
 
 __device__ __host__ bool IsInImage(int x, int y, int width, int height) {
-	return x >= 0 && x < width &&
-			y >= 0 && y < height;
+  return x >= 0 && x < width &&
+    y >= 0 && y < height;
+}
+
+__device__ __host__ bool IsInSharedMemoryBlock(int x, int y, int block_dim) {
+  return x >= 0 && y >= 0 &&
+    x < block_dim && y < block_dim;
 }
 
 __device__ __host__ void RotatedCoordinate(float *x, float *y, float angle) {
-	float c = cos(angle);
-	float s = sin(angle);
-	float new_x = c * (*x) - s* (*y);
-	float new_y = s * (*x) + c * (*y);
-	(*x) = new_x;
-	(*y) = new_y;
+  float c = cos(angle);
+  float s = sin(angle);
+  float new_x = c * (*x) - s* (*y);
+  float new_y = s * (*x) + c * (*y);
+  (*x) = new_x;
+  (*y) = new_y;
 }
 
 
 // calculates indices and corresponding weights of all pixels along a line
 __device__ __host__ int LinePixels(int x, int y, float line_angle, int image_width, int image_height,
-		int line_length, float line_strength,
-		int *indices, float *weights) {
-	int line_pixel_count = 0;
-	float halve_length = static_cast<float>(line_length) / 2.f;
-	float halve_strength = line_strength / 2.f;
+    int line_length, float line_strength,
+    int *indices, float *weights) {
+  int line_pixel_count = 0;
+  float halve_length = static_cast<float>(line_length) / 2.f;
+  float halve_strength = line_strength / 2.f;
 
-	for (int j = ceil(y - halve_strength); j < ceil(y + halve_strength); j++) {
-		for (int i = ceil(x - halve_length); i < ceil(x + halve_length); i++) {
-			float rotated_x = i - x;
-			float rotated_y = j - y;
-			RotatedCoordinate(&rotated_x, &rotated_y, line_angle);
-			rotated_x  += x;
-			rotated_y  += y;
-			if (IsInImage(rotated_x, rotated_y, image_width, image_height)) {
-				indices[line_pixel_count] = PixelIndexOf(rotated_x, rotated_y, image_width);
-				weights[line_pixel_count] = 1;
-				line_pixel_count++;
-			}
-		}
-	}
-	return line_pixel_count;
+  for (int j = ceil(y - halve_strength); j < ceil(y + halve_strength); j++) {
+    for (int i = ceil(x - halve_length); i < ceil(x + halve_length); i++) {
+      float rotated_x = i - x;
+      float rotated_y = j - y;
+      RotatedCoordinate(&rotated_x, &rotated_y, line_angle);
+      rotated_x  += x;
+      rotated_y  += y;
+      if (IsInImage(rotated_x, rotated_y, image_width, image_height)) {
+        indices[line_pixel_count] = PixelIndexOf(rotated_x, rotated_y, image_width);
+        weights[line_pixel_count] = 1;
+        line_pixel_count++;
+      }
+    }
+  }
+  return line_pixel_count;
 }
 
 // scetch kernel
 __global__ void SimpleScetchKernel(
-		float *image,
-		float *result,
-		int image_width, int image_height,
-		int line_length, float line_strength, int line_count,
-		float gamma) {
-	// some neat index calculations:
-	int x = threadIdx.x + blockDim.x * blockIdx.x;
-	int y = threadIdx.y + blockDim.y * blockIdx.y;
+    float *image,
+    float *result,
+    int image_width, int image_height,
+    int line_length, float line_strength, int line_count,
+    float gamma) {
+  // some neat index calculations:
+  int x = threadIdx.x + blockDim.x * blockIdx.x;
+  int y = threadIdx.y + blockDim.y * blockIdx.y;
 
-	if (IsInImage(x, y, image_width, image_height)) {
-		int pixel_index = PixelIndexOf(x, y, image_width);
+  if (IsInImage(x, y, image_width, image_height)) {
+    int pixel_index = PixelIndexOf(x, y, image_width);
 
-		// the number of pixels in a line equals the number of pixels in a rectangle
-		// the true number of pixels might be smaller due to image boundaries
-		int max_line_pixel_count = line_strength * line_length;
+    // the number of pixels in a line equals the number of pixels in a rectangle
+    // the true number of pixels might be smaller due to image boundaries
+    int max_line_pixel_count = line_strength * line_length;
 
-		// allocate some memory for the line pixel indices and the corresponding weights
-		int* line_pixel_indices = new int[max_line_pixel_count];
-		float* weights = new float[max_line_pixel_count];
-		float max_value = 0.f;
-		for (int line = 0; line < line_count; line++) {
-			float line_angle = static_cast<float>(line) * (M_PI / line_count);
-			int line_pixel_count = LinePixels(x, y, line_angle, image_width, image_height,
-					line_length, line_strength,
-					line_pixel_indices, weights);
-			float convolution_result = 0;
-			for  (int i = 0; i < line_pixel_count; i++) {
-				float line_pixel_value = image[line_pixel_indices[i]];
-				convolution_result += line_pixel_value * weights[i] / line_pixel_count;
-			}
-			max_value = max(max_value, convolution_result);
-		}
+    // allocate some memory for the line pixel indices and the corresponding weights
+    int* line_pixel_indices = new int[max_line_pixel_count];
+    float* weights = new float[max_line_pixel_count];
+    float max_value = 0.f;
+    for (int line = 0; line < line_count; line++) {
+      float line_angle = static_cast<float>(line) * (M_PI / line_count);
+      int line_pixel_count = LinePixels(x, y, line_angle, image_width, image_height,
+          line_length, line_strength,
+          line_pixel_indices, weights);
+      float convolution_result = 0;
+      for  (int i = 0; i < line_pixel_count; i++) {
+        float line_pixel_value = image[line_pixel_indices[i]];
+        convolution_result += line_pixel_value * weights[i] / line_pixel_count;
+      }
+      max_value = max(max_value, convolution_result);
+    }
 
-		delete[] line_pixel_indices;
-		delete[] weights;
-		result[pixel_index] = max(255.f - __powf(max_value, gamma), 0.f);
-	}
+    delete[] line_pixel_indices;
+    delete[] weights;
+    result[pixel_index] = max(255.f - __powf(max_value, gamma), 0.f);
+  }
 }
 
-__device__ __host__ void CalculateCoordinatesInSharedMemoryBlock(
+__device__ __host__ bool CalculateCoordinatesInSharedMemoryBlock(
     int x, int y,
     int thread_x, int thread_y,
+    int image_x, int image_y,
     float rotation_angle,
+    int line_length,
+    int shared_width,
+    int image_width, int image_height,
     int *shared_x, int *shared_y) {
-// TODO(Raphael) To be continued
+  float half_length =  static_cast<float>(line_length) / 2.f;
+  float start_x = - half_length;
+  float start_y = 0;
+  float current_x = start_x + x;
+  float current_y = start_y + y;
+  RotatedCoordinate(&current_x, &current_y, rotation_angle);
+  *shared_x = current_x + thread_x;
+  *shared_y = current_y + thread_y;
+  int rotated_image_x = current_x + image_x;
+  int rotated_image_y = current_y + image_y;
+  return IsInSharedMemoryBlock(*shared_x, *shared_y, shared_width) &&
+         IsInImage(rotated_image_x, rotated_image_y, image_width, image_height);
 }
 
 
@@ -128,81 +148,103 @@ __global__ void HighSpeedScetchKernel(
     float *result,
     int image_width,
     int image_height,
+    int shared_width,
     int line_length,
     float line_strength,
     int line_count,
     float rotation_offset,
     float gamma) {
   // Create a shared memory block
-  __shared__ float image_block[SHARED_2D_BLOCK_DIMENSION][SHARED_2D_BLOCK_DIMENSION];
+  extern __shared__ float image_block[];
 
-  // fill the shared memory block
   int overhang = ceil(static_cast<float>(line_length) / 2.f);  //TODO(Raphael) was wenn line_length ungerade?
-  // first copy in the pixels of the trivial mappings of the threads to pixels:
   int x_image = threadIdx.x + blockDim.x * blockIdx.x;
   int y_image = threadIdx.y + blockDim.y * blockIdx.y;
-  image_block[overhang + threadIdx.x][overhang + threadIdx.y] = image[PixelIndexOf(x_image, y_image, image_width)];
-  // then copy the 4 left overhanging regions clockwise starting left
-  int thread_number = threadIdx.x + blockDim.x * threadIdx.y;
-  // left overhang (complete)
-  int start_x = blockDim.x * blockIdx.x - overhang;
-  int start_y = blockDim.y * blockIdx.y - overhang;
-  if ((start_x >= 0) &&
-      (thread_number < 2 * overhang * overhang + overhang * SHARED_2D_BLOCK_DIMENSION)) {
-    image_block[thread_number % overhang][thread_number / overhang] =
-      image[PixelIndexOf(start_x + (thread_number % overhang),
-          start_y + (thread_number / overhang),
-          image_width)];
-  }
-  start_x = start_x + overhang;
-  // top overhang (without left corner)
-  if ((start_y >= 0) &&
-      (thread_number < overhang * overhang + overhang * SHARED_2D_BLOCK_DIMENSION)) {
-    image_block[overhang + thread_number % (blockDim.x + overhang)][thread_number / (blockDim.x + overhang)] =
-      image[PixelIndexOf(start_x + (thread_number % (blockDim.x + overhang)),
-          start_y + (thread_number % (blockDim.x + overhang)),
-          image_width)];
-  }
-  start_x = start_x + blockDim.x;
-  start_y = start_y + overhang;
-  // right overhang (without top corner)
-  if ((start_x + blockDim.x + 2 * overhang < image_width) &&
-      (thread_number < overhang * overhang + overhang * SHARED_2D_BLOCK_DIMENSION)) {
-    image_block[blockDim.x + (thread_number % overhang)][overhang + (thread_number / overhang)] =
-      image[PixelIndexOf(start_x + (thread_number % overhang),
-          start_y + (thread_number / overhang),
-          image_width)];
-  }
-  start_x = blockDim.x * blockIdx.x;
-  start_y = start_y - blockDim.y;
-  // bottom overhang (without any corners)
-  if ((start_y - overhang < image_height) &&
-      (thread_number < overhang * blockDim.x)) {
-    image_block[overhang + (thread_number % overhang)][overhang + blockDim.y + (thread_number / overhang)] =
-      image[PixelIndexOf(start_x + (thread_number % blockDim.x),
-          start_y + (thread_number / blockDim.x),
-          image_width)];
-  }
-
-  // calculate line convolution for all directions
-  float angle_step = M_PI / line_count;
-  for (int line_index = 0; line_index < line_count; line_index++) {
-    float rotation_angle = angle_step * line_index;
-    int n_pixels = 0;
-    float sum = 0.f;
-    // move along the line from left to right and collect the pixel values
-    for (int y = 0; y < line_strength; y++) {
-      for (int x = 0; x < line_length; x++) {
-        int shared_x, shared_y;
-        CalculateCoordinatesInSharedMemoryBlock(x, y,
-            threadIdx.x, threadIdx.y,
-            rotation_angle, &shared_x, &shared_y);
-        sum = sum + image_block[shared_x][shared_y];
-        n_pixels += 1;
-      }
+  if (IsInImage(x_image, y_image, image_width, image_height)) {
+  // fill the shared memory block
+    // first copy in the pixels of the trivial mappings of the threads to pixels:
+    image_block[PixelIndexOf(overhang + threadIdx.x, overhang + threadIdx.y, shared_width)] =
+      image[PixelIndexOf(x_image, y_image, image_width)];
+    // then copy the 4 left overhanging regions clockwise starting left
+    int thread_number = threadIdx.x + blockDim.x * threadIdx.y;
+    // left overhang (complete)
+    int start_x = blockDim.x * blockIdx.x - overhang;
+    int start_y = blockDim.y * blockIdx.y - overhang;
+    int y_coordinate = start_y + (thread_number / overhang);
+    int x_coordinate = start_x + (thread_number % overhang);
+    if (IsInImage(x_coordinate, y_coordinate, image_width, image_height) &&
+        (thread_number < overhang * shared_width)) {
+      image_block[PixelIndexOf(thread_number % overhang, thread_number / overhang, shared_width)] =
+        image[PixelIndexOf(x_coordinate,
+            y_coordinate,
+            image_width)];
     }
-    // do the convolution
-    image[PixelIndexOf(x_image, y_image, image_width)] = sum / n_pixels;
+    start_x = start_x + overhang;
+    // top overhang (without left corner)
+    x_coordinate = start_x + (thread_number % (blockDim.x + overhang));
+    y_coordinate = start_y + (thread_number % (blockDim.x + overhang));
+    if (IsInImage(x_coordinate, y_coordinate, image_width, image_height) &&
+        (thread_number < overhang * overhang + overhang * blockDim.x)) {
+      image_block[PixelIndexOf(overhang + thread_number % (blockDim.x + overhang),thread_number / (blockDim.x + overhang), shared_width)] =
+        image[PixelIndexOf(x_coordinate,
+            y_coordinate,
+            image_width)];
+    }
+    start_x = start_x + blockDim.x;
+    start_y = start_y + overhang;
+    // right overhang (without top corner)
+    x_coordinate = start_x + (thread_number % overhang);
+    y_coordinate = start_y + (thread_number / overhang);
+    if (IsInImage(x_coordinate, y_coordinate, image_width, image_height) &&
+        (thread_number < overhang * overhang + overhang * blockDim.y)) {
+      image_block[PixelIndexOf(overhang + blockDim.x + (thread_number % overhang), overhang + (thread_number / overhang), shared_width)] =
+        image[PixelIndexOf(x_coordinate,
+            y_coordinate,
+            image_width)];
+    }
+    start_x = blockDim.x * blockIdx.x;
+    start_y = start_y + blockDim.y;
+    x_coordinate = start_x + (thread_number % blockDim.x);
+    y_coordinate = start_y + (thread_number / blockDim.x);
+    // bottom overhang (without any corners)
+    if (IsInImage(x_coordinate, y_coordinate, image_width, image_height) &&
+        (thread_number < overhang * blockDim.x)) {
+      image_block[PixelIndexOf(overhang + (thread_number % blockDim.x), overhang + blockDim.y + (thread_number / blockDim.y), shared_width)] =
+        image[PixelIndexOf(x_coordinate,
+            y_coordinate,
+            image_width)];
+    }
+    __syncthreads();
+
+    // calculate line convolution for all directions
+    float angle_step = M_PI / line_count;
+    float max_convolution_result = 0.f;
+    for (int line_index = 0; line_index < line_count; line_index++) {
+      float rotation_angle = angle_step * line_index;
+      int n_pixels = 0;
+      float sum = 0.f;
+      // move along the line from left to right and collect the pixel values
+      for (int y = 0; y < line_strength; y++) {
+        for (int x = 0; x < line_length; x++) {
+          int shared_x, shared_y;
+          bool is_inside_block = CalculateCoordinatesInSharedMemoryBlock(x, y,
+              threadIdx.x, threadIdx.y,
+              x_image, y_image,
+              rotation_angle, line_length, shared_width,
+              image_width, image_height,
+              &shared_x, &shared_y);
+          if (is_inside_block) {
+            sum = sum + image_block[PixelIndexOf(shared_x, shared_y, shared_width)];
+            n_pixels += 1;
+          }
+        }
+      }
+      // do the convolution and take the line if its the best so far
+      max_convolution_result = max(max_convolution_result, sum / n_pixels);
+    }
+    // calculate gamma
+    result[PixelIndexOf(x_image, y_image, image_width)] =
+    		max(255.f - __powf(max_convolution_result, gamma), 0.f);
   }
 }
 
@@ -237,33 +279,39 @@ void ScetchFilter::set_gamma(float gamma) {
 }
 
 void ScetchFilter::Run() {
-  int imageh = GetImageHeight();
-  int imagew = GetImageWidth();
-  dim3 thread_block_size(32, 32, 1);
-  dim3 block_grid_size(1 + imagew / thread_block_size.x,
-      1 + imageh / thread_block_size.y,
+  /*
+     int imageh = GetImageHeight();
+     int imagew = GetImageWidth();
+     dim3 thread_block_size(32, 32, 1);
+     dim3 block_grid_size(1 + imagew / thread_block_size.x,
+     1 + imageh / thread_block_size.y,
+     1);
+     SimpleScetchKernel<<<block_grid_size, thread_block_size>>>(
+     GetGpuImageData(),
+     GetGpuResultData(),
+     imagew, imageh,
+     line_length_, line_strength_, line_count_,
+     gamma_);
+   */
+  // Max threads per Block = 1024 ==> sqrt(1024) = 32
+  int pixels_per_dimension = min(SHARED_2D_BLOCK_DIMENSION - (line_length_ + 1), 32);
+  dim3 high_speed_block_size(pixels_per_dimension, pixels_per_dimension, 1);
+  dim3 high_speed_grid_size(GetImageWidth() / pixels_per_dimension + 1,
+      GetImageHeight() / pixels_per_dimension + 1,
       1);
-  SimpleScetchKernel<<<block_grid_size, thread_block_size>>>(
-      GetGpuImageData(),
-      GetGpuResultData(),
-      imagew, imageh,
-      line_length_, line_strength_, line_count_,
-      gamma_);
-
-/* TODO
-  dim3 high_speed_grid_size = block_grid_size;
-  dim3 high_speed_block_size = thread_block_size;
-  HighSpeedScetchKernel<<<high_speed_grid_size, high_speed_block_size>>>(
+  int memory_per_dimension = pixels_per_dimension + line_length_ + 1;
+  int shared_memory_size = sizeof(float) * memory_per_dimension * memory_per_dimension;
+  HighSpeedScetchKernel<<<high_speed_grid_size, high_speed_block_size, shared_memory_size>>>(
       GetGpuImageData(),
       GetGpuResultData(),
       GetImageWidth(),
       GetImageHeight(),
+      memory_per_dimension,
       line_length_,
       line_strength_,
       line_count_,
       rotation_offset_,
       gamma_);
-      */
 }
 
 
