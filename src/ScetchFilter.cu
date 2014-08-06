@@ -140,6 +140,19 @@ __device__ __host__ bool CalculateCoordinatesInSharedMemoryBlock(
          IsInImage(rotated_image_x, rotated_image_y, image_width, image_height);
 }
 
+__device__ __host__ void ImageCoordinatesFromSharedAddress(
+    int shared_address,
+    int shared_width,
+    int start_x,
+    int start_y,
+    int *image_x,
+    int *image_y) {
+  *image_x = shared_address % shared_width;
+  *image_y = shared_address / shared_width;
+  *image_x = (*image_x) + start_x;
+  *image_y = (*image_y) + start_y;
+}
+
 
 
 // fast scetch kernel
@@ -160,62 +173,30 @@ __global__ void HighSpeedScetchKernel(
   int overhang = ceil(static_cast<float>(line_length) / 2.f);  //TODO(Raphael) was wenn line_length ungerade?
   int x_image = threadIdx.x + blockDim.x * blockIdx.x;
   int y_image = threadIdx.y + blockDim.y * blockIdx.y;
-  if (IsInImage(x_image, y_image, image_width, image_height)) {
-  // fill the shared memory block
-    // first copy in the pixels of the trivial mappings of the threads to pixels:
-    image_block[PixelIndexOf(overhang + threadIdx.x, overhang + threadIdx.y, shared_width)] =
-      image[PixelIndexOf(x_image, y_image, image_width)];
-    // then copy the 4 left overhanging regions clockwise starting left
-    int thread_number = threadIdx.x + blockDim.x * threadIdx.y;
-    // left overhang (complete)
-    int start_x = blockDim.x * blockIdx.x - overhang;
-    int start_y = blockDim.y * blockIdx.y - overhang;
-    int y_coordinate = start_y + (thread_number / overhang);
-    int x_coordinate = start_x + (thread_number % overhang);
-    if (IsInImage(x_coordinate, y_coordinate, image_width, image_height) &&
-        (thread_number < overhang * shared_width)) {
-      image_block[PixelIndexOf(thread_number % overhang, thread_number / overhang, shared_width)] =
-        image[PixelIndexOf(x_coordinate,
-            y_coordinate,
-            image_width)];
-    }
-    start_x = start_x + overhang;
-    // top overhang (without left corner)
-    x_coordinate = start_x + (thread_number % (blockDim.x + overhang));
-    y_coordinate = start_y + (thread_number % (blockDim.x + overhang));
-    if (IsInImage(x_coordinate, y_coordinate, image_width, image_height) &&
-        (thread_number < overhang * overhang + overhang * blockDim.x)) {
-      image_block[PixelIndexOf(overhang + thread_number % (blockDim.x + overhang),thread_number / (blockDim.x + overhang), shared_width)] =
-        image[PixelIndexOf(x_coordinate,
-            y_coordinate,
-            image_width)];
-    }
-    start_x = start_x + blockDim.x;
-    start_y = start_y + overhang;
-    // right overhang (without top corner)
-    x_coordinate = start_x + (thread_number % overhang);
-    y_coordinate = start_y + (thread_number / overhang);
-    if (IsInImage(x_coordinate, y_coordinate, image_width, image_height) &&
-        (thread_number < overhang * overhang + overhang * blockDim.y)) {
-      image_block[PixelIndexOf(overhang + blockDim.x + (thread_number % overhang), overhang + (thread_number / overhang), shared_width)] =
-        image[PixelIndexOf(x_coordinate,
-            y_coordinate,
-            image_width)];
-    }
-    start_x = blockDim.x * blockIdx.x;
-    start_y = start_y + blockDim.y;
-    x_coordinate = start_x + (thread_number % blockDim.x);
-    y_coordinate = start_y + (thread_number / blockDim.x);
-    // bottom overhang (without any corners)
-    if (IsInImage(x_coordinate, y_coordinate, image_width, image_height) &&
-        (thread_number < overhang * blockDim.x)) {
-      image_block[PixelIndexOf(overhang + (thread_number % blockDim.x), overhang + blockDim.y + (thread_number / blockDim.y), shared_width)] =
-        image[PixelIndexOf(x_coordinate,
-            y_coordinate,
-            image_width)];
-    }
-    __syncthreads();
 
+  int thread_number = threadIdx.x + blockDim.x * threadIdx.y;
+  int num_copy_iterations = ceil(static_cast<float>(shared_width * shared_width) /
+      blockDim.x * blockDim.y);
+  int start_x = blockDim.x * blockIdx.x - overhang;
+  int start_y = blockDim.y * blockIdx.y - overhang;
+  for (int i = 0; i < num_copy_iterations; i++) {
+    int shared_address = thread_number + i * blockDim.x * blockDim.y;
+    if (shared_address < shared_width * shared_width) {
+      int x, y;
+      ImageCoordinatesFromSharedAddress(
+          shared_address,
+          shared_width,
+          start_x,
+          start_y,
+          &x,
+          &y);
+      if (IsInImage(x, y, image_width, image_height))
+        image_block[shared_address] = image[PixelIndexOf(x, y, image_width)];
+    }
+  }
+  __syncthreads();
+
+  if (IsInImage(x_image, y_image, image_width, image_height)) {
     // calculate line convolution for all directions
     float angle_step = M_PI / line_count;
     float max_convolution_result = 0.f;
@@ -244,7 +225,7 @@ __global__ void HighSpeedScetchKernel(
     }
     // calculate gamma
     result[PixelIndexOf(x_image, y_image, image_width)] =
-    		max(255.f - __powf(max_convolution_result, gamma), 0.f);
+      max(255.f - __powf(max_convolution_result, gamma), 0.f);
   }
 }
 
