@@ -24,7 +24,7 @@
 
 #define MAX_BLOCKS 256
 #define MAX_THREADS 256
-#define LAMBDA 0.2f
+#define LAMBDA 2.f
 
 __global__ void convertRGBToYUV(float *outputImage, unsigned char* image, int image_size, int comps)
 {
@@ -270,7 +270,7 @@ int main(int argc, char* argv[]) {
 	}
 
 	int texture_width, texture_height, texture_comps;
-	unsigned char * texture = jpgd::decompress_jpeg_image_from_file("resources/texture1.jpg", &texture_width, &texture_height, &texture_comps, 3);
+	unsigned char * texture = jpgd::decompress_jpeg_image_from_file("resources/texture2.jpg", &texture_width, &texture_height, &texture_comps, 3);
 
 	if (texture_comps != 3)
 	{
@@ -286,10 +286,6 @@ int main(int argc, char* argv[]) {
 		return 1;
 	}
 
-	if(!jpge::compress_image_to_jpeg_file("resources/testblub.jpg", texture_width, texture_height, comps, texture))
-	{
-		std::cout << "Error writing the image." << std::endl;
-	}
 
 	unsigned char * gpuCharImage;
 	float * gpuFloatImage;
@@ -423,36 +419,50 @@ int main(int argc, char* argv[]) {
     std::cout << "Expanding and apply log function to texture" << std::endl;
     float *logtext = (float *) malloc(sizeof(float) * image_size);
     float *expanded_text = (float *) malloc(sizeof(float) * image_size);
+    for (int y = 0; y < height; y++) {
+    	for (int x = 0; x < width; x++) {
+    		int target_index = x + y * width;
+    		int source_x = x % texture_width;
+    		int source_y = y % texture_height;
 
-    for (int x = 0; x < width; x++)
-    {
-        for (int y = 0; y < height; y++)
-        {
-        	int useX = x % texture_width;
-        	int useY = y % texture_height;
-        	int destidx = x * width + y;
-        	expanded_text[destidx] = texture[useX * texture_width + useY];
-        	logtext[destidx] = expanded_text[destidx];
-        }
+    		int source_index = source_x + source_y * texture_width;
+    		expanded_text[target_index] =  texture[3*source_index +0] * 0.299;
+    		expanded_text[target_index] += texture[3*source_index +1] * 0.587;
+    		expanded_text[target_index] += texture[3*source_index +2] * 0.114;
+    		expanded_text[target_index] /= 255.f;
+    		logtext[target_index] = logf(expanded_text[target_index]);
+    	}
     }
 
+    //
+    float *gpuExpandedTexture;
+    cudaMalloc((void**) &gpuExpandedTexture, image_size * sizeof(float));
+
+    cudaMemcpy(gpuExpandedTexture, expanded_text, image_size * sizeof(float), cudaMemcpyHostToDevice);
+
+
+
     std::cout << "Solving equation for texture drawing" << std::endl;
-    EquationSolver equation_solver(logtext, tone_filter.GetCpuResultData(), width, height, LAMBDA);
+    EquationSolver equation_solver(logtext, log_filter.GetCpuResultData(), width, height, LAMBDA);
     equation_solver.Run();
     float *beta_star = equation_solver.GetResult();
 
     std::cout << "Rendering computed texture" << std::endl;
     PotentialFilter potential_filter(beta_star);
     potential_filter.SetImageFromCpu(expanded_text, width, height);
+    potential_filter.Run();
 
     std::cout << "Multiplicating both images" << std::endl;
     ImageMultiplicationFilter image_multiplication(scetch_filter.GetGpuResultData());
     image_multiplication.SetImageFromGpu(potential_filter.GetGpuResultData(), width, height);
     image_multiplication.Run();
 
+
+
     // Output grayscale image
     ConvertGradienToRGB<<<blockGrid, threadBlock>>>(
     	image_multiplication.GetGpuResultData(),
+    	// gpuExpandedTexture,
         image_size,
         comps,
         gpuCharImage);

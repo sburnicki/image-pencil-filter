@@ -12,7 +12,7 @@
 
 class EquationSolver {
 public:
-	EquationSolver(float *log_texture, float *log_tonemap, int width, int height);
+	EquationSolver(float *log_texture, float *log_tonemap,  int width, int height, float lambda);
 	void Run();
 	float *GetResult();
 	~EquationSolver();
@@ -20,10 +20,12 @@ public:
 private:
 	void CopyTextureToMatrix(cusp::dia_matrix<int,float,cusp::host_memory> *A_cpu);
 	void FillDeltaMatrixWithGradientOperation(cusp::dia_matrix<int,float,cusp::host_memory> *Delta_cpu);
+	void FillLambdaMatrix(cusp::dia_matrix<int,float,cusp::host_memory> *lambda);
 
 	float *log_texture_;
 	float *log_tonemap_;
 	float *result_;
+	float lambda_;
 	int width_, height_, dimension_;
 };
 

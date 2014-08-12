@@ -23,7 +23,7 @@ __global__ void PotentialKernel(
 
 	if (IsInImage5(x, y, image_width, image_height)) {
 		int pixel_index = PixelIndexOf5(x, y, image_width);
-		result[pixel_index] = powf(img[pixel_index], beta[pixel_index]);
+		result[pixel_index] = powf(img[pixel_index] , beta[pixel_index]) * 255.f;
 	}
 }
 

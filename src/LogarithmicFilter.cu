@@ -22,7 +22,7 @@ __global__ void LogarithmicKernel(
 
 	if (IsInImage4(x, y, image_width, image_height)) {
 		int pixel_index = PixelIndexOf4(x, y, image_width);
-		result[pixel_index] = logf(img[pixel_index]);
+		result[pixel_index] = logf(img[pixel_index] / 255.f);
 	}
 }
 
