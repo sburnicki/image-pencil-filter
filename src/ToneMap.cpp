@@ -2,13 +2,13 @@
 #include <cmath>
 
 #define DEF_SIGMA_B 9.0f
-#define DEF_MU_A 105.0f
-#define DEF_MU_B 225.0f
-#define DEF_MU_D 90.0f
+#define DEF_MU_A 130.0f // 105.0f
+#define DEF_MU_B 200.0f // 225.0f
+#define DEF_MU_D 90.0f // 90.0f
 #define DEF_SIGMA_D 11.0f
-#define DEF_OMEGA_1 11.0f
-#define DEF_OMEGA_2 37.0f
-#define DEF_OMEGA_3 52.0f
+#define DEF_OMEGA_1 31.0f // 11.0f
+#define DEF_OMEGA_2 1.0f // 37.0f
+#define DEF_OMEGA_3 1.0f // 52.0f
 
 ToneMap::ToneMap(int numTones)
 {
