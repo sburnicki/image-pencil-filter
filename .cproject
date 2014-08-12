@@ -32,8 +32,8 @@
 								<inputType id="nvcc.compiler.input.c.526573725" superClass="nvcc.compiler.input.c"/>
 							</tool>
 							<tool id="nvcc.linker.base.1903672962" name="NVCC Linker" superClass="nvcc.linker.base">
-								<option id="nvcc.linker.option.paths.240225075" superClass="nvcc.linker.option.paths" valueType="libPaths">
-									<listOptionValue builtIn="false" value="/home/braunra/Desktop/MPP_Project/image-pencil-filter/lib"/>
+								<option id="nvcc.linker.option.paths.240225075" name="Library search path (-L)" superClass="nvcc.linker.option.paths" valueType="libPaths">
+									<listOptionValue builtIn="false" value="/home/braunra/Desktop/MPP_Project/image-pencil-filter/extern-lib"/>
 								</option>
 								<inputType id="nvcc.linker.input.1859005659" superClass="nvcc.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
