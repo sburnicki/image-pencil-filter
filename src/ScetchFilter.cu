@@ -260,7 +260,7 @@ void ScetchFilter::set_gamma(float gamma) {
 }
 
 void ScetchFilter::Run() {
-  /*
+
      int imageh = GetImageHeight();
      int imagew = GetImageWidth();
      dim3 thread_block_size(32, 32, 1);
@@ -273,8 +273,8 @@ void ScetchFilter::Run() {
      imagew, imageh,
      line_length_, line_strength_, line_count_,
      gamma_);
-   */
-  // Max threads per Block = 1024 ==> sqrt(1024) = 32
+
+/*  // Max threads per Block = 1024 ==> sqrt(1024) = 32
   int pixels_per_dimension = min(SHARED_2D_BLOCK_DIMENSION - (line_length_ + 1), 32);
   dim3 high_speed_block_size(pixels_per_dimension, pixels_per_dimension, 1);
   dim3 high_speed_grid_size(GetImageWidth() / pixels_per_dimension + 1,
@@ -293,6 +293,7 @@ void ScetchFilter::Run() {
       line_count_,
       rotation_offset_,
       gamma_);
+      */
 }
 
 
