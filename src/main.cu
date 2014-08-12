@@ -15,6 +15,7 @@
 
 #include "ScetchFilter.h"
 #include "ToneMappingFilter.h"
+#include "ImageMultiplicationFilter.h"
 
 #define MAX_BLOCKS 256
 #define MAX_THREADS 256
@@ -300,9 +301,9 @@ int main(int argc, char* argv[]) {
     ScetchFilter scetch_filter;
     scetch_filter.SetImageFromGpu(gpu_gradient_image, width, height);
     scetch_filter.set_line_count(7);
-    scetch_filter.set_line_length(40);
+    scetch_filter.set_line_length(70);
     scetch_filter.set_line_strength(1);
-    scetch_filter.set_gamma(1.2);
+    scetch_filter.set_gamma(1.5);
     scetch_filter.Run();
 
 
@@ -329,7 +330,7 @@ int main(int argc, char* argv[]) {
         gpu_histogram,
         gpu_accumulative_histogram);
 
-    cudaThreadSynchronize();
+    //cudaThreadSynchronize();
 
     /*
     // TODO: Only for testing purpose, remove for production
@@ -360,19 +361,35 @@ int main(int argc, char* argv[]) {
       sum += histogram[i];
     }
     std::cout << "Control Sum: " << sum << std::endl;
+    std::cout << "Image Size: " << image_size << std::endl;
     */
 
 
     std::cout << "Calculating the tone mapping filter" << std::endl;
-    // Apply Scetch Filter
     ToneMappingFilter tone_filter(256, gpu_accumulative_histogram);
     tone_filter.SetImageFromGpu(gpuGrayscale, width, height);
     tone_filter.Run();
 
+    /*
+    // DEBUG: show destination tonemap
+    const std::vector<float> &tonemap = tone_filter.GetCpuTonemap();
+    for (int i = 0; i < 256; i++)
+    {
+    	std::cout << "Value for " << i << ": " << tonemap[i] << std::endl;
+    }
+    //
+    */
 
-    // Output grayscale image
+
+    std::cout << "Multiplicating both images" << std::endl;
+    ImageMultiplicationFilter image_multiplication(scetch_filter.GetGpuResultData());
+    image_multiplication.SetImageFromGpu(tone_filter.GetGpuResultData(), width, height);
+    image_multiplication.Run();
+
+
+    // Output multiplicated grayscale image
     ConvertGradienToRGB<<<blockGrid, threadBlock>>>(
-    	tone_filter.GetGpuResultData(),
+    	image_multiplication.GetGpuResultData(),
         image_size,
         comps,
         gpuCharImage);
@@ -389,6 +406,7 @@ int main(int argc, char* argv[]) {
 	{
 		std::cout << "Error writing the image." << std::endl;
 	}
+	std::cout << "Finished." << std::endl;
 
 	free(image);
 	cudaFree(gpu_histogram);

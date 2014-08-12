@@ -215,7 +215,7 @@ __global__ void HighSpeedScetchKernel(
               x, y,
               threadIdx.x, threadIdx.y,
               x_image, y_image,
-              rotation_angle, overflow, shared_width,
+              rotation_angle, overhang, shared_width,
               image_width, image_height,
               &shared_x, &shared_y);
           if (is_inside_block) {
@@ -300,7 +300,7 @@ void ScetchFilter::Run() {
       */
 }
 
-
+/*
 
 bool ScetchFilter::TestGpuFunctions(std::string *message,
     std::string *additional_message, bool *is_additional_message) {
@@ -393,3 +393,4 @@ bool ScetchFilter::TestGpuFunctions(std::string *message,
 
   return true;
 }
+*/

@@ -15,6 +15,8 @@ public:
 	ToneMappingFilter(int numTones, int *gpuCumHistogram);
 	~ToneMappingFilter();
 
+	const std::vector<float> &GetCpuTonemap();
+
 	// overriden
 	void Run();
 
