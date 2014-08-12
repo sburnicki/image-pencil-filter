@@ -236,6 +236,18 @@ __global__ void CalculateHistogram(
   }
 }
 
+__global__ void ExpandImage(float *dest, float *src, int destW, int destH, int srcW, int srcH)
+{
+	int idxX = blockDim.x * blockIdx.x + threadIdx.x;
+	int idxY = blockDim.y * blockIdx.y + threadIdx.y;
+	int useX = idxX % srcW;
+	int useY = idxY % srcH;
+	if (idxX <= destW && idxY <= destH )
+	{
+		dest[idxX * destW + idxY] = src[useX * srcW + useY];
+	}
+}
+
 int main(int argc, char* argv[]) {
 	int width, height, comps, image_size;
 
