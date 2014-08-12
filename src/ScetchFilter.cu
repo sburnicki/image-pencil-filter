@@ -10,6 +10,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <string>
+#include <vector>
 
 // only for debugging!
 #include "../lib/jpge.h"
@@ -122,12 +123,11 @@ __device__ __host__ bool CalculateCoordinatesInSharedMemoryBlock(
     int thread_x, int thread_y,
     int image_x, int image_y,
     float rotation_angle,
-    int line_length,
+    int half_length,
     int shared_width,
     int image_width, int image_height,
     int *shared_x, int *shared_y) {
-  float half_length =  static_cast<float>(line_length) / 2.f;
-  float start_x = - half_length;
+  float start_x = -half_length;
   float start_y = 0;
   float current_x = start_x + x;
   float current_y = start_y + y;
@@ -175,12 +175,13 @@ __global__ void HighSpeedScetchKernel(
   int y_image = threadIdx.y + blockDim.y * blockIdx.y;
 
   int thread_number = threadIdx.x + blockDim.x * threadIdx.y;
+  int thread_count_in_block = blockDim.x * blockDim.y;
   int num_copy_iterations = ceil(static_cast<float>(shared_width * shared_width) /
-      blockDim.x * blockDim.y);
+      thread_count_in_block);
   int start_x = blockDim.x * blockIdx.x - overhang;
   int start_y = blockDim.y * blockIdx.y - overhang;
   for (int i = 0; i < num_copy_iterations; i++) {
-    int shared_address = thread_number + i * blockDim.x * blockDim.y;
+    int shared_address = thread_number + i * thread_count_in_block;
     if (shared_address < shared_width * shared_width) {
       int x, y;
       ImageCoordinatesFromSharedAddress(
@@ -192,6 +193,8 @@ __global__ void HighSpeedScetchKernel(
           &y);
       if (IsInImage(x, y, image_width, image_height))
         image_block[shared_address] = image[PixelIndexOf(x, y, image_width)];
+      else // TODO(Raphael) debug!
+        image_block[shared_address] = 255.f;
     }
   }
   __syncthreads();
@@ -208,10 +211,11 @@ __global__ void HighSpeedScetchKernel(
       for (int y = 0; y < line_strength; y++) {
         for (int x = 0; x < line_length; x++) {
           int shared_x, shared_y;
-          bool is_inside_block = CalculateCoordinatesInSharedMemoryBlock(x, y,
+          bool is_inside_block = CalculateCoordinatesInSharedMemoryBlock(
+              x, y,
               threadIdx.x, threadIdx.y,
               x_image, y_image,
-              rotation_angle, line_length, shared_width,
+              rotation_angle, overhang, shared_width,
               image_width, image_height,
               &shared_x, &shared_y);
           if (is_inside_block) {
@@ -298,7 +302,8 @@ void ScetchFilter::Run() {
 
 
 
-bool ScetchFilter::TestGpuFunctions(std::string *message) {
+bool ScetchFilter::TestGpuFunctions(std::string *message,
+    std::string *additional_message, bool *is_additional_message) {
   int** lines = new int*[line_count_];
   float** weights = new float*[line_count_];
   int max_line_pixel_count = line_strength_ * line_length_;
@@ -362,6 +367,29 @@ bool ScetchFilter::TestGpuFunctions(std::string *message) {
   }
   delete[] lines;
   delete[] weights;
+
+
+  // Test Shared adress to x y
+  std::vector<int> xs, ys;
+  for (int i = 0; i < 42*42; i++) {
+    int x, y;
+    ImageCoordinatesFromSharedAddress(i, 42, 10, 10, &x, &y);
+    xs.push_back(x); ys.push_back(y);
+  }
+  // print all coordinates
+  int y = ys[0];
+  char x_string[16], y_string[16];
+  *additional_message = "";
+  for (int i = 0; i < 42*42; i++) {
+    if (ys[i] != y) {
+      y = ys[i];
+      (*additional_message) += "\n";
+    }
+    sprintf(x_string, "%d", xs[i]);
+    sprintf(y_string, "%d", ys[i]);
+    (*additional_message) += std::string("(") + x_string + ", " + y_string + ") ";
+  }
+  *is_additional_message = false;
 
   return true;
 }

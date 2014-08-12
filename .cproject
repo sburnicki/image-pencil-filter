@@ -21,7 +21,7 @@
 					<folderInfo id="com.nvidia.cuda.ide.configuration.debug.1036644720." name="/" resourcePath="">
 						<toolChain id="com.nvidia.cuda.tools.toolchain.exe.debug.729075990" name="CUDA Toolkit 6.0" resourceTypeBasedDiscovery="true" superClass="com.nvidia.cuda.tools.toolchain.exe.debug">
 							<targetPlatform archList="all" binaryParser="com.nvidia.cuda.ide.elf;com.nvidia.cuda.ide.macho;com.nvidia.cuda.ide.cubin" id="com.nvidia.cuda.ide.targetPlatform.1170412781" isAbstract="false" name="Debug Platform" osList="linux,macosx" superClass="com.nvidia.cuda.ide.targetPlatform"/>
-							<builder buildPath="${workspace_loc:/image-pencil-filter}/Debug" id="com.nvidia.cuda.ide.builder.2113347475" keepEnvironmentInBuildfile="false" managedBuildOn="true" name="CUDA Toolkit 6.0 Builder" superClass="com.nvidia.cuda.ide.builder"/>
+							<builder buildPath="${workspace_loc:/image-pencil-filter}/Debug" id="com.nvidia.cuda.ide.builder.2113347475" keepEnvironmentInBuildfile="false" managedBuildOn="true" name="CUDA Toolkit 5.5 Builder" superClass="com.nvidia.cuda.ide.builder"/>
 							<tool id="nvcc.compiler.base.660831489" name="NVCC Compiler" superClass="nvcc.compiler.base">
 								<option id="nvcc.compiler.deviceDebug.901149991" name="Generate device debug information (-G)" superClass="nvcc.compiler.deviceDebug" value="true" valueType="boolean"/>
 								<option id="nvcc.compiler.option.level.668805342" name="Generate host debug information (-g)" superClass="nvcc.compiler.option.level" value="true" valueType="boolean"/>
@@ -32,6 +32,9 @@
 								<inputType id="nvcc.compiler.input.c.526573725" superClass="nvcc.compiler.input.c"/>
 							</tool>
 							<tool id="nvcc.linker.base.1903672962" name="NVCC Linker" superClass="nvcc.linker.base">
+								<option id="nvcc.linker.option.paths.240225075" name="Library search path (-L)" superClass="nvcc.linker.option.paths" valueType="libPaths">
+									<listOptionValue builtIn="false" value="/home/braunra/Desktop/MPP_Project/image-pencil-filter/extern-lib"/>
+								</option>
 								<inputType id="nvcc.linker.input.1859005659" superClass="nvcc.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
 									<additionalInput kind="additionalinput" paths="$(LIBS)"/>
