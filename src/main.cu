@@ -16,6 +16,7 @@
 #include "ScetchFilter.h"
 #include "ToneMappingFilter.h"
 #include "ImageMultiplicationFilter.h"
+#include "LogarithmicFilter.h"
 
 #define MAX_BLOCKS 256
 #define MAX_THREADS 256
@@ -385,6 +386,14 @@ int main(int argc, char* argv[]) {
     //
     */
 
+    // TODO: think about unifying with tone mapping
+    std::cout << "Calculate the log of tonemapped image" << std::endl;
+    LogarithmicFilter log_filter;
+    log_filter.SetImageFromGpu(tone_filter.GetGpuResultData(), width, height);
+    log_filter.Run();
+
+
+    // TODO: insert code for texture mapping
 
     std::cout << "Multiplicating both images" << std::endl;
     ImageMultiplicationFilter image_multiplication(scetch_filter.GetGpuResultData());
