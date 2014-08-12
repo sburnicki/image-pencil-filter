@@ -15,11 +15,9 @@
 
 #include "ScetchFilter.h"
 #include "ToneMappingFilter.h"
-<<<<<<< HEAD
 #include "ImageMultiplicationFilter.h"
 #include "LogarithmicFilter.h"
-=======
->>>>>>> Equation Solver
+
 
 #define MAX_BLOCKS 256
 #define MAX_THREADS 256
