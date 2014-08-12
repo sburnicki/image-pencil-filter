@@ -1,5 +1,6 @@
 #include "ToneMappingFilter.h"
 #include <cmath>
+#include <iostream>
 
 
 #define EPSILON 0.0001
@@ -19,7 +20,7 @@ __device__ __host__ int binarySearch(float value, float* target, int minidx, int
     while(true)
     {
     	int pivot = (maxidx - minidx) / 2 + minidx;
-    	if (maxidx == minidx)
+    	if (maxidx <= minidx)
     	{
     		return minidx;
     	}
@@ -40,7 +41,7 @@ __device__ __host__ int binarySearch(float value, float* target, int minidx, int
 	}
 }
 
-// scetch kernel
+
 __global__ void ToneMappingKernel(
 		float *image,
 		float *result,
@@ -49,7 +50,7 @@ __global__ void ToneMappingKernel(
 	// some neat index calculations:
 	int x = threadIdx.x + blockDim.x * blockIdx.x;
 	int y = threadIdx.y + blockDim.y * blockIdx.y;
-	int numpixels = image_width * image_height;
+	float numpixels = image_width * image_height;
 
 	if (IsInImage2(x, y, image_width, image_height)) {
 		int pixel_index = PixelIndexOf2(x, y, image_width);
@@ -64,13 +65,19 @@ ToneMappingFilter::ToneMappingFilter(int tones, int *gpuCumHistogram) : ImageFil
 {
 	gpu_histogram_ = gpuCumHistogram;
 	num_tones_ = tones;
+	const std::vector<float> &tonemap = cpu_tonemap_.getTonemap();
 	cudaMalloc((void**) &gpu_tonemap_array_, num_tones_ * sizeof(float));
-	cudaMemcpy(gpu_tonemap_array_, &cpu_tonemap_.getTonemap()[0], num_tones_ * sizeof(float), cudaMemcpyHostToDevice);
+	cudaMemcpy(gpu_tonemap_array_, &tonemap[0], num_tones_ * sizeof(float), cudaMemcpyHostToDevice);
 }
 
 ToneMappingFilter::~ToneMappingFilter()
 {
 	cudaFree(gpu_tonemap_array_);
+}
+
+const std::vector<float> &ToneMappingFilter::GetCpuTonemap()
+{
+	return cpu_tonemap_.getTonemap();
 }
 
 void ToneMappingFilter::Run() {
@@ -83,6 +90,6 @@ void ToneMappingFilter::Run() {
 	ToneMappingKernel<<<block_grid_size, thread_block_size>>>(
 			GetGpuImageData(),
 			GetGpuResultData(),
-			GetImageWidth(), imageh, num_tones_,
+			imagew, imageh, num_tones_,
 			gpu_histogram_, gpu_tonemap_array_);
 }

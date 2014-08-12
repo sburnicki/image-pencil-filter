@@ -300,7 +300,7 @@ void ScetchFilter::Run() {
       */
 }
 
-
+/*
 
 bool ScetchFilter::TestGpuFunctions(std::string *message,
     std::string *additional_message, bool *is_additional_message) {
@@ -393,3 +393,4 @@ bool ScetchFilter::TestGpuFunctions(std::string *message,
 
   return true;
 }
+*/
