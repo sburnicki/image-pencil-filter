@@ -9,6 +9,7 @@
  */
 
 #include <iostream>
+#include <cmath>
 
 #include "../lib/jpge.h"
 #include "../lib/jpgd.h"
@@ -17,10 +18,13 @@
 #include "ToneMappingFilter.h"
 #include "ImageMultiplicationFilter.h"
 #include "LogarithmicFilter.h"
+#include "PotentialFilter.h"
+#include "EquationSolver.h"
 
 
 #define MAX_BLOCKS 256
 #define MAX_THREADS 256
+#define LAMBDA 0.2f
 
 __global__ void convertRGBToYUV(float *outputImage, unsigned char* image, int image_size, int comps)
 {
@@ -237,18 +241,6 @@ __global__ void CalculateHistogram(
   }
 }
 
-__global__ void ExpandImage(float *dest, float *src, int destW, int destH, int srcW, int srcH)
-{
-	int idxX = blockDim.x * blockIdx.x + threadIdx.x;
-	int idxY = blockDim.y * blockIdx.y + threadIdx.y;
-	int useX = idxX % srcW;
-	int useY = idxY % srcH;
-	if (idxX <= destW && idxY <= destH )
-	{
-		dest[idxX * destW + idxY] = src[useX * srcW + useY];
-	}
-}
-
 int main(int argc, char* argv[]) {
 	int width, height, comps, image_size;
 
@@ -277,9 +269,8 @@ int main(int argc, char* argv[]) {
 		return 1;
 	}
 
-	int texture_width, texture_height, texture_comps, texture_size;
+	int texture_width, texture_height, texture_comps;
 	unsigned char * texture = jpgd::decompress_jpeg_image_from_file("resources/texture1.jpg", &texture_width, &texture_height, &texture_comps, 3);
-	texture_size = texture_width * texture_height;
 
 	if (texture_comps != 3)
 	{
@@ -337,8 +328,8 @@ int main(int argc, char* argv[]) {
     // Apply Scetch Filter
     ScetchFilter scetch_filter;
     scetch_filter.SetImageFromGpu(gpu_gradient_image, width, height);
-    scetch_filter.set_line_count(7);
-    scetch_filter.set_line_length(40);
+    scetch_filter.set_line_count(6);
+    scetch_filter.set_line_length(30);
     scetch_filter.set_line_strength(1);
     scetch_filter.set_gamma(1.2);
     scetch_filter.Run();
@@ -372,7 +363,7 @@ int main(int argc, char* argv[]) {
         gpu_histogram,
         gpu_accumulative_histogram);
 
-    cudaThreadSynchronize();
+    //cudaThreadSynchronize();
 
     /*
     // TODO: Only for testing purpose, remove for production
@@ -429,16 +420,39 @@ int main(int argc, char* argv[]) {
     log_filter.Run();
 
 
-    // TODO: insert code for texture mapping
+    std::cout << "Expanding and apply log function to texture" << std::endl;
+    float *logtext = (float *) malloc(sizeof(float) * image_size);
+    float *expanded_text = (float *) malloc(sizeof(float) * image_size);
+
+    for (int x = 0; x < width; x++)
+    {
+        for (int y = 0; y < height; y++)
+        {
+        	int useX = x % texture_width;
+        	int useY = y % texture_height;
+        	int destidx = x * width + y;
+        	expanded_text[destidx] = texture[useX * texture_width + useY];
+        	logtext[destidx] = expanded_text[destidx];
+        }
+    }
+
+    std::cout << "Solving equation for texture drawing" << std::endl;
+    EquationSolver equation_solver(logtext, tone_filter.GetCpuResultData(), width, height, LAMBDA);
+    equation_solver.Run();
+    float *beta_star = equation_solver.GetResult();
+
+    std::cout << "Rendering computed texture" << std::endl;
+    PotentialFilter potential_filter(beta_star);
+    potential_filter.SetImageFromCpu(expanded_text, width, height);
 
     std::cout << "Multiplicating both images" << std::endl;
     ImageMultiplicationFilter image_multiplication(scetch_filter.GetGpuResultData());
-    image_multiplication.SetImageFromGpu(tone_filter.GetGpuResultData(), width, height);
+    image_multiplication.SetImageFromGpu(potential_filter.GetGpuResultData(), width, height);
     image_multiplication.Run();
 
     // Output grayscale image
     ConvertGradienToRGB<<<blockGrid, threadBlock>>>(
-    	tone_filter.GetGpuResultData(),
+    	image_multiplication.GetGpuResultData(),
         image_size,
         comps,
         gpuCharImage);
@@ -455,8 +469,11 @@ int main(int argc, char* argv[]) {
 	{
 		std::cout << "Error writing the image." << std::endl;
 	}
+	std::cout << "Done." << std::endl;
 
 	free(image);
+	free(logtext);
+	free(expanded_text);
 	cudaFree(gpu_histogram);
 	cudaFree(gpu_accumulative_histogram);
 	cudaFree(gpu_gradient_image);
