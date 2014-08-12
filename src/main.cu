@@ -306,12 +306,17 @@ int main(int argc, char* argv[]) {
     scetch_filter.Run();
 
 
-//    std::cout << "Running scetch filter debug tests" << std::endl;
-//    std::string debug_message;
-//    if (!scetch_filter.TestGpuFunctions(&debug_message)) {
-//    	std::cerr << "scetch filter test failed with message:" << std::endl <<
-//    			debug_message << std::endl;
-//    }
+    // std::cout << "Running scetch filter debug tests" << std::endl;
+    // std::string debug_message, additional_message;
+    // bool is_there_a_addditional_message = false;
+    // if (!scetch_filter.TestGpuFunctions(&debug_message, 
+    //       &additional_message, &is_there_a_addditional_message)) {
+    // 	std::cerr << "scetch filter test failed with message:" << std::endl <<
+    // 			debug_message << std::endl;
+    // } else if (is_there_a_addditional_message) {
+    //   std::cout << "scetch filter succeeded with additional message:" << std::endl <<
+    //     additional_message << std::endl;
+    // }
 
     std::cout << "Create rgb image from greyscale image" << std::endl;
 

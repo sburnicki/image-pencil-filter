@@ -38,7 +38,8 @@ public:
 	void Run();
 
 	// For debugging
-	bool TestGpuFunctions(std::string *message);
+	bool TestGpuFunctions(std::string *message,
+      std::string * additional_message, bool *is_additional_message);
 
 private:
 	int line_length_, line_count_;
