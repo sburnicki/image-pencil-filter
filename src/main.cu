@@ -329,7 +329,7 @@ int main(int argc, char* argv[]) {
     scetch_filter.set_line_count(5);
     scetch_filter.set_line_length(20);
     scetch_filter.set_line_strength(1);
-    scetch_filter.set_gamma(1.2);
+    scetch_filter.set_gamma(1.5);
     scetch_filter.Run();
 
 

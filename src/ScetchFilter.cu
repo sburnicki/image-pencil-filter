@@ -132,10 +132,12 @@ __device__ __host__ bool CalculateCoordinatesInSharedMemoryBlock(
   float current_x = start_x + x;
   float current_y = start_y + y;
   RotatedCoordinate(&current_x, &current_y, rotation_angle);
-  *shared_x = current_x + thread_x;
-  *shared_y = current_y + thread_y;
   int rotated_image_x = current_x + image_x;
   int rotated_image_y = current_y + image_y;
+  current_x += half_length;  // in shared memory (0,0) is located at
+  current_y += half_length;  // (half_length, half_length)
+  *shared_x = current_x + thread_x;
+  *shared_y = current_y + thread_y;
   return IsInSharedMemoryBlock(*shared_x, *shared_y, shared_width) &&
          IsInImage(rotated_image_x, rotated_image_y, image_width, image_height);
 }
@@ -194,7 +196,7 @@ __global__ void HighSpeedScetchKernel(
       if (IsInImage(x, y, image_width, image_height))
         image_block[shared_address] = image[PixelIndexOf(x, y, image_width)];
       else // TODO(Raphael) debug!
-        image_block[shared_address] = 255.f;
+        image_block[shared_address] = 0.f;
     }
   }
   __syncthreads();
@@ -215,7 +217,9 @@ __global__ void HighSpeedScetchKernel(
               x, y,
               threadIdx.x, threadIdx.y,
               x_image, y_image,
-              rotation_angle, overhang, shared_width,
+              rotation_angle,
+              overhang,
+              shared_width,
               image_width, image_height,
               &shared_x, &shared_y);
           if (is_inside_block) {
@@ -264,7 +268,7 @@ void ScetchFilter::set_gamma(float gamma) {
 }
 
 void ScetchFilter::Run() {
-
+/*
      int imageh = GetImageHeight();
      int imagew = GetImageWidth();
      dim3 thread_block_size(32, 32, 1);
@@ -277,8 +281,8 @@ void ScetchFilter::Run() {
      imagew, imageh,
      line_length_, line_strength_, line_count_,
      gamma_);
-
-/*  // Max threads per Block = 1024 ==> sqrt(1024) = 32
+*/
+  // Max threads per Block = 1024 ==> sqrt(1024) = 32
   int pixels_per_dimension = min(SHARED_2D_BLOCK_DIMENSION - (line_length_ + 1), 32);
   dim3 high_speed_block_size(pixels_per_dimension, pixels_per_dimension, 1);
   dim3 high_speed_grid_size(GetImageWidth() / pixels_per_dimension + 1,
@@ -297,7 +301,6 @@ void ScetchFilter::Run() {
       line_count_,
       rotation_offset_,
       gamma_);
-      */
 }
 
 /*
