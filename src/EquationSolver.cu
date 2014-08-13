@@ -82,11 +82,17 @@ void EquationSolver::Run() {
 
 
 	cusp::verbose_monitor<float> monitor(b1_gpu, 100, 1e-3);
+
+
+	// set preconditioner (identity)
+	cusp::identity_operator<float, cusp::device_memory> M(dimension_, dimension_);
+
 	// solve equation
 	cusp::krylov::cg(A_gpu,
 			beta_gpu,
 			b1_gpu,
-			monitor);
+			monitor,
+			M);
 
 	// copy to host memory
 	cusp::array1d<float, cusp::host_memory> beta_cpu = beta_gpu;

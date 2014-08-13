@@ -263,7 +263,8 @@ int main(int argc, char* argv[]) {
 		}
 		else
 		{
-			std::cout << "Currently only images with 3 components are supported." << std::endl;
+			std::cout << "Currently only images with 3 components are supported. Yours has "
+        << comps  << std::endl;
 		}
 		free(image);
 		return 1;
@@ -280,7 +281,8 @@ int main(int argc, char* argv[]) {
 		}
 		else
 		{
-			std::cout << "Currently only images with 3 components are supported." << std::endl;
+			std::cout << "Currently only textures with 3 components are supported. Yours has "
+        << comps  << std::endl;
 		}
 		free(texture);
 		return 1;
@@ -324,8 +326,8 @@ int main(int argc, char* argv[]) {
     // Apply Scetch Filter
     ScetchFilter scetch_filter;
     scetch_filter.SetImageFromGpu(gpu_gradient_image, width, height);
-    scetch_filter.set_line_count(6);
-    scetch_filter.set_line_length(30);
+    scetch_filter.set_line_count(5);
+    scetch_filter.set_line_length(20);
     scetch_filter.set_line_strength(1);
     scetch_filter.set_gamma(1.2);
     scetch_filter.Run();

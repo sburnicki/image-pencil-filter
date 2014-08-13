@@ -100,7 +100,7 @@ __global__ void SimpleScetchKernel(
     float* weights = new float[max_line_pixel_count];
     float max_value = 0.f;
     for (int line = 0; line < line_count; line++) {
-      float line_angle = static_cast<float>(line) * (M_PI / line_count);
+      float line_angle = static_cast<float>(line) * (M_PI / line_count); // Random?
       int line_pixel_count = LinePixels(x, y, line_angle, image_width, image_height,
           line_length, line_strength,
           line_pixel_indices, weights);
