@@ -271,7 +271,7 @@ int main(int argc, char* argv[]) {
 	}
 
 	int texture_width, texture_height, texture_comps;
-	unsigned char * texture = jpgd::decompress_jpeg_image_from_file("resources/texture2.jpg", &texture_width, &texture_height, &texture_comps, 3);
+	unsigned char * texture = jpgd::decompress_jpeg_image_from_file("resources/texture4.jpg", &texture_width, &texture_height, &texture_comps, 3);
 
 	if (texture_comps != 3)
 	{
@@ -287,7 +287,6 @@ int main(int argc, char* argv[]) {
 		free(texture);
 		return 1;
 	}
-
 
 	unsigned char * gpuCharImage;
 	float * gpuFloatImage;
@@ -326,10 +325,10 @@ int main(int argc, char* argv[]) {
     // Apply Scetch Filter
     ScetchFilter scetch_filter;
     scetch_filter.SetImageFromGpu(gpu_gradient_image, width, height);
-    scetch_filter.set_line_count(5);
-    scetch_filter.set_line_length(20);
+    scetch_filter.set_line_count(10);
+    scetch_filter.set_line_length(10);
     scetch_filter.set_line_strength(1);
-    scetch_filter.set_gamma(1.5);
+    scetch_filter.set_gamma(1.3);
     scetch_filter.Run();
 
 

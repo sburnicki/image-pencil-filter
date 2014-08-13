@@ -123,19 +123,19 @@ __device__ __host__ bool CalculateCoordinatesInSharedMemoryBlock(
     int thread_x, int thread_y,
     int image_x, int image_y,
     float rotation_angle,
-    int half_length,
+    int line_length,
     int shared_width,
     int image_width, int image_height,
     int *shared_x, int *shared_y) {
-  float start_x = -half_length;
+  float start_x = 0;
   float start_y = 0;
   float current_x = start_x + x;
   float current_y = start_y + y;
   RotatedCoordinate(&current_x, &current_y, rotation_angle);
   int rotated_image_x = current_x + image_x;
   int rotated_image_y = current_y + image_y;
-  current_x += half_length;  // in shared memory (0,0) is located at
-  current_y += half_length;  // (half_length, half_length)
+  current_x += line_length;  // in shared memory (0,0) is located at
+  current_y += line_length;  // (half_length, half_length)
   *shared_x = current_x + thread_x;
   *shared_y = current_y + thread_y;
   return IsInSharedMemoryBlock(*shared_x, *shared_y, shared_width) &&
@@ -172,14 +172,14 @@ __global__ void HighSpeedScetchKernel(
   // Create a shared memory block
   extern __shared__ float image_block[];
 
-  int overhang = ceil(static_cast<float>(line_length) / 2.f);  //TODO(Raphael) was wenn line_length ungerade?
+  int overhang = line_length;
   int x_image = threadIdx.x + blockDim.x * blockIdx.x;
   int y_image = threadIdx.y + blockDim.y * blockIdx.y;
 
   int thread_number = threadIdx.x + blockDim.x * threadIdx.y;
   int thread_count_in_block = blockDim.x * blockDim.y;
-  int num_copy_iterations = ceil(static_cast<float>(shared_width * shared_width) /
-      thread_count_in_block);
+  int num_copy_iterations = ceil(static_cast<float>(shared_width * shared_width)
+                            / thread_count_in_block);
   int start_x = blockDim.x * blockIdx.x - overhang;
   int start_y = blockDim.y * blockIdx.y - overhang;
   for (int i = 0; i < num_copy_iterations; i++) {
@@ -195,7 +195,7 @@ __global__ void HighSpeedScetchKernel(
           &y);
       if (IsInImage(x, y, image_width, image_height))
         image_block[shared_address] = image[PixelIndexOf(x, y, image_width)];
-      else // TODO(Raphael) debug!
+      else // TODO(Raphael) debug! Necessary?
         image_block[shared_address] = 0.f;
     }
   }
@@ -203,7 +203,7 @@ __global__ void HighSpeedScetchKernel(
 
   if (IsInImage(x_image, y_image, image_width, image_height)) {
     // calculate line convolution for all directions
-    float angle_step = M_PI / line_count;
+    float angle_step = 2.f * M_PI / line_count;
     float max_convolution_result = 0.f;
     for (int line_index = 0; line_index < line_count; line_index++) {
       float rotation_angle = angle_step * line_index;
@@ -223,7 +223,7 @@ __global__ void HighSpeedScetchKernel(
               image_width, image_height,
               &shared_x, &shared_y);
           if (is_inside_block) {
-            sum = sum + image_block[PixelIndexOf(shared_x, shared_y, shared_width)];
+            sum += image_block[PixelIndexOf(shared_x, shared_y, shared_width)];
             n_pixels += 1;
           }
         }
