@@ -100,7 +100,7 @@ __global__ void SimpleScetchKernel(
     float* weights = new float[max_line_pixel_count];
     float max_value = 0.f;
     for (int line = 0; line < line_count; line++) {
-      float line_angle = static_cast<float>(line) * (M_PI / line_count); // Random?
+      float line_angle = static_cast<float>(line) * (M_PI / line_count);
       int line_pixel_count = LinePixels(x, y, line_angle, image_width, image_height,
           line_length, line_strength,
           line_pixel_indices, weights);
@@ -123,19 +123,19 @@ __device__ __host__ bool CalculateCoordinatesInSharedMemoryBlock(
     int thread_x, int thread_y,
     int image_x, int image_y,
     float rotation_angle,
-    int line_length,
+    int half_length,
     int shared_width,
     int image_width, int image_height,
     int *shared_x, int *shared_y) {
-  float start_x = 0;
+  float start_x = -half_length;
   float start_y = 0;
   float current_x = start_x + x;
   float current_y = start_y + y;
   RotatedCoordinate(&current_x, &current_y, rotation_angle);
   int rotated_image_x = current_x + image_x;
   int rotated_image_y = current_y + image_y;
-  current_x += line_length;  // in shared memory (0,0) is located at
-  current_y += line_length;  // (half_length, half_length)
+  current_x += half_length;  // in shared memory (0,0) is located at
+  current_y += half_length;  // (half_length, half_length)
   *shared_x = current_x + thread_x;
   *shared_y = current_y + thread_y;
   return IsInSharedMemoryBlock(*shared_x, *shared_y, shared_width) &&
@@ -172,7 +172,7 @@ __global__ void HighSpeedScetchKernel(
   // Create a shared memory block
   extern __shared__ float image_block[];
 
-  int overhang = line_length;
+  int overhang = ceilf(static_cast<float>(line_length) / 2.f);
   int x_image = threadIdx.x + blockDim.x * blockIdx.x;
   int y_image = threadIdx.y + blockDim.y * blockIdx.y;
 
@@ -203,7 +203,7 @@ __global__ void HighSpeedScetchKernel(
 
   if (IsInImage(x_image, y_image, image_width, image_height)) {
     // calculate line convolution for all directions
-    float angle_step = 2.f * M_PI / line_count;
+    float angle_step = M_PI / line_count;
     float max_convolution_result = 0.f;
     for (int line_index = 0; line_index < line_count; line_index++) {
       float rotation_angle = angle_step * line_index;
@@ -233,7 +233,7 @@ __global__ void HighSpeedScetchKernel(
     }
     // calculate gamma
     result[PixelIndexOf(x_image, y_image, image_width)] =
-      max(255.f - __powf(max_convolution_result, gamma), 0.f);
+      max(255.f - __powf(max_convolution_result, gamma), 50.f);
   }
 }
 
