@@ -11,9 +11,7 @@
 #include <iostream>
 #include <cmath>
 
-#include "../lib/jpge.h"
-#include "../lib/jpgd.h"
-
+#include "JpegImage.h"
 #include "ScetchFilter.h"
 #include "ToneMappingFilter.h"
 #include "ImageMultiplicationFilter.h"
@@ -25,18 +23,24 @@
 #define MAX_BLOCKS 256
 #define MAX_THREADS 256
 #define LAMBDA 2.f
+#define YUV_COMPONENTS 3
+#define COLOR_DEPTH 256
+#define MAX_COLOR_VALUE COLOR_DEPTH - 1
+#define PENCIL_TEXTURE_PATH "resources/texture4.jpg"
 
-__global__ void convertRGBToYUV(float *outputImage, unsigned char* image, int image_size, int comps)
+#define RGB_TO_Y(R, G, B) \
+	(R*0.299 + G*0.587 + B*0.114)
+
+__global__ void convertRGBToYUV(float *outputImage, unsigned char* image, int image_size)
 {
 	int pixel = blockDim.x * blockIdx.x + threadIdx.x;
 	while (pixel < image_size)
 	{
-		int idx = pixel*comps;
-		float r = (float) image[idx];
-		float g = (float) image[idx+1];
-		float b = (float) image[idx+2];
-
-		float y = 0.299 * r + 0.587 * g + 0.114 * b;
+		int idx = pixel*RGB_COMPONENTS;
+		float r = image[idx];
+		float g = image[idx+1];
+		float b = image[idx+2];
+		float y = RGB_TO_Y(r, g, b);
 		outputImage[idx] = y;
 		outputImage[idx+1] = (b - y) * 0.493;
 		outputImage[idx+2] = (r - y) * 0.877;
@@ -45,15 +49,15 @@ __global__ void convertRGBToYUV(float *outputImage, unsigned char* image, int im
 	}
 }
 
-__global__ void GrayscaleAndYUVToRGB(unsigned char* outputImage, float *grayscaleImage, float *yuvImage, int image_size, int comps)
+__global__ void GrayscaleAndYUVToRGB(unsigned char* outputImage, float *grayscaleImage, float *yuvImage, bool useColors, int image_size)
 {
 	int pixel = blockDim.x * blockIdx.x + threadIdx.x;
 	while (pixel < image_size)
 	{
-		int idx = pixel*comps;
+		int idx = pixel*RGB_COMPONENTS;
 		float y = (float) grayscaleImage[pixel];
-		float u = (float) yuvImage[idx+1];
-		float v = (float) yuvImage[idx+2];
+		float u = useColors ? (float) yuvImage[idx+1] : 0.0f;
+		float v = useColors ? (float) yuvImage[idx+2] : 0.0f;
 
 		float r = y+v/0.877;
 		float b = y+u/0.493;
@@ -76,12 +80,12 @@ __global__ void GrayscaleAndYUVToRGB(unsigned char* outputImage, float *grayscal
 	}
 }
 
-__global__ void extractGrayscale(float* grayscale, float *image, int image_size, int comps)
+__global__ void extractGrayscale(float* grayscale, float *image, int image_size)
 {
 	int pixel = blockDim.x * blockIdx.x + threadIdx.x;
 	while (pixel < image_size)
 	{
-		grayscale[pixel] = image[pixel*comps];
+		grayscale[pixel] = image[pixel*RGB_COMPONENTS];
 
 		pixel += MAX_BLOCKS * MAX_THREADS;
 	}
@@ -214,9 +218,9 @@ __global__ void CalculateHistogram(
   }
 }
 
-int main(int argc, char* argv[]) {
-	int width, height, comps, image_size;
 
+
+int main(int argc, char* argv[]) {
 	if (argc < 3)
 	{
 		std::cout << "Please provide input and output filenames as arguments." << std::endl;
@@ -224,70 +228,45 @@ int main(int argc, char* argv[]) {
 	}
 	char *infilename = argv[1];
 	char *outfilename = argv[2];
+	bool useColors = !(argc > 3 && strcmp(argv[3], "-grayscale") == 0);
 
 	// load image, allocate space on GPU
-	unsigned char * image = jpgd::decompress_jpeg_image_from_file(infilename, &width, &height, &comps, 3);
-	image_size = width * height;
-	if (comps != 3)
-	{
-		if (comps == 0)
-		{
-			std::cout << "Loading the image failed! Wrong path?." << std::endl;
-		}
-		else
-		{
-			std::cout << "Currently only images with 3 components are supported." << std::endl;
-		}
-		free(image);
-		return 1;
-	}
+	JpegImage cpuImage(infilename);
+	JpegImage cpuPencilTexture(PENCIL_TEXTURE_PATH);
 
-	int texture_width, texture_height, texture_comps;
-	unsigned char * texture = jpgd::decompress_jpeg_image_from_file("resources/texture4.jpg", &texture_width, &texture_height, &texture_comps, 3);
-
-	if (texture_comps != 3)
-	{
-		if (texture_comps == 0)
-		{
-			std::cout << "Loading the image failed! Wrong path?." << std::endl;
-		}
-		else
-		{
-			std::cout << "Currently only images with 3 components are supported." << std::endl;
-		}
-		free(texture);
-		return 1;
-	}
+	int imageSize = cpuImage.PixelSize();
+	int imageWidth = cpuImage.Width();
+	int imageHeight = cpuImage.Height();
 
 	unsigned char * gpuCharImage;
 	float * gpuFloatImage;
     float * gpuGrayscale;
-	cudaMalloc((void**) &gpuCharImage, image_size * comps * sizeof(unsigned char));
-	cudaMalloc((void**) &gpuFloatImage, image_size * comps * sizeof(float));
-	cudaMalloc((void**) &gpuGrayscale, image_size * sizeof(float));
+	cudaMalloc((void**) &gpuCharImage, cpuImage.ByteSize());
+	cudaMalloc((void**) &gpuFloatImage, imageSize * YUV_COMPONENTS * sizeof(float));
+	cudaMalloc((void**) &gpuGrayscale, imageSize * sizeof(float));
 
 	// upload to gpu
-    cudaMemcpy(gpuCharImage, image, image_size * comps * sizeof(unsigned char), cudaMemcpyHostToDevice);
+    cudaMemcpy(gpuCharImage, cpuImage.Buffer(), cpuImage.ByteSize(), cudaMemcpyHostToDevice);
 
 	// convert to YUV
     dim3 blockGrid(MAX_BLOCKS);
     dim3 threadBlock(MAX_THREADS);
     std::cout << "Converting RGB to YUV" << std::endl;
-    convertRGBToYUV<<<blockGrid, threadBlock>>>(gpuFloatImage, gpuCharImage, image_size, comps);
+    convertRGBToYUV<<<blockGrid, threadBlock>>>(gpuFloatImage, gpuCharImage, imageSize);
 
     // extract grayscale
     std::cout << "Extracting grayscale Image" << std::endl;
-    extractGrayscale<<<blockGrid, threadBlock>>>(gpuGrayscale, gpuFloatImage, image_size, comps);
+    extractGrayscale<<<blockGrid, threadBlock>>>(gpuGrayscale, gpuFloatImage, imageSize);
 
     // Calculate gradient image
     float *gpu_gradient_image;
-    cudaMalloc((void**) &gpu_gradient_image, image_size * sizeof(float));
+    cudaMalloc((void**) &gpu_gradient_image, imageSize * sizeof(float));
 
     std::cout << "Calculating the Gradient" << std::endl;
     CalculateGradientImage<<<blockGrid, threadBlock>>>(
         gpuGrayscale,
-        image_size,
-        width,
+        imageSize,
+        imageWidth,
         gpu_gradient_image);
 
 
@@ -295,98 +274,97 @@ int main(int argc, char* argv[]) {
     std::cout << "Calculating the scetch filter" << std::endl;
     // Apply Scetch Filter
     ScetchFilter scetch_filter;
-    scetch_filter.SetImageFromGpu(gpu_gradient_image, width, height);
+    scetch_filter.SetImageFromGpu(gpu_gradient_image, imageWidth, imageHeight);
     scetch_filter.set_line_count(5);
     scetch_filter.set_line_length(20);
     scetch_filter.set_line_strength(1);
     scetch_filter.set_gamma(1.2);
     scetch_filter.Run();
 
-    std::cout << "Create rgb image from greyscale image" << std::endl;
-
     // Calculate histogram
     int * gpu_histogram;
     int * gpu_accumulative_histogram;
-    cudaMalloc((void**) &gpu_histogram, 256 * sizeof(int));
-    cudaMalloc((void**) &gpu_accumulative_histogram, 256 * sizeof(int));
+    cudaMalloc((void**) &gpu_histogram, COLOR_DEPTH * sizeof(int));
+    cudaMalloc((void**) &gpu_accumulative_histogram, COLOR_DEPTH * sizeof(int));
 
-    std::cout << "Calculating the histogram of the grayscale image"
-              << std::endl;
+    std::cout << "Calculating the histogram of the grayscale image" << std::endl;
     CalculateHistogram<<<blockGrid, threadBlock>>>(
         gpuGrayscale,
-        image_size,
+        imageSize,
         gpu_histogram,
         gpu_accumulative_histogram);
 
     std::cout << "Calculating the tone mapping filter" << std::endl;
     // Apply Scetch Filter
-    ToneMappingFilter tone_filter(256, gpu_accumulative_histogram);
-    tone_filter.SetImageFromGpu(gpuGrayscale, width, height);
+    ToneMappingFilter tone_filter(COLOR_DEPTH, gpu_accumulative_histogram);
+    tone_filter.SetImageFromGpu(gpuGrayscale, imageWidth, imageHeight);
     tone_filter.Run();
 
     // TODO: think about unifying with tone mapping
     std::cout << "Calculate the log of tonemapped image" << std::endl;
     LogarithmicFilter log_filter;
-    log_filter.SetImageFromGpu(tone_filter.GetGpuResultData(), width, height);
+    log_filter.SetImageFromGpu(tone_filter.GetGpuResultData(), imageWidth, imageHeight);
     log_filter.Run();
 
 
     std::cout << "Expanding and apply log function to texture" << std::endl;
-    float *logtext = (float *) malloc(sizeof(float) * image_size);
-    float *expanded_text = (float *) malloc(sizeof(float) * image_size);
-    for (int y = 0; y < height; y++) {
-    	for (int x = 0; x < width; x++) {
-    		int target_index = x + y * width;
-    		int source_x = x % texture_width;
-    		int source_y = y % texture_height;
+    float *logtext = (float *) malloc(sizeof(float) * imageSize);
+    float *expanded_text = (float *) malloc(sizeof(float) * imageSize);
+    int textureWidth = cpuPencilTexture.Width();
+    for (int y = 0; y < imageHeight; y++) {
+    	for (int x = 0; x < imageWidth; x++) {
+    		int destIdx = x + y * imageWidth;
+    		int srcX = x % textureWidth;
+    		int srcY = y % cpuPencilTexture.Height();
 
-    		int source_index = source_x + source_y * texture_width;
-    		expanded_text[target_index] =  texture[3*source_index +0] * 0.299;
-    		expanded_text[target_index] += texture[3*source_index +1] * 0.587;
-    		expanded_text[target_index] += texture[3*source_index +2] * 0.114;
-    		expanded_text[target_index] /= 255.f;
-    		logtext[target_index] = logf(expanded_text[target_index]);
+    		int srcIdx = (srcX + srcY * textureWidth) * RGB_COMPONENTS;
+
+    		// The following line should be the same as:
+    		// expanded_text[destIdx] = RGB_TO_Y(cpuPencilTexture[srcIdx], cpuPencilTexture[srcIdx+1], cpuPencilTexture[srcIdx+2]) / 255.0f;
+    		// However, using the macro leads to a runtime error in the cusp slver... wtf.
+    		expanded_text[destIdx] =  cpuPencilTexture[srcIdx] * 0.299;
+    		expanded_text[destIdx] += cpuPencilTexture[srcIdx+1] * 0.587;
+    		expanded_text[destIdx] += cpuPencilTexture[srcIdx+2] * 0.114;
+    		expanded_text[destIdx] /= 255.f;
+
+    		logtext[destIdx] = logf(expanded_text[destIdx]);
     	}
     }
 
     float *gpuExpandedTexture;
-    cudaMalloc((void**) &gpuExpandedTexture, image_size * sizeof(float));
+    cudaMalloc((void**) &gpuExpandedTexture, imageSize * sizeof(float));
 
-    cudaMemcpy(gpuExpandedTexture, expanded_text, image_size * sizeof(float), cudaMemcpyHostToDevice);
+    cudaMemcpy(gpuExpandedTexture, expanded_text, imageSize * sizeof(float), cudaMemcpyHostToDevice);
 
 
 
     std::cout << "Solving equation for texture drawing" << std::endl;
-    EquationSolver equation_solver(logtext, log_filter.GetCpuResultData(), width, height, LAMBDA);
+    EquationSolver equation_solver(logtext, log_filter.GetCpuResultData(), imageWidth, imageHeight, LAMBDA);
     equation_solver.Run();
     float *beta_star = equation_solver.GetResult();
 
     std::cout << "Rendering computed texture" << std::endl;
     PotentialFilter potential_filter(beta_star);
-    potential_filter.SetImageFromCpu(expanded_text, width, height);
+    potential_filter.SetImageFromCpu(expanded_text, imageWidth, imageHeight);
     potential_filter.Run();
 
     std::cout << "Multiplicating both images" << std::endl;
     ImageMultiplicationFilter image_multiplication(scetch_filter.GetGpuResultData());
-    image_multiplication.SetImageFromGpu(potential_filter.GetGpuResultData(), width, height);
+    image_multiplication.SetImageFromGpu(potential_filter.GetGpuResultData(), imageWidth, imageHeight);
     image_multiplication.Run();
 
     float *resultGrayscaleImage = image_multiplication.GetGpuResultData();
 
 	// convert to RGB
-    GrayscaleAndYUVToRGB<<<blockGrid, threadBlock>>>(gpuCharImage, resultGrayscaleImage, gpuFloatImage, image_size, comps);
+    GrayscaleAndYUVToRGB<<<blockGrid, threadBlock>>>(gpuCharImage, resultGrayscaleImage, gpuFloatImage, useColors, imageSize);
 
 	// download image
-    cudaMemcpy(image, gpuCharImage, image_size * comps * sizeof(unsigned char), cudaMemcpyDeviceToHost);
+    cudaMemcpy(cpuImage.Buffer(), gpuCharImage, cpuImage.ByteSize(), cudaMemcpyDeviceToHost);
 
 	// write image
-	if(!jpge::compress_image_to_jpeg_file(outfilename, width, height, comps, image))
-	{
-		std::cout << "Error writing the image." << std::endl;
-	}
+    cpuImage.Save(outfilename);
 	std::cout << "Done." << std::endl;
 
-	free(image);
 	free(logtext);
 	free(expanded_text);
 	cudaFree(gpu_histogram);
