@@ -135,7 +135,7 @@ __global__ void HighSpeedScetchKernel(
     float angle_step = M_PI / line_count;
     float max_convolution_result = 0.f;
     for (int line_index = 0; line_index < line_count; line_index++) {
-      float rotation_angle = angle_step * line_index;
+      float rotation_angle = angle_step * line_index - 3.0f;
       int n_pixels = 0;
       float sum = 0.f;
       // move along the line from left to right and collect the pixel values

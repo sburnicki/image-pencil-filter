@@ -7,7 +7,7 @@
 #define DEF_MU_D 90.0f // 90.0f
 #define DEF_SIGMA_D 11.0f
 #define DEF_OMEGA_1 31.0f // 11.0f
-#define DEF_OMEGA_2 1.0f // 37.0f
+#define DEF_OMEGA_2 2.0f // 37.0f
 #define DEF_OMEGA_3 1.0f // 52.0f
 
 ToneMap::ToneMap(int numTones)

@@ -13,6 +13,8 @@
 
 #include "JpegImage.h"
 #include "ExpandableTexture.h"
+#include "GrayscaleHistogram.h"
+
 #include "ScetchFilter.h"
 #include "ToneMappingFilter.h"
 #include "ImageMultiplicationFilter.h"
@@ -25,7 +27,6 @@
 #define MAX_THREADS 256
 #define LAMBDA 2.f
 #define YUV_COMPONENTS 3
-#define COLOR_DEPTH 256
 #define MAX_COLOR_VALUE COLOR_DEPTH - 1
 #define PENCIL_TEXTURE_PATH "resources/texture4.jpg"
 
@@ -144,93 +145,8 @@ __global__ void CalculateGradientImage(
   }
 }
 
-/**
- * \brief Kernel to calculate the histogram from a grayscale image
- * \param kGrayscaleImage         The input grayscale image
- * \param kImageSize              The size of the image in pixel
- * \param histogram               Histogram output
- * \param accumulative_histogramm Accumulative histogram output
- *
- * TODO: Check this out - http://developer.download.nvidia.com/compute/cuda/\
- *                        1.1-Beta/x86_website/projects/histogram64/doc/\
- *                        histogram.pdf
- */
-__global__ void CalculateHistogram(
-    const float *kGrayscaleImage,
-    const int kImageSize,
-    int *histogram,
-    int *accumulative_histogram) {
-  __shared__ int shared_histogram[256];
-  __shared__ int shared_accumulative_histogram[256];
-
-  // Calculate ID and pixel position
-  int tid       = threadIdx.x;
-  int pixel_pos = blockDim.x * blockIdx.x + tid;
-
-  // Clear histogram
-  if (pixel_pos < 256) {
-      histogram[pixel_pos] = 0;
-      accumulative_histogram[pixel_pos] = 0;
-  }
-  if (tid < 256) {
-    shared_histogram[tid] = 0;
-    shared_accumulative_histogram[tid] = 0;
-  }
-  __syncthreads();
-
-  // Calculate partial histogram if pixel exists
-  while (pixel_pos < kImageSize) {
-    int value = kGrayscaleImage[pixel_pos];
-
-    // Increment position of value in histogram
-    // TODO Remove sanity check if sure
-    if (value < 256 && value >= 0) {
-      atomicAdd(&shared_histogram[value], 1);
-    }
-
-    // Calculate next pixel position
-    pixel_pos += MAX_BLOCKS * MAX_THREADS;
-  }
-  __syncthreads();
-
-  // Calculate partial histogram and accumulate result to global memory
-  if (tid < 256) {
-    shared_accumulative_histogram[tid] = shared_histogram[tid];
-
-    // TODO: Fix the commented code block and delete the uncommented slower one
-    //       The result is too big in this faster solution
-    //for (int i = 1; i <= tid; i *= 2) {
-    //  __syncthreads();
-    //  shared_accumulative_histogram[tid]
-    //      += shared_accumulative_histogram[tid - i];
-    //}
-    __syncthreads();
-    int sum = 0;
-    for (int i = 0; i <= tid; i++) {
-      sum += shared_accumulative_histogram[i];
-    }
-    __syncthreads();
-    shared_accumulative_histogram[tid] = sum;
-
-    // Copy result to global memory
-    __syncthreads();
-    atomicAdd(&histogram[tid], shared_histogram[tid]);
-    atomicAdd(&accumulative_histogram[tid], shared_accumulative_histogram[tid]);
-  }
-}
-
-
-
-int main(int argc, char* argv[]) {
-	if (argc < 3)
-	{
-		std::cout << "Please provide input and output filenames as arguments." << std::endl;
-		return 1;
-	}
-	char *infilename = argv[1];
-	char *outfilename = argv[2];
-	bool useColors = !(argc > 3 && strcmp(argv[3], "-grayscale") == 0);
-
+void ExecutePipeline(const char *infilename, const char *outfilename, bool useColors)
+{
 	// load image, allocate space on GPU
 	JpegImage cpuImage(infilename);
 	ExpandableTexture pencilTexture(PENCIL_TEXTURE_PATH);
@@ -276,28 +192,21 @@ int main(int argc, char* argv[]) {
     // Apply Scetch Filter
     ScetchFilter scetch_filter;
     scetch_filter.SetImageFromGpu(gpu_gradient_image, imageWidth, imageHeight);
-    scetch_filter.set_line_count(5);
+    scetch_filter.set_line_count(7);
     scetch_filter.set_line_length(20);
     scetch_filter.set_line_strength(1);
     scetch_filter.set_gamma(1.2);
     scetch_filter.Run();
 
     // Calculate histogram
-    int * gpu_histogram;
-    int * gpu_accumulative_histogram;
-    cudaMalloc((void**) &gpu_histogram, COLOR_DEPTH * sizeof(int));
-    cudaMalloc((void**) &gpu_accumulative_histogram, COLOR_DEPTH * sizeof(int));
-
     std::cout << "Calculating the histogram of the grayscale image" << std::endl;
-    CalculateHistogram<<<blockGrid, threadBlock>>>(
-        gpuGrayscale,
-        imageSize,
-        gpu_histogram,
-        gpu_accumulative_histogram);
+    GrayscaleHistogram histogram(gpuGrayscale, imageSize);
+    histogram.Run();
+
 
     std::cout << "Calculating the tone mapping filter" << std::endl;
     // Apply Scetch Filter
-    ToneMappingFilter tone_filter(COLOR_DEPTH, gpu_accumulative_histogram);
+    ToneMappingFilter tone_filter(COLOR_DEPTH, histogram.GpuCummulativeHistogram());
     tone_filter.SetImageFromGpu(gpuGrayscale, imageWidth, imageHeight);
     tone_filter.Run();
 
@@ -338,10 +247,31 @@ int main(int argc, char* argv[]) {
     cpuImage.Save(outfilename);
 	std::cout << "Done." << std::endl;
 
-	cudaFree(gpu_histogram);
-	cudaFree(gpu_accumulative_histogram);
 	cudaFree(gpu_gradient_image);
 	cudaFree(gpuGrayscale);
 	cudaFree(gpuFloatImage);
 	cudaFree(gpuCharImage);
+}
+
+
+
+int main(int argc, char* argv[]) {
+	if (argc < 3)
+	{
+		std::cout << "Please provide input and output filenames as arguments." << std::endl;
+		return 1;
+	}
+	bool useColors = !(argc > 3 && strcmp(argv[3], "-grayscale") == 0);
+
+	try
+	{
+		ExecutePipeline(argv[1], argv[2], useColors);
+	}
+	catch (const char *msg)
+	{
+		std::cout << msg << std::endl;
+		return 1;
+	}
+
+	return 0;
 }
