@@ -10,8 +10,6 @@ __device__ __host__ bool IsInImage5(int x, int y, int width, int height) {
 			y >= 0 && y < height;
 }
 
-// TODO: remove the /255.0 operations and decide in which space we are
-
 __global__ void PotentialKernel(
 		float *img,
 		float *beta,

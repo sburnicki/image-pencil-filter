@@ -44,27 +44,6 @@ __global__ void convertRGBToYUV(float *outputImage, unsigned char* image, int im
 		pixel += MAX_BLOCKS * MAX_THREADS;
 	}
 }
-/*
-__global__ void convertYUVToRGB(unsigned char* outputImage, float *image, int image_size, int comps)
-{
-	int pixel = blockDim.x * blockIdx.x + threadIdx.x;
-	while (pixel < image_size)
-	{
-		int idx = pixel*comps;
-		float y = (float) image[idx];
-		float u = (float) image[idx+1];
-		float v = (float) image[idx+2];
-		float r = y+v/0.877;
-		float b = y+u/0.493;
-		float g = 1.704 * y - 0.509 * r - 0.194*b;
-		outputImage[idx] = r;
-		outputImage[idx+1] =
-		outputImage[idx+2] = b;
-
-		pixel += MAX_BLOCKS * MAX_THREADS;
-	}
-}
-*/
 
 __global__ void GrayscaleAndYUVToRGB(unsigned char* outputImage, float *grayscaleImage, float *yuvImage, int image_size, int comps)
 {
@@ -95,46 +74,6 @@ __global__ void GrayscaleAndYUVToRGB(unsigned char* outputImage, float *grayscal
 
 		pixel += MAX_BLOCKS * MAX_THREADS;
 	}
-}
-
-/**
- * \brief Kernel to transform the gradient image into a RGB image
- *
- *        This kernel is only for testing the gradient image output.
- *
- * \param kGradientImage  The input gradient image
- * \param kImageSize      The size of the image in pixel
- * \param rgb_image       RGB output image
- */
-__global__ void ConvertGradienToRGB(
-    const float *kGradientImage,
-    const int kImageSize,
-    const int kImageComponents,
-    unsigned char *rgb_image) {
-  // Calculate pixel position
-  int pixel_pos_this = blockDim.x * blockIdx.x + threadIdx.x;
-
-  // Calculate RGB value if pixel exists
-  while (pixel_pos_this < kImageSize)
-  {
-    // Transform to YUV
-    float y = kGradientImage[pixel_pos_this];
-    float u = 0.0;
-    float v = 0.0;
-
-    // Calculate RGB
-    float r = y + v / 0.877;
-    float b = y + u / 0.493;
-
-    // Save RGB
-    int pixel_pos_output = pixel_pos_this * kImageComponents;
-    rgb_image[pixel_pos_output]     = r;
-    rgb_image[pixel_pos_output + 1] = 1.704 * y - 0.509 * r - 0.194 * b;
-    rgb_image[pixel_pos_output + 2] = b;
-
-    // Calculate next pixel position
-    pixel_pos_this += MAX_BLOCKS * MAX_THREADS;
-  }
 }
 
 __global__ void extractGrayscale(float* grayscale, float *image, int image_size, int comps)
@@ -363,19 +302,6 @@ int main(int argc, char* argv[]) {
     scetch_filter.set_gamma(1.2);
     scetch_filter.Run();
 
-
-    // std::cout << "Running scetch filter debug tests" << std::endl;
-    // std::string debug_message, additional_message;
-    // bool is_there_a_addditional_message = false;
-    // if (!scetch_filter.TestGpuFunctions(&debug_message, 
-    //       &additional_message, &is_there_a_addditional_message)) {
-    // 	std::cerr << "scetch filter test failed with message:" << std::endl <<
-    // 			debug_message << std::endl;
-    // } else if (is_there_a_addditional_message) {
-    //   std::cout << "scetch filter succeeded with additional message:" << std::endl <<
-    //     additional_message << std::endl;
-    // }
-
     std::cout << "Create rgb image from greyscale image" << std::endl;
 
     // Calculate histogram
@@ -392,55 +318,11 @@ int main(int argc, char* argv[]) {
         gpu_histogram,
         gpu_accumulative_histogram);
 
-    //cudaThreadSynchronize();
-
-    /*
-    // TODO: Only for testing purpose, remove for production
-    int histogram[256];
-    int accumulative_histogram[256];
-    cudaMemcpy(
-        &histogram,
-        gpu_histogram,
-        256 * sizeof(int),
-        cudaMemcpyDeviceToHost);
-    cudaMemcpy(
-        &accumulative_histogram,
-        gpu_accumulative_histogram,
-        256 * sizeof(int),
-        cudaMemcpyDeviceToHost);
-    std::cout << "Histogram: ";
-    for (int i = 0; i <= 255; i++) {
-      std::cout << " " << histogram[i];
-    }
-    std::cout << std::endl;
-    std::cout << "Accumulative histogram: ";
-    for (int i = 0; i <= 255; i++) {
-      std::cout << " " << accumulative_histogram[i];
-    }
-    std::cout << std::endl;
-    int sum = 0;
-    for (int i = 0; i <= 255; i++) {
-      sum += histogram[i];
-    }
-    std::cout << "Control Sum: " << sum << std::endl;
-    */
-
-
     std::cout << "Calculating the tone mapping filter" << std::endl;
     // Apply Scetch Filter
     ToneMappingFilter tone_filter(256, gpu_accumulative_histogram);
     tone_filter.SetImageFromGpu(gpuGrayscale, width, height);
     tone_filter.Run();
-
-    /*
-    // DEBUG: show destination tonemap
-    const std::vector<float> &tonemap = tone_filter.GetCpuTonemap();
-    for (int i = 0; i < 256; i++)
-    {
-    	std::cout << "Value for " << i << ": " << tonemap[i] << std::endl;
-    }
-    //
-    */
 
     // TODO: think about unifying with tone mapping
     std::cout << "Calculate the log of tonemapped image" << std::endl;
@@ -467,7 +349,6 @@ int main(int argc, char* argv[]) {
     	}
     }
 
-    //
     float *gpuExpandedTexture;
     cudaMalloc((void**) &gpuExpandedTexture, image_size * sizeof(float));
 
@@ -491,16 +372,6 @@ int main(int argc, char* argv[]) {
     image_multiplication.Run();
 
     float *resultGrayscaleImage = image_multiplication.GetGpuResultData();
-
-/*
-    // Output grayscale image
-    ConvertGradienToRGB<<<blockGrid, threadBlock>>>(
-    	resultGrayscaleImage,
-    	// gpuExpandedTexture,
-        image_size,
-        comps,
-        gpuCharImage);
-*/
 
 	// convert to RGB
     GrayscaleAndYUVToRGB<<<blockGrid, threadBlock>>>(gpuCharImage, resultGrayscaleImage, gpuFloatImage, image_size, comps);
