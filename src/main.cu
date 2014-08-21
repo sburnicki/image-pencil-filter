@@ -35,6 +35,7 @@ __global__ void convertRGBToYUV(float *outputImage, unsigned char* image, int im
 		float r = (float) image[idx];
 		float g = (float) image[idx+1];
 		float b = (float) image[idx+2];
+
 		float y = 0.299 * r + 0.587 * g + 0.114 * b;
 		outputImage[idx] = y;
 		outputImage[idx+1] = (b - y) * 0.493;
@@ -43,7 +44,7 @@ __global__ void convertRGBToYUV(float *outputImage, unsigned char* image, int im
 		pixel += MAX_BLOCKS * MAX_THREADS;
 	}
 }
-
+/*
 __global__ void convertYUVToRGB(unsigned char* outputImage, float *image, int image_size, int comps)
 {
 	int pixel = blockDim.x * blockIdx.x + threadIdx.x;
@@ -55,8 +56,41 @@ __global__ void convertYUVToRGB(unsigned char* outputImage, float *image, int im
 		float v = (float) image[idx+2];
 		float r = y+v/0.877;
 		float b = y+u/0.493;
+		float g = 1.704 * y - 0.509 * r - 0.194*b;
 		outputImage[idx] = r;
-		outputImage[idx+1] = 1.704 * y - 0.509 * r - 0.194*b;
+		outputImage[idx+1] =
+		outputImage[idx+2] = b;
+
+		pixel += MAX_BLOCKS * MAX_THREADS;
+	}
+}
+*/
+
+__global__ void GrayscaleAndYUVToRGB(unsigned char* outputImage, float *grayscaleImage, float *yuvImage, int image_size, int comps)
+{
+	int pixel = blockDim.x * blockIdx.x + threadIdx.x;
+	while (pixel < image_size)
+	{
+		int idx = pixel*comps;
+		float y = (float) grayscaleImage[pixel];
+		float u = (float) yuvImage[idx+1];
+		float v = (float) yuvImage[idx+2];
+
+		float r = y+v/0.877;
+		float b = y+u/0.493;
+		float g = 1.703 * y - 0.509 * r - 0.194*b;
+
+		// make sure that our values fit in a byte
+		r = r < 0 ? 0 : r;
+		g = g < 0 ? 0 : g;
+		b = b < 0 ? 0 : b;
+
+		r = r > 255 ? 255 : r;
+		g = g > 255 ? 255 : g;
+		b = b > 255 ? 255 : b;
+
+		outputImage[idx] = r;
+		outputImage[idx+1] = g;
 		outputImage[idx+2] = b;
 
 		pixel += MAX_BLOCKS * MAX_THREADS;
@@ -456,19 +490,20 @@ int main(int argc, char* argv[]) {
     image_multiplication.SetImageFromGpu(potential_filter.GetGpuResultData(), width, height);
     image_multiplication.Run();
 
+    float *resultGrayscaleImage = image_multiplication.GetGpuResultData();
 
-
+/*
     // Output grayscale image
     ConvertGradienToRGB<<<blockGrid, threadBlock>>>(
-    	image_multiplication.GetGpuResultData(),
+    	resultGrayscaleImage,
     	// gpuExpandedTexture,
         image_size,
         comps,
         gpuCharImage);
-
+*/
 
 	// convert to RGB
-    //convertYUVToRGB<<<blockGrid, threadBlock>>>(gpuCharImage, gpuFloatImage, image_size, comps);
+    GrayscaleAndYUVToRGB<<<blockGrid, threadBlock>>>(gpuCharImage, resultGrayscaleImage, gpuFloatImage, image_size, comps);
 
 	// download image
     cudaMemcpy(image, gpuCharImage, image_size * comps * sizeof(unsigned char), cudaMemcpyDeviceToHost);
