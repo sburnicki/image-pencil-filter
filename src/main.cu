@@ -12,6 +12,7 @@
 #include <cmath>
 
 #include "JpegImage.h"
+#include "ExpandableTexture.h"
 #include "ScetchFilter.h"
 #include "ToneMappingFilter.h"
 #include "ImageMultiplicationFilter.h"
@@ -232,7 +233,7 @@ int main(int argc, char* argv[]) {
 
 	// load image, allocate space on GPU
 	JpegImage cpuImage(infilename);
-	JpegImage cpuPencilTexture(PENCIL_TEXTURE_PATH);
+	ExpandableTexture pencilTexture(PENCIL_TEXTURE_PATH);
 
 	int imageSize = cpuImage.PixelSize();
 	int imageWidth = cpuImage.Width();
@@ -308,44 +309,16 @@ int main(int argc, char* argv[]) {
 
 
     std::cout << "Expanding and apply log function to texture" << std::endl;
-    float *logtext = (float *) malloc(sizeof(float) * imageSize);
-    float *expanded_text = (float *) malloc(sizeof(float) * imageSize);
-    int textureWidth = cpuPencilTexture.Width();
-    for (int y = 0; y < imageHeight; y++) {
-    	for (int x = 0; x < imageWidth; x++) {
-    		int destIdx = x + y * imageWidth;
-    		int srcX = x % textureWidth;
-    		int srcY = y % cpuPencilTexture.Height();
-
-    		int srcIdx = (srcX + srcY * textureWidth) * RGB_COMPONENTS;
-
-    		// The following line should be the same as:
-    		// expanded_text[destIdx] = RGB_TO_Y(cpuPencilTexture[srcIdx], cpuPencilTexture[srcIdx+1], cpuPencilTexture[srcIdx+2]) / 255.0f;
-    		// However, using the macro leads to a runtime error in the cusp slver... wtf.
-    		expanded_text[destIdx] =  cpuPencilTexture[srcIdx] * 0.299;
-    		expanded_text[destIdx] += cpuPencilTexture[srcIdx+1] * 0.587;
-    		expanded_text[destIdx] += cpuPencilTexture[srcIdx+2] * 0.114;
-    		expanded_text[destIdx] /= 255.f;
-
-    		logtext[destIdx] = logf(expanded_text[destIdx]);
-    	}
-    }
-
-    float *gpuExpandedTexture;
-    cudaMalloc((void**) &gpuExpandedTexture, imageSize * sizeof(float));
-
-    cudaMemcpy(gpuExpandedTexture, expanded_text, imageSize * sizeof(float), cudaMemcpyHostToDevice);
-
-
+    pencilTexture.Expand(imageWidth, imageHeight);
 
     std::cout << "Solving equation for texture drawing" << std::endl;
-    EquationSolver equation_solver(logtext, log_filter.GetCpuResultData(), imageWidth, imageHeight, LAMBDA);
+    EquationSolver equation_solver(pencilTexture.LogBuffer(), log_filter.GetCpuResultData(), imageWidth, imageHeight, LAMBDA);
     equation_solver.Run();
     float *beta_star = equation_solver.GetResult();
 
     std::cout << "Rendering computed texture" << std::endl;
     PotentialFilter potential_filter(beta_star);
-    potential_filter.SetImageFromCpu(expanded_text, imageWidth, imageHeight);
+    potential_filter.SetImageFromCpu(pencilTexture.ExpandedBuffer(), imageWidth, imageHeight);
     potential_filter.Run();
 
     std::cout << "Multiplicating both images" << std::endl;
@@ -365,8 +338,6 @@ int main(int argc, char* argv[]) {
     cpuImage.Save(outfilename);
 	std::cout << "Done." << std::endl;
 
-	free(logtext);
-	free(expanded_text);
 	cudaFree(gpu_histogram);
 	cudaFree(gpu_accumulative_histogram);
 	cudaFree(gpu_gradient_image);
