@@ -12,11 +12,6 @@
 #include <string>
 #include <vector>
 
-// only for debugging!
-#include "../lib/jpge.h"
-#include "../lib/jpgd.h"
-// -------------------
-
 // shared Memory Size per Multiprocessor is 48KB with Cuda 2.0 to 4.x
 // 48KB equals 48k/4 floats
 // the side lenght of a shared memory block is the squareroot of 40k/4
@@ -51,72 +46,6 @@ __device__ __host__ void RotatedCoordinate(float *x, float *y, float angle) {
   (*y) = new_y;
 }
 
-
-// calculates indices and corresponding weights of all pixels along a line
-__device__ __host__ int LinePixels(int x, int y, float line_angle, int image_width, int image_height,
-    int line_length, float line_strength,
-    int *indices, float *weights) {
-  int line_pixel_count = 0;
-  float halve_length = static_cast<float>(line_length) / 2.f;
-  float halve_strength = line_strength / 2.f;
-
-  for (int j = ceil(y - halve_strength); j < ceil(y + halve_strength); j++) {
-    for (int i = ceil(x - halve_length); i < ceil(x + halve_length); i++) {
-      float rotated_x = i - x;
-      float rotated_y = j - y;
-      RotatedCoordinate(&rotated_x, &rotated_y, line_angle);
-      rotated_x  += x;
-      rotated_y  += y;
-      if (IsInImage(rotated_x, rotated_y, image_width, image_height)) {
-        indices[line_pixel_count] = PixelIndexOf(rotated_x, rotated_y, image_width);
-        weights[line_pixel_count] = 1;
-        line_pixel_count++;
-      }
-    }
-  }
-  return line_pixel_count;
-}
-
-// scetch kernel
-__global__ void SimpleScetchKernel(
-    float *image,
-    float *result,
-    int image_width, int image_height,
-    int line_length, float line_strength, int line_count,
-    float gamma) {
-  // some neat index calculations:
-  int x = threadIdx.x + blockDim.x * blockIdx.x;
-  int y = threadIdx.y + blockDim.y * blockIdx.y;
-
-  if (IsInImage(x, y, image_width, image_height)) {
-    int pixel_index = PixelIndexOf(x, y, image_width);
-
-    // the number of pixels in a line equals the number of pixels in a rectangle
-    // the true number of pixels might be smaller due to image boundaries
-    int max_line_pixel_count = line_strength * line_length;
-
-    // allocate some memory for the line pixel indices and the corresponding weights
-    int* line_pixel_indices = new int[max_line_pixel_count];
-    float* weights = new float[max_line_pixel_count];
-    float max_value = 0.f;
-    for (int line = 0; line < line_count; line++) {
-      float line_angle = static_cast<float>(line) * (M_PI / line_count);
-      int line_pixel_count = LinePixels(x, y, line_angle, image_width, image_height,
-          line_length, line_strength,
-          line_pixel_indices, weights);
-      float convolution_result = 0;
-      for  (int i = 0; i < line_pixel_count; i++) {
-        float line_pixel_value = image[line_pixel_indices[i]];
-        convolution_result += line_pixel_value * weights[i] / line_pixel_count;
-      }
-      max_value = max(max_value, convolution_result);
-    }
-
-    delete[] line_pixel_indices;
-    delete[] weights;
-    result[pixel_index] = max(255.f - __powf(max_value, gamma), 0.f);
-  }
-}
 
 __device__ __host__ bool CalculateCoordinatesInSharedMemoryBlock(
     int x, int y,
