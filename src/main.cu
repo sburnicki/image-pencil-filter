@@ -193,15 +193,15 @@ void ExecutePipeline(const char *infilename, const char *outfilename, bool useCo
     // Apply Scetch Filter
     ScetchFilter scetch_filter;
     scetch_filter.SetImageFromGpu(gpu_gradient_image, imageWidth, imageHeight);
-    scetch_filter.set_line_count(7);
-    if (!scetch_filter.set_line_length(20)) {
+    scetch_filter.set_line_count(9);
+    if (!scetch_filter.set_line_length(10)) {
       std::cout << "Warning: linelength couldnt be set to the desired value."
         " It was set to the maximal possible length instead."
         << std::endl;
     }
     scetch_filter.set_line_strength(1);
-    scetch_filter.set_line_rotation_offset(13 * ONE_DEGRE); // 13 degree offset
-    scetch_filter.set_gamma(1.2);
+    scetch_filter.set_line_rotation_offset(5 * ONE_DEGRE); // 13 degree offset
+    scetch_filter.set_gamma(1.1);
     scetch_filter.Run();
 
     // Calculate histogram

@@ -52,19 +52,19 @@ __device__ __host__ bool CalculateCoordinatesInSharedMemoryBlock(
     int thread_x, int thread_y,
     int image_x, int image_y,
     float rotation_angle,
-    int half_length,
+    int length,
     int shared_width,
     int image_width, int image_height,
     int *shared_x, int *shared_y) {
-  float start_x = -half_length;
+  float start_x = 0;
   float start_y = 0;
   float current_x = start_x + x;
   float current_y = start_y + y;
   RotatedCoordinate(&current_x, &current_y, rotation_angle);
   int rotated_image_x = current_x + image_x;
   int rotated_image_y = current_y + image_y;
-  current_x += half_length;  // in shared memory (0,0) is located at
-  current_y += half_length;  // (half_length, half_length)
+  current_x += length;  // in shared memory (0,0) is located at
+  current_y += length;  // (length, length)
   *shared_x = current_x + thread_x;
   *shared_y = current_y + thread_y;
   return IsInSharedMemoryBlock(*shared_x, *shared_y, shared_width) &&
@@ -101,7 +101,7 @@ __global__ void HighSpeedScetchKernel(
   // Create a shared memory block
   extern __shared__ float image_block[];
 
-  int overhang = ceilf(static_cast<float>(line_length) / 2.f);
+  int overhang = line_length;
   int x_image = threadIdx.x + blockDim.x * blockIdx.x;
   int y_image = threadIdx.y + blockDim.y * blockIdx.y;
 
@@ -132,7 +132,7 @@ __global__ void HighSpeedScetchKernel(
 
   if (IsInImage(x_image, y_image, image_width, image_height)) {
     // calculate line convolution for all directions
-    float angle_step = M_PI / line_count;
+    float angle_step = 2.f * M_PI / line_count;
     float max_convolution_result = 0.f;
     for (int line_index = 0; line_index < line_count; line_index++) {
       float rotation_angle = angle_step * line_index + rotation_offset;
@@ -181,12 +181,12 @@ void ScetchFilter::set_line_strength(float line_strength) {
 }
 
 bool ScetchFilter::set_line_length(int line_length) {
-  if (line_length + 32 <= SHARED_2D_BLOCK_DIMENSION) {
+  if (2*line_length + 32 <= SHARED_2D_BLOCK_DIMENSION) {
     line_length_ = line_length;
     return true;
   } else {
     // max line length exeeded
-    line_length_ = SHARED_2D_BLOCK_DIMENSION - 32;
+    line_length_ = (SHARED_2D_BLOCK_DIMENSION - 32) / 2;
     return false;
   }
 }
@@ -205,12 +205,12 @@ void ScetchFilter::set_gamma(float gamma) {
 
 void ScetchFilter::Run() {
   // Max threads per Block = 1024 ==> sqrt(1024) = 32
-  int pixels_per_dimension = min(SHARED_2D_BLOCK_DIMENSION - (line_length_ + 1), 32);
+  int pixels_per_dimension = min(SHARED_2D_BLOCK_DIMENSION - (2 * line_length_), 32);
   dim3 high_speed_block_size(pixels_per_dimension, pixels_per_dimension, 1);
   dim3 high_speed_grid_size(GetImageWidth() / pixels_per_dimension + 1,
       GetImageHeight() / pixels_per_dimension + 1,
       1);
-  int memory_per_dimension = pixels_per_dimension + line_length_ + 1;
+  int memory_per_dimension = pixels_per_dimension + 2*line_length_ + 1;
   int shared_memory_size = sizeof(float) * memory_per_dimension * memory_per_dimension;
   HighSpeedScetchKernel<<<high_speed_grid_size, high_speed_block_size, shared_memory_size>>>(
       GetGpuImageData(),
