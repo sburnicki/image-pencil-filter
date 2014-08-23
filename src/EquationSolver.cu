@@ -109,7 +109,7 @@ void EquationSolver::Run() {
 
 #endif
 
-	cusp::verbose_monitor<float> monitor(b1_gpu, 20, 1e-1);
+	cusp::default_monitor<float> monitor(b1_gpu, 20, 1e-1);
 	// solve equation
   //(A^T * A + lambda Delta^T * Delta) * x = b <-(log_texture^T * log_tonemap)
 	cusp::krylov::cg(A_gpu,
