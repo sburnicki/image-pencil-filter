@@ -14,6 +14,8 @@
 #include <cusp/linear_operator.h>
 #include <vector>
 
+#define MATRIX_ON_CPU
+
 EquationSolver::EquationSolver(float *log_texture, float *log_tonemap,
 		int width, int height,
 		float lambda) {
@@ -31,6 +33,31 @@ EquationSolver::~EquationSolver() {
 }
 
 void EquationSolver::Run() {
+
+#ifdef MATRIX_ON_CPU // faster! yields a total speedup of 2 for the entire calculation
+	// allocate storage for matrix A (dimension x dimension)
+  // with dimension nonzero values in three diagonals
+	cusp::dia_matrix<int,float,cusp::host_memory> A_cpu(dimension_, dimension_, dimension_, 3);
+
+	// set the offsets of the diagonals
+	A_cpu.diagonal_offsets[0] = -2;
+	A_cpu.diagonal_offsets[1] = 0;
+	A_cpu.diagonal_offsets[2] = 2;
+
+  CreateMatrix_A(&A_cpu);
+  // Copy to GPU
+	cusp::dia_matrix<int,float,cusp::device_memory> A_gpu = A_cpu;
+
+	// allocate storage for right hand side (b = log_texture^T * log_tonemap)
+	cusp::array1d<float, cusp::host_memory> b_cpu(dimension_, 0);
+  CreateVector_b(&b_cpu);
+  // Copy to GPU
+	cusp::array1d<float, cusp::device_memory> b1_gpu = b_cpu;
+
+	// allocate storage for result (beta)
+	cusp::array1d<float, cusp::device_memory> beta_gpu(dimension_, 0);
+
+#else
 	// allocate storage for matrix A (dimension x dimension) with dimension nonzero values in one diagonal
 	cusp::dia_matrix<int,float,cusp::host_memory> A_cpu(dimension_, dimension_, dimension_, 1);
 	// allocate storage for the lamba matrix (dimension x dimension) with dimension nonzero values in one diagonal
@@ -80,9 +107,11 @@ void EquationSolver::Run() {
 	cusp::multiply(lambda_gpu, Delta1_gpu, Delta_gpu); // lambda * Delta^T * Delta
 	cusp::add(A1_gpu, Delta_gpu, A_gpu);  // (A^T * A + lambda * Delta^T * Delta)
 
+#endif
 
-	cusp::verbose_monitor<float> monitor(b1_gpu, 100, 1e-3);
+	cusp::verbose_monitor<float> monitor(b1_gpu, 20, 1e-1);
 	// solve equation
+  //(A^T * A + lambda Delta^T * Delta) * x = b <-(log_texture^T * log_tonemap)
 	cusp::krylov::cg(A_gpu,
 			beta_gpu,
 			b1_gpu,
@@ -120,4 +149,30 @@ void EquationSolver::FillLambdaMatrix(cusp::dia_matrix<int,float,cusp::host_memo
 	for (int i = 0; i < dimension_; i++) {
 		(*lambda).values(i, 0) = lambda_;
 	}
+}
+
+void EquationSolver::CreateMatrix_A(cusp::dia_matrix<int,float,cusp::host_memory> *A_cpu) {
+  float neg_lambda = -lambda_;
+  float two_lambda = 2 * lambda_;
+  // first line is lambda * (a, 0, -1, ...) with a being the first pixel in the log_texture
+  (*A_cpu).values(0, 1) = lambda_ + log_texture_[0] * log_texture_[0];
+  (*A_cpu).values(0, 2) = neg_lambda;
+  
+  // the lines in between are lambda * (..., -1, 0, 2*a[i], 0, -1, ...)
+  for (int i = 1; i < dimension_ -1; i++) {
+    (*A_cpu).values(i, 0) = neg_lambda;
+    (*A_cpu).values(i, 1) = two_lambda + log_texture_[i] * log_texture_[i];
+    (*A_cpu).values(i, 2) = neg_lambda;
+  }
+
+  // the last line is lambda * (...,0,-1,0,a) with a being the last pixel in log_texture
+  (*A_cpu).values(dimension_ - 1, 0) = neg_lambda;
+  (*A_cpu).values(dimension_ - 1, 1) = lambda_ +
+    log_texture_[dimension_ - 1] * log_texture_[dimension_ - 1];
+}
+
+void EquationSolver::CreateVector_b(cusp::array1d<float, cusp::host_memory> *b_cpu) {
+  for (int i = 0; i < dimension_; i++) {
+    (*b_cpu)[i] = log_texture_[i] * log_tonemap_[i];
+  }
 }

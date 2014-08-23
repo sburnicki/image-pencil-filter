@@ -22,6 +22,15 @@ private:
 	void FillDeltaMatrixWithGradientOperation(cusp::dia_matrix<int,float,cusp::host_memory> *Delta_cpu);
 	void FillLambdaMatrix(cusp::dia_matrix<int,float,cusp::host_memory> *lambda);
 
+  // Create the Matrix on the left side of the Tikhonov-regularization normal equation
+  // (A^T * A + lambda * Delta^T * Delta)
+  // With A being the log_texture and Delta being the Gradient Operator Matrix
+  void CreateMatrix_A(cusp::dia_matrix<int,float,cusp::host_memory> *A_cpu);
+
+	// Create Vector for the right side of the Tikhonov-regularization normal equation
+  // b = log_texture^T * log_tonemap = (A^T * b)
+  void CreateVector_b(cusp::array1d<float, cusp::host_memory> *b_cpu);
+
 	float *log_texture_;
 	float *log_tonemap_;
 	float *result_;
