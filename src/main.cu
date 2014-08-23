@@ -29,6 +29,7 @@
 #define YUV_COMPONENTS 3
 #define MAX_COLOR_VALUE COLOR_DEPTH - 1
 #define PENCIL_TEXTURE_PATH "resources/texture4.jpg"
+#define ONE_DEGRE 0.0174532925
 
 #define RGB_TO_Y(R, G, B) \
 	(R*0.299 + G*0.587 + B*0.114)
@@ -198,8 +199,8 @@ void ExecutePipeline(const char *infilename, const char *outfilename, bool useCo
         " It was set to the maximal possible length instead."
         << std::endl;
     }
-
     scetch_filter.set_line_strength(1);
+    scetch_filter.set_line_rotation_offset(13 * ONE_DEGRE); // 13 degree offset
     scetch_filter.set_gamma(1.2);
     scetch_filter.Run();
 
