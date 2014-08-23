@@ -180,8 +180,15 @@ void ScetchFilter::set_line_strength(float line_strength) {
   line_strength_ = line_strength;
 }
 
-void ScetchFilter::set_line_length(int line_length) {
-  line_length_ = line_length;
+bool ScetchFilter::set_line_length(int line_length) {
+  if (line_length + 32 <= SHARED_2D_BLOCK_DIMENSION) {
+    line_length_ = line_length;
+    return true;
+  } else {
+    // max line length exeeded
+    line_length_ = SHARED_2D_BLOCK_DIMENSION - 32;
+    return false;
+  }
 }
 
 void ScetchFilter::set_line_count(int line_count) {

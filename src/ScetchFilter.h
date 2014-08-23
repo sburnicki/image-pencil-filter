@@ -19,7 +19,9 @@ public:
 	void set_line_strength(float line_strength);
 
 	// set the length of the scetch lines in pixels
-	void set_line_length(int line_length);
+  // returns false if the desired line length was to great
+  // in this case line_length_ is set to the maximum
+	bool set_line_length(int line_length);
 
 	// set the number of used lines for the scetch algorithm.
 	// The angle between all possible lines will be 360/linecount

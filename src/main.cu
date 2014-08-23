@@ -193,7 +193,12 @@ void ExecutePipeline(const char *infilename, const char *outfilename, bool useCo
     ScetchFilter scetch_filter;
     scetch_filter.SetImageFromGpu(gpu_gradient_image, imageWidth, imageHeight);
     scetch_filter.set_line_count(7);
-    scetch_filter.set_line_length(20);
+    if (!scetch_filter.set_line_length(20)) {
+      std::cout << "Warning: linelength couldnt be set to the desired value."
+        " It was set to the maximal possible length instead."
+        << std::endl;
+    }
+
     scetch_filter.set_line_strength(1);
     scetch_filter.set_gamma(1.2);
     scetch_filter.Run();
