@@ -86,7 +86,7 @@ Design for Computer Graphics]
 \renewcommand\section{\@startsection{section}{1}{\z@}%
                 {-2ex \@plus -1ex \@minus -.2ex}%
                 {0.8ex \@plus .2ex}%
-                {\reset@font\normalsize\sffamily\bfseries\nshape\utue@sectionfont}}
+                {\reset@font\normalsize\sffamily\bfseries\scshape\utue@sectionfont}}
 \renewcommand\subsection{\@startsection{subsection}{2}{\z@}%
                 {-1.8ex\@plus -1ex \@minus -.2ex}%
                 {0.8ex \@plus .2ex}%

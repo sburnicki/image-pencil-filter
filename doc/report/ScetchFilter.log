@@ -1,8 +1,8 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2014.4.22)  25 AUG 2014 14:03
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2014.4.22)  25 AUG 2014 14:08
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
-**ScetchFilter.tex
+**ScetchFilter
 (./ScetchFilter.tex
 LaTeX2e <2011/06/27>
 Babel <3.9h> and hyphenation patterns for 9 languages loaded.
@@ -363,29 +363,48 @@ Package pdftex.def Info: images/teaser.jpg used on input line 25.
                                                   \utue@sectionfont 
 l.1 \section*{Abstract}
                        
-? 
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
 ) (./introduction.tex
 ! Undefined control sequence.
 <argument> ...malsize \sffamily \bfseries \nshape 
                                                   \utue@sectionfont 
 l.1 \section{Introduction}
                           
-? 
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
 ) (./previous-work.tex
 ! Undefined control sequence.
 <argument> ...malsize \sffamily \bfseries \nshape 
                                                   \utue@sectionfont 
 l.1 \section{Previous Work}
                            
-? 
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
 ) (./method.tex
 ! Undefined control sequence.
 <argument> ...malsize \sffamily \bfseries \nshape 
                                                   \utue@sectionfont 
 l.1 \section{Method}
                      \label{method} The problem class that is addressed by t...
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
 
-? 
 pdfTeX warning (ext4): destination with the same identifier (name{page.1}) has 
 been already used, duplicate ignored
 <to be read again> 
@@ -486,7 +505,12 @@ Overfull \hbox (5.70782pt too wide) in paragraph at lines 257--267
                                                   \utue@sectionfont 
 l.1 \section{GPU Implementation}
                                  \label{gpu-implementation}
-? 
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
 
 Underfull \hbox (badness 4913) in paragraph at lines 10--14
  []\T1/aess/bx/n/10 Disparity Es-ti-ma-tion[] \T1/aer/m/n/10 Dis-par-ity es-ti-
@@ -532,14 +556,24 @@ Overfull \hbox (5.0pt too wide) in paragraph at lines 67--69
                                                   \utue@sectionfont 
 l.1 \section{Performance}
                          
-? 
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
 ) (./conclusion.tex
 ! Undefined control sequence.
 <argument> ...malsize \sffamily \bfseries \nshape 
                                                   \utue@sectionfont 
 l.1 \section{Conclusion}
                         
-? 
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
 [5 <./images/disparity.png> <./images/depth.png> <./images/saliency.png>])
 (./ScetchFilter.bbl
 ! Undefined control sequence.
@@ -547,7 +581,12 @@ l.1 \section{Conclusion}
                                                   \utue@sectionfont 
 l.2 \begin{thebibliography}{RHB{\etalchar{+}}11}
                                                 
-? 
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
 
 Underfull \hbox (badness 1622) in paragraph at lines 5--10
 \T1/aer/m/n/10 Cole, Adam Finkel-stein, and Joëlle
@@ -626,7 +665,7 @@ Here is how much of TeX's memory you used:
  9233 multiletter control sequences out of 15000+600000
  28572 words of font info for 54 fonts, out of 8000000 for 9000
  36 hyphenation exceptions out of 8191
- 35i,12n,28p,396b,341s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 35i,12n,28p,392b,341s stack positions out of 5000i,500n,10000p,200000b,80000s
 </usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></us
 r/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/shar
 e/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/share/texli
