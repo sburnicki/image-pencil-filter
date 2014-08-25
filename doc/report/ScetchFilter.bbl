@@ -1,5 +1,12 @@
 \newcommand{\etalchar}[1]{$^{#1}$}
-\begin{thebibliography}{LWA{\etalchar{+}}12}
+\begin{thebibliography}{RHB{\etalchar{+}}11}
+
+\bibitem[BLC{\etalchar{+}}12]{Benard:2012:ASC}
+Pierre B{\'e}nard, Jingwan Lu, Forrester Cole, Adam Finkelstein, and Jo{\"e}lle
+  Thollot.
+\newblock {Active Strokes}: Coherent line stylization for animated {3D} models.
+\newblock {\em NPAR 2012, Proceedings of the 10th International Symposium on
+  Non-photorealistic Animation and Rendering}, June 2012.
 
 \bibitem[GO11]{GastalOliveira2011DomainTransform}
 Eduardo S.~L. Gastal and Manuel~M. Oliveira.
@@ -7,25 +14,11 @@ Eduardo S.~L. Gastal and Manuel~M. Oliveira.
 \newblock {\em ACM TOG}, 30(4):69:1--69:12, 2011.
 \newblock Proceedings of SIGGRAPH 2011.
 
-\bibitem[HOK11]{conf/acivs/HoffkenOK11}
-Matthias Höffken, Daniel Oberhoff, and Marina Kolesnik.
-\newblock Temporal prediction and spatial regularization in differential
-  optical flow.
-\newblock In Jacques Blanc-Talon, Richard~P. Kleihorst, Wilfried Philips,
-  Dan~C. Popescu, and Paul Scheunders, editors, {\em ACIVS}, volume 6915 of
-  {\em Lecture Notes in Computer Science}, pages 576--585. Springer, 2011.
-
-\bibitem[HRBG11]{conf/psivt/HosniRBG11}
-Asmaa Hosni, Christoph Rhemann, Michael Bleyer, and Margrit Gelautz.
-\newblock Temporally consistent disparity and optical flow via efficient
-  spatio-temporal filtering.
-\newblock In Yo-Sung Ho, editor, {\em PSIVT (1)}, volume 7087 of {\em Lecture
-  Notes in Computer Science}, pages 165--177. Springer, 2011.
-
-\bibitem[LLW04]{Levin:2004:CUO:1015706.1015780}
-Anat Levin, Dani Lischinski, and Yair Weiss.
-\newblock Colorization using optimization.
-\newblock {\em ACM Trans. Graph.}, 23(3):689--694, August 2004.
+\bibitem[LSF10]{Lu:2010:IPS}
+Jingwan Lu, Pedro~V. Sander, and Adam Finkelstein.
+\newblock Interactive painterly stylization of images, videos and {3D}
+  animations.
+\newblock In {\em Proceedings of I3D 2010}, February 2010.
 
 \bibitem[LTF{\etalchar{+}}05]{journals/tog/LiuTFDA05}
 Ce~Liu, Antonio Torralba, William~T. Freeman, Frédo Durand, and Edward~H.
@@ -33,10 +26,11 @@ Ce~Liu, Antonio Torralba, William~T. Freeman, Frédo Durand, and Edward~H.
 \newblock Motion magnification.
 \newblock {\em ACM Trans. Graph.}, 24(3):519--526, 2005.
 
-\bibitem[LWA{\etalchar{+}}12]{Lang:2012}
-Manuel Lang, Oliver Wang, Tunc Aydin, Aljoscha Smolic, and Markus Gross.
-\newblock Practical temporal consistency for image-based graphics applications.
-\newblock {\em ACM Trans. Graph.}, 31(4):34:1--34:8, July 2012.
+\bibitem[LXJ12]{mainPaper}
+Cewu Lu, Li~Xu, and Jiaya Jia.
+\newblock Combining sketch and tone for pencil drawing production.
+\newblock In Paul Asente and Cindy Grimm, editors, {\em Expressive}, pages
+  65--73. ACM, 2012.
 
 \bibitem[PKT09]{paris2009bilateral}
 S.~Paris, P.~Kornprobst, and J.~Tumblin.

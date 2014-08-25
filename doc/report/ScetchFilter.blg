@@ -3,54 +3,51 @@ Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
 The top-level auxiliary file: ScetchFilter.aux
 The style file: alpha.bst
 Database file #1: bibliography.bib
-A bad cross reference---entry "conf/psivt/HosniRBG11"
-refers to entry "conf/psivt/2011-1", which doesn't exist
-A bad cross reference---entry "conf/acivs/HoffkenOK11"
-refers to entry "conf/acivs/2011", which doesn't exist
+A bad cross reference---entry "mainPaper"
+refers to entry "conf/npar/2012", which doesn't exist
 A bad cross reference---entry "conf/iccv/VolzBVZ11"
 refers to entry "conf/iccv/2011", which doesn't exist
-Warning--I didn't find a database entry for "conf/acivs/2011"
-Warning--I didn't find a database entry for "conf/psivt/2011-1"
+Warning--I didn't find a database entry for "conf/npar/2012"
 Warning--I didn't find a database entry for "conf/iccv/2011"
-You've used 11 entries,
+You've used 10 entries,
             2543 wiz_defined-function locations,
-            652 strings with 6954 characters,
-and the built_in function-call counts, 5837 in all, are:
-= -- 578
-> -- 329
-< -- 7
-+ -- 117
-- -- 117
-* -- 473
-:= -- 957
-add.period$ -- 40
-call.type$ -- 11
-change.case$ -- 80
-chr.to.int$ -- 11
-cite$ -- 11
-duplicate$ -- 211
-empty$ -- 391
-format.name$ -- 126
-if$ -- 1209
+            637 strings with 6620 characters,
+and the built_in function-call counts, 4910 in all, are:
+= -- 481
+> -- 285
+< -- 4
++ -- 101
+- -- 101
+* -- 376
+:= -- 820
+add.period$ -- 36
+call.type$ -- 10
+change.case$ -- 72
+chr.to.int$ -- 10
+cite$ -- 10
+duplicate$ -- 183
+empty$ -- 330
+format.name$ -- 109
+if$ -- 1013
 int.to.chr$ -- 1
 int.to.str$ -- 0
-missing$ -- 13
-newline$ -- 60
-num.names$ -- 39
-pop$ -- 68
+missing$ -- 12
+newline$ -- 55
+num.names$ -- 34
+pop$ -- 69
 preamble$ -- 1
-purify$ -- 93
+purify$ -- 84
 quote$ -- 0
-skip$ -- 178
+skip$ -- 153
 stack$ -- 0
-substring$ -- 345
-swap$ -- 58
-text.length$ -- 7
+substring$ -- 246
+swap$ -- 42
+text.length$ -- 4
 text.prefix$ -- 1
 top$ -- 0
-type$ -- 80
+type$ -- 72
 warning$ -- 0
-while$ -- 53
-width$ -- 15
-write$ -- 157
-(There were 3 error messages)
+while$ -- 43
+width$ -- 13
+write$ -- 139
+(There were 2 error messages)
