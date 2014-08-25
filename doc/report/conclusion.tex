@@ -1,0 +1,23 @@
+\section{Conclusion}
+A simple and efficient approach was presented that simplifies difficult global
+optimization problems like optical flow and disparity calculations using
+temporal edge aware filtering. The method creates temporal consistent results
+for many image based graphics problems. Sparse feature matches can be used as
+input for the joint filtering operation to replace costly global minimizations.
+
+There are some limitations to the approach. It is possible that objects are not
+detected if they do not provide enough features to match. This issue can be
+addressed by adapting the parameters of the feature matcher to find as many
+features as possible. The effect of faulty features is minimal as their
+confidence is low, so they are filtered out.
+
+As the method relies on edge preserving filtering problems occur if important
+object boundaries are not well defined in the input images. Unwanted bleeding
+artifacts can show up on such edges. Special care must be taken in the scribble
+propagation application to place the input scribbles close to edges, as object
+boundaries could otherwise be missed which causes unwanted color bleedings. A
+true global solution does not suffer from this problem. The authors suggested an
+extension that could fix this issue.
+
+For me as writer of this report the described method in the paper was quite easy
+to comprehend and written in enough detail for a full reimplementation.

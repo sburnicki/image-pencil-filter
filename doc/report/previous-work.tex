@@ -1,0 +1,29 @@
+\section{Previous Work}
+This section highlights the difficulty of solving the optimization problem in
+\autoref{eq:error-function} by outlining other approaches and their
+restrictions. The domain-transform paper
+\cite{GastalOliveira2011DomainTransform} is left out on purpose, as it is
+discussed in \autoref{domain-transform} in great detail.
+
+The smoothness that is applied to a pixel by the regularization term depends on
+the values of all the other pixels. Those dependencies often leads to non-convex
+optimization problems, which are computationally infeasible for video volumes.
+
+For this reason most existing methods which address the problem class in
+\autoref{eq:error-function} concentrate on single-frame solutions, which are
+computational tractable. However, single-frame solutions can not take account
+for temporal consistency. Methods which also solve the temporal stability
+problem typically use sliding windows to reduce computation costs
+\cite{conf/psivt/HosniRBG11} and Kalman filtering to mix the results of
+single-frame solutions \cite{conf/acivs/HoffkenOK11}. For those approaches it is
+important to find the correct window size, as this parameter balances
+computation costs and temporal smoothness. Poor parameter choices lead to
+inconsistencies.
+
+There also are methods which directly solve the global optimization using
+precomputed optical flow as a representation of the frame-to-frame relations. An
+example for this approach is \cite{Levin:2004:CUO:1015706.1015780}, which allows
+to recolor a video based on sparse scribble input by the user. Those methods
+generate high quality results but are computationally expensive and do not scale
+well for higher resolution input images and videos.
+
