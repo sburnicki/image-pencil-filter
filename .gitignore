@@ -3,3 +3,8 @@
 Debug
 Release
 result.jpg
+*.aux
+*.bbl
+*.blg
+*.log
+*.out
