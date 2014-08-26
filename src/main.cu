@@ -19,7 +19,6 @@
 #include "ScetchFilter.h"
 #include "ToneMappingFilter.h"
 #include "ImageMultiplicationFilter.h"
-#include "LogarithmicFilter.h"
 #include "PotentialFilter.h"
 #include "EquationSolver.h"
 
@@ -207,16 +206,11 @@ void ExecutePipeline(const char *infilename, const char *outfilename, IPFConfigu
     tone_filter.SetImageFromGpu(gpuGrayscale, imageWidth, imageHeight);
     tone_filter.Run();
 
-    std::cout << "Calculate the log of tonemapped image" << std::endl;
-    LogarithmicFilter log_filter;
-    log_filter.SetImageFromGpu(tone_filter.GetGpuResultData(), imageWidth, imageHeight);
-    log_filter.Run();
-
     std::cout << "Expanding and apply log function to texture on CPU" << std::endl;
     pencilTexture.Expand(imageWidth, imageHeight);
 
     std::cout << "Solving equation for texture drawing" << std::endl;
-    EquationSolver equation_solver(pencilTexture.LogBuffer(), log_filter.GetCpuResultData(),
+    EquationSolver equation_solver(pencilTexture.LogBuffer(), tone_filter.GetCpuResultData(),
     		imageWidth, imageHeight, config.TextureRenderingSmoothness);
     equation_solver.Run();
     float *beta_star = equation_solver.GetResult();
