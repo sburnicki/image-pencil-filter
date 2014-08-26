@@ -165,7 +165,7 @@ void ExecutePipelineCore(unsigned char *gpuCharResult, unsigned char *gpuCharIma
      COUT("Converting RGB to YUV");
      convertRGBToYUV<<<blockGrid, threadBlock>>>(gpuYUVBuffer, gpuCharImage, imageSize);
 
-     std::cout << "Extracting grayscale Image into BufferOne" << std::endl;
+     COUT("Extracting grayscale Image into BufferOne");
      extractGrayscale<<<blockGrid, threadBlock>>>(gpuBufferOne, gpuYUVBuffer, imageSize);
      PROF_RANGE_POP();
 
