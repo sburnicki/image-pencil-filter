@@ -14,10 +14,12 @@
     \frame{\titlepage}
 
     \section{Introduction}
+      \subsection{Table of Contents}
         \frame{
             \frametitle{Table of Contents}
             \tableofcontents
         }
+      \subsection{Project Objectives}
         \frame{
         	\frametitle{Project Objectives}
             \begin{itemize}
@@ -26,6 +28,7 @@
                 \item Understanding of a larger CUDA implementation
             \end{itemize}
         }
+      \subsection{Implementation Steps}
         \frame{
         	\frametitle{Implementation Steps}
             \begin{figure}[htbp]
@@ -39,25 +42,40 @@
                 \item Merge of Line and Tone Drawing
             \end{itemize}
         }
+    \section{Implementation}
+      \subsection{Line Drawing}
         \frame{
         	\frametitle{Line Drawing}
             \begin{figure}[htbp]
                 \centering
-                \includegraphics[scale = 0.15]{img/line_drawing.png}
-                \caption{Line drawing with strokes}
+                \includegraphics[scale = 0.2]{img/minions-1-gradient.png}
             \end{figure}
             \begin{itemize}
             	\item Forward gradient calculation on the grayscale version of the image with $G = \left ( \left ( \partial_xI \right )^2 + \left ( \partial_yI \right )^2 \right )^{\frac{1}{2}}$
-                \item Computation of the response map with $G_i = L_i * G$, where $L_i$ is a line segment at direction $i$ (implemented in the convolution kernel) and $*$ the convolution operator
             \end{itemize}
         }
         \frame{
+            \begin{figure}[htbp]
+                \centering
+                \includegraphics[scale = 0.2]{img/line_drawing.png}
+                \caption{Line drawing with strokes}
+            \end{figure}
             \begin{itemize}
+                \item Computation of the response map with $G_i = L_i * G$, where $L_i$ is a line segment at direction $i$ (implemented in the convolution kernel) and $*$ the convolution operator
                 \item Selection of the response for the pixel $p$ with the maximum value by $C_i \left ( p \right ) = \left \{ \begin{matrix} G \left ( p \right ) & if \: argmin_i \left \{ G_i \left ( p \right ) \right \} = i \\ 0 & otherwise \end{matrix} \right.$
+            \end{itemize}
+        }
+        \frame{
+            \begin{figure}[htbp]
+                \centering
+                \includegraphics[scale = 0.2]{img/minions-2-convolution.png}
+            \end{figure}
+            \begin{itemize}
                 \item Line Generation at each pixel with $S' = \sum \limits_{i = 1}^{8} \left ( L_i \otimes C_i \right )$
                 \item Final stroke map $S$ obtained by inverting pixels of $S'$ and mapping them to $[0, 1]$
             \end{itemize}
         }
+      \subsection{Tone Drawing}
         \frame{
             \frametitle{Tone Drawing}
             \begin{figure}[htbp]
@@ -73,12 +91,42 @@
             \end{itemize}
         }
         \frame{
+            \begin{figure}[htbp]
+                \centering
+                \includegraphics[scale = 0.2]{img/minions-3-tone.png}
+                \caption{Result of tone map}
+            \end{figure}
+        }
+        \frame{
+            \begin{figure}[htbp]
+                \centering
+                \includegraphics[scale = 0.2]{img/minions-4-potential.png}
+            \end{figure}
+            \begin{itemize}
+                \item Pencil Texture rendering
+            \end{itemize}
+        }
+      \subsection{Merge of Line and Tone Drawing}
+        \frame{
             \frametitle{Merge of Line and Tone Drawing}
+            \begin{figure}[htbp]
+                \centering
+                \includegraphics[scale = 0.2]{img/minions-5-multiplication.png}
+            \end{figure}
             \begin{itemize}
                 \item Multiplication of S and T values per pixel in $R = S \cdot T$
+            \end{itemize}
+        }
+        \frame{
+            \begin{figure}[htbp]
+                \centering
+                \includegraphics[scale = 0.2]{img/minions-6-colouring.png}
+            \end{figure}
+            \begin{itemize}
                 \item Simply use generated output R as Y in YUV colour space, keeping U and V from original image for coloured output
             \end{itemize}
         }
+      \subsection{Kernel Pipeline and Benchmarks}
         \frame{
             \frametitle{Kernel Pipeline}
             \begin{figure}[htbp]
@@ -86,34 +134,45 @@
                 \includegraphics[scale = 0.2]{img/pipeline.png}
             \end{figure}
         }
-    \section{Benchmarks}
     	\frame{
         	\frametitle{Benchmarks}
         }
     \section{Live Demonstration}
-    	\subsection{Minions}
         \frame{
             \frametitle{Live Demonstration}
             \begin{figure}[htbp]
                 \centering
-                \includegraphics[scale = 0.25]{img/minions.jpg}
-                \caption{Example of an animation picture}
+                \includegraphics[scale = 1.4]{img/karate_jump.jpg}
             \end{figure}
         }
-        \subsection{Cat}
         \frame{
             \begin{figure}[htbp]
                 \centering
-                \includegraphics[scale = 0.16]{img/cat.jpg}
-                \caption{Photo of a Cat}
+                \includegraphics[scale = 0.38]{img/karate_jump-scetch.jpg}
             \end{figure}
         }
-        \subsection{Church}
         \frame{
             \begin{figure}[htbp]
                 \centering
-                \includegraphics[scale = 0.1]{img/kirche.jpg}
-                \caption{Photo of a Church from the paper}
+                \includegraphics[scale = 1.58]{img/canoo.jpg}
+            \end{figure}
+        }
+        \frame{
+            \begin{figure}[htbp]
+                \centering
+                \includegraphics[scale = 0.38]{img/canoo-scetch.jpg}
+            \end{figure}
+        }
+        \frame{
+            \begin{figure}[htbp]
+                \centering
+                \includegraphics[scale = 0.78]{img/boats.jpg}
+            \end{figure}
+        }
+        \frame{
+            \begin{figure}[htbp]
+                \centering
+                \includegraphics[scale = 0.19]{img/boats-scetch.jpg}
             \end{figure}
         }
     \section{Conclusion}
@@ -123,6 +182,9 @@
                     \item Successful GPU implementation of the sketch filter as described in the paper
                     % TODO: How much faster?
                     \item Our GPU implementation is faster than the version of the paper
+                    \item 30 ms per frame in DVD quality
+                    \item 60 ms per frame in HD Ready
+                    \item 130 ms per frame in Full HD quality
                 \end{itemize}
             }
             \frame{

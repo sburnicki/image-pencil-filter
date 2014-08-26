@@ -6,6 +6,8 @@
  */
 
 #include "EquationSolver.h"
+#include "macros.h"
+
 #include <cusp/krylov/cg.h>
 #include <cusp/dia_matrix.h>
 #include <cusp/transpose.h>
@@ -37,16 +39,23 @@ void EquationSolver::Run() {
 #ifdef MATRIX_ON_CPU // faster! yields a total speedup of 2 for the entire calculation
 	// allocate storage for matrix A (dimension x dimension)
   // with dimension nonzero values in three diagonals
+	PROF_RANGE_PUSH("Allocate Matrix A on CPU");
 	cusp::dia_matrix<int,float,cusp::host_memory> A_cpu(dimension_, dimension_, dimension_, 3);
+	PROF_RANGE_POP();
 
 	// set the offsets of the diagonals
 	A_cpu.diagonal_offsets[0] = -2;
 	A_cpu.diagonal_offsets[1] = 0;
 	A_cpu.diagonal_offsets[2] = 2;
 
+    PROF_RANGE_PUSH("Create Matrix A");
   CreateMatrix_A(&A_cpu);
+  PROF_RANGE_POP();
+
   // Copy to GPU
+  PROF_RANGE_PUSH("Allocate and copy Matrix A on GPU");
 	cusp::dia_matrix<int,float,cusp::device_memory> A_gpu = A_cpu;
+  PROF_RANGE_POP();
 
 	// allocate storage for right hand side (b = log_texture^T * log_tonemap)
 	cusp::array1d<float, cusp::host_memory> b_cpu(dimension_, 0);

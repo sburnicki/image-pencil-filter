@@ -21,36 +21,29 @@ __global__ void PotentialKernel(
 
 	if (IsInImage5(x, y, image_width, image_height)) {
 		int pixel_index = PixelIndexOf5(x, y, image_width);
-		result[pixel_index] = powf(img[pixel_index] , beta[pixel_index]) * 255.f;
+		// * 2 because img[pixel_index] is the log2f of the real value
+		result[pixel_index] = exp2f(img[pixel_index] * beta[pixel_index]) * 255.f;
 	}
 }
 
-PotentialFilter::PotentialFilter(float *beta)
+PotentialFilter::PotentialFilter(float *gpu_beta)
 {
-	this->beta = beta;
+	gpu_beta_ = gpu_beta;
 }
 
 void PotentialFilter::Run()
 {
-	float * gpuBeta;
-
 	int imagew = GetImageWidth();
 	int imageh = GetImageHeight();
-	int image_size = imagew * imageh;
 
 	dim3 thread_block_size(32, 32, 1);
 	dim3 block_grid_size(1 + imagew / thread_block_size.x,
 			1 + imageh / thread_block_size.y,
 			1);
 
-	cudaMalloc((void**) &gpuBeta, image_size * sizeof(float));
-	cudaMemcpy(gpuBeta, beta, image_size * sizeof(float), cudaMemcpyHostToDevice);
-
 	PotentialKernel<<<block_grid_size, thread_block_size>>>(
 			GetGpuImageData(),
-			gpuBeta,
+			gpu_beta_,
 			GetGpuResultData(),
 			imagew, imageh);
-
-	cudaFree(gpuBeta);
 }
