@@ -1,2 +1,27 @@
 \section{Previous Work}
-Use this (a completely different very cool scetch filter on the GPU) \cite{Lu:2010:IPS} and this (3d Models => Scetch): \cite{Benard:2012:ASC}
+This work is based on \cite{mainPaper}, as this paper describes the filter that
+is implemented. The filter requires quite some parameters. In \cite{mainPaper}
+they use a parameter lerning approach to automatically select those parameters.
+In this work the filter is kept slightly simpler than in the origin paper, e.g.
+the line filter is slightly simplified and the filter parameters are left as
+user controllable options. 
+
+Another GPU-sketch-filter is described in \cite{Lu:2010:IPS}, though it uses the
+a regular shaderpipeline. Based on the neighbourhood informations of each pixel
+it calculates weather to place a stroke at this point or not. The strokes are
+then rendered as stroke-textures. The strokes are made in three different detail
+layers based on the gradientmagnitude. Furthermore it is possible to filter
+animations using optical flow. The greatest difference to the filter that we
+implement is that they calculate each individual pencil or brush stroke based on
+the image and then render those strokes using stroke-textures, and our method
+uses traditional filters to alter the original image. Their filter is quite
+versatile, as it allows different painting stiles by changing the
+stroke-textures and weighting the detail layers.
+
+
+A partially GPU based method is described in \cite{Benard:2012:ASC}. However
+they concentrate on rendering temporal coherent line drawing animations from a
+given 3D-scene. First they find active contours that are then adapted throughout
+the animation. The result pictures are rendered by parameterizing the and then
+add a certain style to the path. While this method yields amazing results for
+very stylistic animations, it needs 3D input data.

@@ -17,13 +17,13 @@ outlines and drawing the shading. In the sketch stage the filter calculates seve
 line convolutions and the shading stage solves a huge linear system of
 equations. Both tasks are computationally rather expensive and according to the
 authors their implementation of the filter takes 2 seconds to run on a
-$600\times 600$ image.
-
-
+$600\times 600$ image. \autoref{fig:teaser} shows input, intermediate
+results and the final result of the filter.
 
 This report presents our efforts to implement the entire filter on the GPU using
-Cuda. The structure is as follows: The filter itself is described in
-\autoref{method}, then in \autoref{gpu-implementation} we describe our
-implementation using Cuda. \autoref{performance} shows our benchmarking results
-for various input images and \autoref{future-work} some possible optimizations
-and applications for our implementation.
+Cuda, to gain realtime results. The structure of the report is as follows: The
+filter itself is described in \autoref{method}, then in
+\autoref{gpu-implementation} we describe our implementation using Cuda.
+\autoref{performance} shows our benchmarking results for various input images
+and \autoref{future-work} some possible optimizations and applications for our
+implementation.
