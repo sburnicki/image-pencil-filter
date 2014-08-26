@@ -11,6 +11,7 @@
 #include <iostream>
 #include <cmath>
 
+#include "ImagePencilFilter.h"
 #include "JpegImage.h"
 #include "ExpandableTexture.h"
 #include "GrayscaleHistogram.h"
@@ -22,17 +23,6 @@
 #include "PotentialFilter.h"
 #include "EquationSolver.h"
 
-
-#define MAX_BLOCKS 256
-#define MAX_THREADS 256
-#define LAMBDA 2.f
-#define YUV_COMPONENTS 3
-#define MAX_COLOR_VALUE COLOR_DEPTH - 1
-#define PENCIL_TEXTURE_PATH "resources/texture4.jpg"
-#define ONE_DEGRE 0.0174532925
-
-#define RGB_TO_Y(R, G, B) \
-	(R*0.299 + G*0.587 + B*0.114)
 
 __global__ void convertRGBToYUV(float *outputImage, unsigned char* image, int image_size)
 {
@@ -146,9 +136,11 @@ __global__ void CalculateGradientImage(
   }
 }
 
-void ExecutePipeline(const char *infilename, const char *outfilename, bool useColors)
+void ExecutePipeline(const char *infilename, const char *outfilename, IPFConfiguration &config)
 {
-	// load image, allocate space on GPU
+	/*
+	 * CPU Preprocssing: Load image and texture from JPEG, set variables
+	 */
 	JpegImage cpuImage(infilename);
 	ExpandableTexture pencilTexture(PENCIL_TEXTURE_PATH);
 
@@ -156,27 +148,34 @@ void ExecutePipeline(const char *infilename, const char *outfilename, bool useCo
 	int imageWidth = cpuImage.Width();
 	int imageHeight = cpuImage.Height();
 
+	/*
+	 * GPU Setup: allocate buffers, set variables, upload image to GPU
+	 */
 	unsigned char * gpuCharImage;
 	float * gpuFloatImage;
     float * gpuGrayscale;
 	cudaMalloc((void**) &gpuCharImage, cpuImage.ByteSize());
 	cudaMalloc((void**) &gpuFloatImage, imageSize * YUV_COMPONENTS * sizeof(float));
 	cudaMalloc((void**) &gpuGrayscale, imageSize * sizeof(float));
-
-	// upload to gpu
-    cudaMemcpy(gpuCharImage, cpuImage.Buffer(), cpuImage.ByteSize(), cudaMemcpyHostToDevice);
-
-	// convert to YUV
     dim3 blockGrid(MAX_BLOCKS);
     dim3 threadBlock(MAX_THREADS);
+
+    cudaMemcpy(gpuCharImage, cpuImage.Buffer(), cpuImage.ByteSize(), cudaMemcpyHostToDevice);
+
+    /*
+     * GPU Preprocessing: Convert to YUV and extract Grayscale
+     */
     std::cout << "Converting RGB to YUV" << std::endl;
     convertRGBToYUV<<<blockGrid, threadBlock>>>(gpuFloatImage, gpuCharImage, imageSize);
 
-    // extract grayscale
     std::cout << "Extracting grayscale Image" << std::endl;
     extractGrayscale<<<blockGrid, threadBlock>>>(gpuGrayscale, gpuFloatImage, imageSize);
 
-    // Calculate gradient image
+
+
+    /*
+     * Image 1: Create the scetched gradient image from Grayscale
+     */
     float *gpu_gradient_image;
     cudaMalloc((void**) &gpu_gradient_image, imageSize * sizeof(float));
 
@@ -187,47 +186,38 @@ void ExecutePipeline(const char *infilename, const char *outfilename, bool useCo
         imageWidth,
         gpu_gradient_image);
 
-
-
     std::cout << "Calculating the scetch filter" << std::endl;
-    // Apply Scetch Filter
-    ScetchFilter scetch_filter;
+    ScetchFilter scetch_filter(config);
     scetch_filter.SetImageFromGpu(gpu_gradient_image, imageWidth, imageHeight);
-    scetch_filter.set_line_count(13);
-    if (!scetch_filter.set_line_length(10)) {
-      std::cout << "Warning: linelength couldnt be set to the desired value."
-        " It was set to the maximal possible length instead."
-        << std::endl;
-    }
-    scetch_filter.set_line_strength(1);
-    scetch_filter.set_line_rotation_offset(5 * ONE_DEGRE); // 13 degree offset
-    scetch_filter.set_gamma(1.1);
     scetch_filter.Run();
 
-    // Calculate histogram
+
+    /*
+     * Image 2: Create the textured tone-mapped image from Grayscale
+     */
+    std::cout << "Calculating the target tone map on CPU" << std::endl;
+    ToneMap targetToneMap(config);
+
     std::cout << "Calculating the histogram of the grayscale image" << std::endl;
     GrayscaleHistogram histogram(gpuGrayscale, imageSize);
     histogram.Run();
 
-
     std::cout << "Calculating the tone mapping filter" << std::endl;
-    // Apply Scetch Filter
-    ToneMappingFilter tone_filter(COLOR_DEPTH, histogram.GpuCummulativeHistogram());
+    ToneMappingFilter tone_filter(targetToneMap, histogram.GpuCummulativeHistogram());
     tone_filter.SetImageFromGpu(gpuGrayscale, imageWidth, imageHeight);
     tone_filter.Run();
 
-    // TODO: think about unifying with tone mapping
     std::cout << "Calculate the log of tonemapped image" << std::endl;
     LogarithmicFilter log_filter;
     log_filter.SetImageFromGpu(tone_filter.GetGpuResultData(), imageWidth, imageHeight);
     log_filter.Run();
 
-
-    std::cout << "Expanding and apply log function to texture" << std::endl;
+    std::cout << "Expanding and apply log function to texture on CPU" << std::endl;
     pencilTexture.Expand(imageWidth, imageHeight);
 
     std::cout << "Solving equation for texture drawing" << std::endl;
-    EquationSolver equation_solver(pencilTexture.LogBuffer(), log_filter.GetCpuResultData(), imageWidth, imageHeight, LAMBDA);
+    EquationSolver equation_solver(pencilTexture.LogBuffer(), log_filter.GetCpuResultData(),
+    		imageWidth, imageHeight, config.TextureRenderingSmoothness);
     equation_solver.Run();
     float *beta_star = equation_solver.GetResult();
 
@@ -236,6 +226,11 @@ void ExecutePipeline(const char *infilename, const char *outfilename, bool useCo
     potential_filter.SetImageFromCpu(pencilTexture.ExpandedBuffer(), imageWidth, imageHeight);
     potential_filter.Run();
 
+
+
+    /*
+     * Combined Image: Multiplying texture tone-mapped image with scetched gradient image
+     */
     std::cout << "Multiplicating both images" << std::endl;
     ImageMultiplicationFilter image_multiplication(scetch_filter.GetGpuResultData());
     image_multiplication.SetImageFromGpu(potential_filter.GetGpuResultData(), imageWidth, imageHeight);
@@ -243,21 +238,32 @@ void ExecutePipeline(const char *infilename, const char *outfilename, bool useCo
 
     float *resultGrayscaleImage = image_multiplication.GetGpuResultData();
 
-	// convert to RGB
-    GrayscaleAndYUVToRGB<<<blockGrid, threadBlock>>>(gpuCharImage, resultGrayscaleImage, gpuFloatImage, useColors, imageSize);
 
-	// download image
+    /*
+     * GPU Postprocessing: Convert to RGB, either with colors or without
+     */
+    GrayscaleAndYUVToRGB<<<blockGrid, threadBlock>>>(gpuCharImage, resultGrayscaleImage, gpuFloatImage, config.UseColors, imageSize);
+
+
+    /*
+     * CPU Postprocessing: Download image and save it as JPEG
+     */
+
+
     cudaMemcpy(cpuImage.Buffer(), gpuCharImage, cpuImage.ByteSize(), cudaMemcpyDeviceToHost);
-
-	// write image
     cpuImage.Save(outfilename);
 	std::cout << "Done." << std::endl;
 
+	/*
+	 * Cleanup
+	 */
 	cudaFree(gpu_gradient_image);
 	cudaFree(gpuGrayscale);
 	cudaFree(gpuFloatImage);
 	cudaFree(gpuCharImage);
 }
+
+
 
 
 
@@ -267,11 +273,12 @@ int main(int argc, char* argv[]) {
 		std::cout << "Please provide input and output filenames as arguments." << std::endl;
 		return 1;
 	}
-	bool useColors = !(argc > 3 && strcmp(argv[3], "-grayscale") == 0);
+	IPFConfiguration config;
+	config.UseColors = !(argc > 3 && strcmp(argv[3], "-grayscale") == 0);
 
 	try
 	{
-		ExecutePipeline(argv[1], argv[2], useColors);
+		ExecutePipeline(argv[1], argv[2], config);
 	}
 	catch (const char *msg)
 	{

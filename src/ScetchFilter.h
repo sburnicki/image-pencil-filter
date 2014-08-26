@@ -9,11 +9,12 @@
 #define CONVOLUTIONFILTER_H_
 
 #include <string>
+#include "ImagePencilFilter.h"
 #include "ImageFilter.h"
 
 class ScetchFilter : public ImageFilter {
 public:
-	ScetchFilter();
+	ScetchFilter(IPFConfiguration &config);
 
 	// set the strength of the scetch lines in pixels
 	void set_line_strength(float line_strength);

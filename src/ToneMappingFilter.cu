@@ -2,7 +2,7 @@
 #include <cmath>
 #include <iostream>
 
-
+#include "ImagePencilFilter.h"
 #define EPSILON 0.0001
 
 // TODO: remove/resolve duplicate code:
@@ -61,23 +61,17 @@ __global__ void ToneMappingKernel(
 }
 
 
-ToneMappingFilter::ToneMappingFilter(int tones, int *gpuCumHistogram) : ImageFilter(), cpu_tonemap_(tones)
+ToneMappingFilter::ToneMappingFilter(ToneMap &destinationMap, int *gpuCumHistogram) : ImageFilter()
 {
 	gpu_histogram_ = gpuCumHistogram;
-	num_tones_ = tones;
-	const std::vector<float> &tonemap = cpu_tonemap_.getTonemap();
-	cudaMalloc((void**) &gpu_tonemap_array_, num_tones_ * sizeof(float));
-	cudaMemcpy(gpu_tonemap_array_, &tonemap[0], num_tones_ * sizeof(float), cudaMemcpyHostToDevice);
+	const std::vector<float> &tonemap = destinationMap.getTonemap();
+	cudaMalloc((void**) &gpu_tonemap_array_, COLOR_DEPTH * sizeof(float));
+	cudaMemcpy(gpu_tonemap_array_, &tonemap[0], COLOR_DEPTH * sizeof(float), cudaMemcpyHostToDevice);
 }
 
 ToneMappingFilter::~ToneMappingFilter()
 {
 	cudaFree(gpu_tonemap_array_);
-}
-
-const std::vector<float> &ToneMappingFilter::GetCpuTonemap()
-{
-	return cpu_tonemap_.getTonemap();
 }
 
 void ToneMappingFilter::Run() {
@@ -90,6 +84,6 @@ void ToneMappingFilter::Run() {
 	ToneMappingKernel<<<block_grid_size, thread_block_size>>>(
 			GetGpuImageData(),
 			GetGpuResultData(),
-			imagew, imageh, num_tones_,
+			imagew, imageh, COLOR_DEPTH,
 			gpu_histogram_, gpu_tonemap_array_);
 }

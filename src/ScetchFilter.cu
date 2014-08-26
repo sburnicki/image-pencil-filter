@@ -11,6 +11,7 @@
 #include <math.h>
 #include <string>
 #include <vector>
+#include <iostream>
 
 // shared Memory Size per Multiprocessor is 48KB with Cuda 2.0 to 4.x
 // 48KB equals 48k/4 floats
@@ -167,12 +168,12 @@ __global__ void HighSpeedScetchKernel(
 }
 
 
-ScetchFilter::ScetchFilter() : ImageFilter() {
-  line_length_ = 20;
-  line_strength_ = 1;
-  line_count_  = 4;
-  gamma_ = 1.f;
-  rotation_offset_ = 0.f;
+ScetchFilter::ScetchFilter(IPFConfiguration &config) : ImageFilter() {
+  set_line_length(config.ScetchLineLength);
+  set_line_strength(config.ScetchLineStrength);
+  set_line_count(config.ScetchLineCount);
+  set_gamma(config.ScetchGamma);
+  set_line_rotation_offset(config.ScetchLineRotationOffset);
 }
 
 
@@ -187,6 +188,9 @@ bool ScetchFilter::set_line_length(int line_length) {
   } else {
     // max line length exeeded
     line_length_ = (SHARED_2D_BLOCK_DIMENSION - 32) / 2;
+    std::cout << "Warning: linelength couldnt be set to the desired value."
+        " It was set to the maximal possible length instead."
+        << std::endl;
     return false;
   }
 }

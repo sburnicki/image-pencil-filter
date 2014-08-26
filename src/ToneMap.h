@@ -4,18 +4,17 @@
  *  Created on: 24.06.2014
  *      Author: stefan
  */
-#include <vector>
-
 #ifndef TONEMAP_H_
 #define TONEMAP_H_
 
-#define DEF_NUM_TONES 256
+#include "ImagePencilFilter.h"
+#include <vector>
 
 class ToneMap
 {
 
 public:
-	ToneMap(int numTones = DEF_NUM_TONES);
+	ToneMap(IPFConfiguration &config);
 
 	void setP1Params(float sigmaB);
 	void setP2Params(float muA, float muB);

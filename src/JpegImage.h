@@ -8,7 +8,7 @@
 #ifndef JPEGIMAGE_H_
 #define JPEGIMAGE_H_
 
-#define RGB_COMPONENTS 3
+#include "ImagePencilFilter.h"
 
 class JpegImage {
 public:

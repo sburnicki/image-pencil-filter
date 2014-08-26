@@ -8,6 +8,7 @@
 #include "JpegImage.h"
 
 #include <exception>
+#include <string>
 
 #include "../lib/jpge.h"
 #include "../lib/jpgd.h"
@@ -24,7 +25,7 @@ JpegImage::JpegImage(const char *filename)
 		_buffer = NULL;
 		if (comps == 0)
 		{
-			throw "Loading the image failed! Wrong path?.";
+			throw (std::string("Loading the image") + filename + " failed! Wrong path?.").c_str();
 		}
 		else
 		{
