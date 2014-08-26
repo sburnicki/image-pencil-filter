@@ -14,7 +14,7 @@
 #include "macros.h"
 #include "ImagePencilFilter.h"
 #include "JpegImage.h"
-#include "ExpandableTexture.h"
+#include "TextureExpander.h"
 #include "GrayscaleHistogram.h"
 
 #include "ScetchFilter.h"
@@ -143,7 +143,7 @@ void ExecutePipeline(const char *infilename, const char *outfilename, IPFConfigu
 	 */
 	PROF_RANGE_PUSH("Load Jpeg Images");
 	JpegImage cpuImage(infilename);
-	ExpandableTexture pencilTexture(PENCIL_TEXTURE_PATH);
+	JpegImage cpuTextureImage(PENCIL_TEXTURE_PATH);
 
 	int imageSize = cpuImage.PixelSize();
 	int imageWidth = cpuImage.Width();
@@ -155,11 +155,14 @@ void ExecutePipeline(const char *infilename, const char *outfilename, IPFConfigu
 	 */
 	PROF_RANGE_PUSH("Buffer Allocation");
 	unsigned char * gpuCharImage;
+	unsigned char * gpuTextureImage;
 	float * gpuYUVImage;
 	float * gpuScetchImage;
     float * gpuBufferOne;
     float * gpuBufferTwo;
-	cudaMalloc((void**) &gpuCharImage, cpuImage.ByteSize());
+    float * cpuExpandedTexture = (float *) malloc(imageSize * sizeof(float));
+    cudaMalloc((void**) &gpuCharImage, cpuImage.ByteSize());
+    cudaMalloc((void**) &gpuTextureImage, cpuTextureImage.ByteSize());
 	cudaMalloc((void**) &gpuYUVImage, imageSize * YUV_COMPONENTS * sizeof(float));
 	cudaMalloc((void**) &gpuScetchImage, imageSize * sizeof(float));
 	cudaMalloc((void**) &gpuBufferOne, imageSize * sizeof(float));
@@ -168,6 +171,7 @@ void ExecutePipeline(const char *infilename, const char *outfilename, IPFConfigu
     dim3 threadBlock(MAX_THREADS);
 
     cudaMemcpy(gpuCharImage, cpuImage.Buffer(), cpuImage.ByteSize(), cudaMemcpyHostToDevice);
+    cudaMemcpy(gpuTextureImage, cpuTextureImage.Buffer(), cpuTextureImage.ByteSize(), cudaMemcpyHostToDevice);
     PROF_RANGE_POP();
 
     /*
@@ -223,16 +227,17 @@ void ExecutePipeline(const char *infilename, const char *outfilename, IPFConfigu
     PROF_RANGE_POP();
 
     PROF_RANGE_PUSH("Expanding Texture");
-    std::cout << "Expanding and apply log function to texture on CPU, copy it to BufferOne" << std::endl;
-    pencilTexture.Expand(imageWidth, imageHeight);
+    std::cout << "Expanding and apply log2f function to texture, copy it to BufferOne" << std::endl;
+    TextureExpander textExpander(gpuTextureImage, cpuTextureImage.Width(), cpuTextureImage.Height());
+    textExpander.ExpandDesaturateAndLogTo(gpuBufferOne , imageWidth, imageHeight);
     PROF_RANGE_POP();
-    PROF_RANGE_PUSH("Upload expanded Texture to GPU");
-	cudaMemcpy(gpuBufferOne, pencilTexture.ExpandedBuffer(), imageSize * sizeof(float), cudaMemcpyHostToDevice);
+    PROF_RANGE_PUSH("Download expanded log-Texture to CPU");
+    cudaMemcpy(cpuExpandedTexture, gpuBufferOne, imageSize * sizeof(float), cudaMemcpyDeviceToHost);
 	PROF_RANGE_POP();
 
 	PROF_RANGE_PUSH("Solve Equation");
     std::cout << "Solving equation for texture drawing, copy result to BufferTwo" << std::endl;
-    EquationSolver equation_solver(pencilTexture.LogBuffer(), tone_filter.GetCpuResultData(),
+    EquationSolver equation_solver(cpuExpandedTexture, tone_filter.GetCpuResultData(),
     		imageWidth, imageHeight, config.TextureRenderingSmoothness);
     equation_solver.Run();
     PROF_RANGE_POP();
@@ -290,6 +295,8 @@ void ExecutePipeline(const char *infilename, const char *outfilename, IPFConfigu
 	cudaFree(gpuBufferOne);
 	cudaFree(gpuYUVImage);
 	cudaFree(gpuCharImage);
+	cudaFree(gpuTextureImage);
+	free(cpuExpandedTexture);
 	PROF_RANGE_POP();
 }
 

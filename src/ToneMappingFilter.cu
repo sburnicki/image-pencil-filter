@@ -43,7 +43,7 @@ __device__ __host__ int binarySearch(float value, float* target, int minidx, int
 
 /*
  * Important: This kernel does not only perform tone mapping,
- * but also normalizes the value and applies the logarithmic function to it!
+ * but also applies the log2f function to it!
  */
 __global__ void ToneMappingKernel(
 		float *image,
@@ -59,7 +59,7 @@ __global__ void ToneMappingKernel(
 		int pixel_index = PixelIndexOf2(x, y, image_width);
 		float find = ((float) origHist[(int) image[pixel_index]]) / numpixels;
 		int targetValue = binarySearch(find, destHist, 0, num_tones - 1);
-		result[pixel_index] = logf(targetValue / 255.0);
+		result[pixel_index] = log2f(targetValue / 255.0);
 	}
 }
 

@@ -8,21 +8,10 @@
 #ifndef IMAGEPENCILFILTERR_H_
 #define IMAGEPENCILFILTERR_H_
 
+#include "macros.h"
+
 #define MAX_BLOCKS 256
 #define MAX_THREADS 256
-
-#define COLOR_DEPTH 256
-#define MAX_COLOR_VALUE COLOR_DEPTH - 1
-
-#define YUV_COMPONENTS 3
-#define RGB_COMPONENTS 3
-
-#define PENCIL_TEXTURE_PATH "resources/texture4.jpg"
-#define ONE_DEGREE 0.0174532925
-
-
-#define RGB_TO_Y(R, G, B) \
-	(R*0.299 + G*0.587 + B*0.114)
 
 class IPFConfiguration
 {
