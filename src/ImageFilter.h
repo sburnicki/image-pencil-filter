@@ -16,15 +16,22 @@ public:
 	virtual ~ImageFilter();
 
 
+
 	// Creates and uploads the image data from the given cpu_image
+	// Optional: Set an existing result buffer
 	void SetImageFromCpu(float *cpu_image_data,
 				  int image_width, int image_height);
+	void SetImageFromCpu(float *cpu_image_data,
+				  int image_width, int image_height, float *gpu_result_buffer);
 
 	// Uses the given gpu image data. Expects the data to be already
 	// allocated and uploaded to the gpu.
 	// Useful to process an image that is already on the device
+	// Optional: Set an existing result buffer
 	void SetImageFromGpu(float *gpu_image_data,
 				  int image_width, int image_height);
+	void SetImageFromGpu(float *gpu_image_data,
+				  int image_width, int image_height, float *gpu_result_buffer);
 
 	// returns the pointer to the result image
 	// expects that Run() was already called
@@ -47,12 +54,14 @@ protected:
 	float *GetGpuImageData() { return gpu_image_data_; }
 
 private:
+	void set_result_buffer(float *gpu_result_buffer);
 	// little helper functions
 	int image_pixel_count();
 	int image_byte_count();
 
 	int image_width_, image_height_;
 	bool free_image_;
+	bool free_result_;
 	float *gpu_image_data_;
 	float *gpu_result_data_;
 };
