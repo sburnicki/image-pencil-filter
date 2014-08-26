@@ -104,6 +104,9 @@
 								<option id="nvcc.linker.option.paths.872755553" name="Library search path (-L)" superClass="nvcc.linker.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="/home/braunra/Desktop/MPP_Project/image-pencil-filter/extern-lib/cusplibrary-master"/>
 								</option>
+								<option id="nvcc.linker.option.libs.733993831" superClass="nvcc.linker.option.libs" valueType="libs">
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="nvToolsExt"/>
+								</option>
 								<inputType id="nvcc.linker.input.1842706695" superClass="nvcc.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
 									<additionalInput kind="additionalinput" paths="$(LIBS)"/>

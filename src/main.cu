@@ -11,6 +11,7 @@
 #include <iostream>
 #include <cmath>
 
+#include "macros.h"
 #include "ImagePencilFilter.h"
 #include "JpegImage.h"
 #include "ExpandableTexture.h"
@@ -140,16 +141,19 @@ void ExecutePipeline(const char *infilename, const char *outfilename, IPFConfigu
 	/*
 	 * CPU Preprocssing: Load image and texture from JPEG, set variables
 	 */
+	PROF_RANGE_PUSH("Load Jpeg Images");
 	JpegImage cpuImage(infilename);
 	ExpandableTexture pencilTexture(PENCIL_TEXTURE_PATH);
 
 	int imageSize = cpuImage.PixelSize();
 	int imageWidth = cpuImage.Width();
 	int imageHeight = cpuImage.Height();
+	PROF_RANGE_POP();
 
 	/*
 	 * GPU Setup: allocate buffers, set variables, upload image to GPU
 	 */
+	PROF_RANGE_PUSH("Buffer Allocation");
 	unsigned char * gpuCharImage;
 	float * gpuYUVImage;
 	float * gpuScetchImage;
@@ -164,21 +168,25 @@ void ExecutePipeline(const char *infilename, const char *outfilename, IPFConfigu
     dim3 threadBlock(MAX_THREADS);
 
     cudaMemcpy(gpuCharImage, cpuImage.Buffer(), cpuImage.ByteSize(), cudaMemcpyHostToDevice);
+    PROF_RANGE_POP();
 
     /*
      * GPU Preprocessing: Convert to YUV and extract Grayscale
      */
+    PROF_RANGE_PUSH("GPU Preprocessing");
     std::cout << "Converting RGB to YUV" << std::endl;
     convertRGBToYUV<<<blockGrid, threadBlock>>>(gpuYUVImage, gpuCharImage, imageSize);
 
     std::cout << "Extracting grayscale Image into BufferOne" << std::endl;
     extractGrayscale<<<blockGrid, threadBlock>>>(gpuBufferOne, gpuYUVImage, imageSize);
+    PROF_RANGE_POP();
 
 
 
     /*
      * Image 1: Create the scetched gradient image from Grayscale
      */
+    PROF_RANGE_PUSH("Image 1");
     std::cout << "Calculating the Gradient from BufferOne (grayscale) in BufferTwo" << std::endl;
     CalculateGradientImage<<<blockGrid, threadBlock>>>(
         gpuBufferOne,
@@ -190,70 +198,99 @@ void ExecutePipeline(const char *infilename, const char *outfilename, IPFConfigu
     ScetchFilter scetch_filter(config);
     scetch_filter.SetImageFromGpu(gpuBufferTwo, imageWidth, imageHeight, gpuScetchImage);
     scetch_filter.Run();
+    PROF_RANGE_POP();
 
 
     /*
      * Image 2: Create the textured tone-mapped image from Grayscale
      */
+    PROF_RANGE_PUSH("Compute Target Tone Map");
     std::cout << "Calculating the target tone map on CPU" << std::endl;
     ToneMap targetToneMap(config);
+    PROF_RANGE_POP();
 
+    PROF_RANGE_PUSH("Compute Histogram");
     std::cout << "Calculating the histogram of BufferOne (grayscale)" << std::endl;
     GrayscaleHistogram histogram(gpuBufferOne, imageSize);
     histogram.Run();
+    PROF_RANGE_POP();
 
+    PROF_RANGE_PUSH("Use ToneMapping filter");
     std::cout << "Applying tone mapping fromn BufferOne (grayscale) to BufferTwo" << std::endl;
     ToneMappingFilter tone_filter(targetToneMap, histogram.GpuCummulativeHistogram());
     tone_filter.SetImageFromGpu(gpuBufferOne, imageWidth, imageHeight, gpuBufferTwo);
     tone_filter.Run();
+    PROF_RANGE_POP();
 
+    PROF_RANGE_PUSH("Expanding Texture");
     std::cout << "Expanding and apply log function to texture on CPU, copy it to BufferOne" << std::endl;
     pencilTexture.Expand(imageWidth, imageHeight);
+    PROF_RANGE_POP();
+    PROF_RANGE_PUSH("Upload expanded Texture to GPU");
 	cudaMemcpy(gpuBufferOne, pencilTexture.ExpandedBuffer(), imageSize * sizeof(float), cudaMemcpyHostToDevice);
+	PROF_RANGE_POP();
 
+	PROF_RANGE_PUSH("Solve Equation");
     std::cout << "Solving equation for texture drawing, copy result to BufferTwo" << std::endl;
     EquationSolver equation_solver(pencilTexture.LogBuffer(), tone_filter.GetCpuResultData(),
     		imageWidth, imageHeight, config.TextureRenderingSmoothness);
     equation_solver.Run();
+    PROF_RANGE_POP();
+    PROF_RANGE_PUSH("Upload equation result");
     cudaMemcpy(gpuBufferTwo, equation_solver.GetResult(), imageSize * sizeof(float), cudaMemcpyHostToDevice);
+    PROF_RANGE_POP();
 
     std::cout << "Rendering computed texture with BufferTwo (equation_solver result), BufferOne (expanded texture) to BufferOne" << std::endl;
+    PROF_RANGE_PUSH("Rendering Texture");
     // This Filter can work inplace: Input Picture can be ouput picture
     PotentialFilter potential_filter(gpuBufferTwo);
     potential_filter.SetImageFromGpu(gpuBufferOne, imageWidth, imageHeight, gpuBufferOne);
     potential_filter.Run();
+    PROF_RANGE_POP();
 
 
 
     /*
      * Combined Image: Multiplying texture tone-mapped image with scetched gradient image
      */
+    PROF_RANGE_PUSH("Multiplicate Images");
     std::cout << "Multiplicating both images (gpuScetchImage and BufferTwo) into BufferOne" << std::endl;
     ImageMultiplicationFilter image_multiplication(scetch_filter.GetGpuResultData());
     image_multiplication.SetImageFromGpu(potential_filter.GetGpuResultData(), imageWidth, imageHeight, gpuBufferOne);
     image_multiplication.Run();
+    PROF_RANGE_POP();
 
     /*
      * GPU Postprocessing: Convert to RGB, either with colors or without
      */
+    PROF_RANGE_PUSH("GPU Postprocessing");
     GrayscaleAndYUVToRGB<<<blockGrid, threadBlock>>>(gpuCharImage, image_multiplication.GetGpuResultData(),
     		gpuYUVImage, config.UseColors, imageSize);
+    PROF_RANGE_POP();
 
 
     /*
      * CPU Postprocessing: Download image and save it as JPEG
      */
+    PROF_RANGE_PUSH("Download result");
     cudaMemcpy(cpuImage.Buffer(), gpuCharImage, cpuImage.ByteSize(), cudaMemcpyDeviceToHost);
-    cpuImage.Save(outfilename);
+    PROF_RANGE_POP();
+
+    PROF_RANGE_PUSH("Save result");
+	cpuImage.Save(outfilename);
+	PROF_RANGE_POP();
+
 	std::cout << "Done." << std::endl;
 
 	/*
 	 * Cleanup
 	 */
+	PROF_RANGE_PUSH("Cleanup");
 	cudaFree(gpuBufferTwo);
 	cudaFree(gpuBufferOne);
 	cudaFree(gpuYUVImage);
 	cudaFree(gpuCharImage);
+	PROF_RANGE_POP();
 }
 
 
