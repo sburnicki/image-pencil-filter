@@ -8,6 +8,8 @@
 #ifndef MACROS_H_
 #define MACROS_H_
 
+#define DUMMYOP() do {} while(false)
+
 //#define PROFILING
 
 #ifdef PROFILING
@@ -15,8 +17,8 @@
   #define PROF_RANGE_PUSH(s) nvtxRangePushA(s)
   #define PROF_RANGE_POP() nvtxRangePop()
 #else
-  #define PROF_RANGE_PUSH(s) do {} while(false)
-  #define PROF_RANGE_POP() do {} while(false)
+  #define PROF_RANGE_PUSH(s) DUMMYOP()
+  #define PROF_RANGE_POP() DUMMYOP()
 #endif
 
 #define COLOR_DEPTH 256
