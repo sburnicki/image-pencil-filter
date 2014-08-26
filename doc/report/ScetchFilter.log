@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2014.4.18)  26 AUG 2014 11:12
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2014.4.18)  26 AUG 2014 16:08
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -139,6 +139,10 @@ LaTeX Font Info:    Redeclaring font encoding OMS on input line 567.
 LaTeX Info: Redefining \[ on input line 2665.
 LaTeX Info: Redefining \] on input line 2666.
 )
+(/usr/share/texlive/texmf-dist/tex/latex/jknapltx/mathrsfs.sty
+Package: mathrsfs 1996/01/01 Math RSFS package v1.0 (jk)
+\symrsfs=\mathgroup4
+)
 (/usr/share/texlive/texmf-dist/tex/latex/hyperref/hyperref.sty
 Package: hyperref 2012/11/06 v6.83m Hypertext links for LaTeX
 
@@ -254,23 +258,26 @@ Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
 )
 \Hy@SectionHShift=\skip46
 )
+(/usr/share/texlive/texmf-dist/tex/latex/oberdiek/hypcap.sty
+Package: hypcap 2011/02/16 v1.11 Adjusting the anchors of captions (HO)
+)
 (./ScetchFilter.aux)
 \openout1 = `ScetchFilter.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 12.
-LaTeX Font Info:    ... okay on input line 12.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 12.
-LaTeX Font Info:    ... okay on input line 12.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 12.
-LaTeX Font Info:    ... okay on input line 12.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 12.
-LaTeX Font Info:    ... okay on input line 12.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 12.
-LaTeX Font Info:    ... okay on input line 12.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 12.
-LaTeX Font Info:    ... okay on input line 12.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 12.
-LaTeX Font Info:    ... okay on input line 12.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 14.
+LaTeX Font Info:    ... okay on input line 14.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 14.
+LaTeX Font Info:    ... okay on input line 14.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 14.
+LaTeX Font Info:    ... okay on input line 14.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 14.
+LaTeX Font Info:    ... okay on input line 14.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 14.
+LaTeX Font Info:    ... okay on input line 14.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 14.
+LaTeX Font Info:    ... okay on input line 14.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 14.
+LaTeX Font Info:    ... okay on input line 14.
 
 (/usr/share/texlive/texmf-dist/tex/context/base/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
@@ -301,7 +308,7 @@ File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
 e
 ))
 \AtBeginShipoutBox=\box29
-Package hyperref Info: Link coloring OFF on input line 12.
+Package hyperref Info: Link coloring OFF on input line 14.
 
 (/usr/share/texlive/texmf-dist/tex/latex/hyperref/nameref.sty
 Package: nameref 2012/10/27 v2.43 Cross-referencing by name of section
@@ -311,37 +318,40 @@ Package: gettitlestring 2010/12/03 v1.4 Cleanup title references (HO)
 )
 \c@section@level=\count116
 )
-LaTeX Info: Redefining \ref on input line 12.
-LaTeX Info: Redefining \pageref on input line 12.
-LaTeX Info: Redefining \nameref on input line 12.
+LaTeX Info: Redefining \ref on input line 14.
+LaTeX Info: Redefining \pageref on input line 14.
+LaTeX Info: Redefining \nameref on input line 14.
 
 (./ScetchFilter.out) (./ScetchFilter.out)
 \@outlinefile=\write3
 \openout3 = `ScetchFilter.out'.
 
 
-<images/tuebingen4b_um_rot_small.pdf, id=36, 558.8127pt x 196.8936pt>
+<images/tuebingen4b_um_rot_small.pdf, id=40, 558.8127pt x 196.8936pt>
 File: images/tuebingen4b_um_rot_small.pdf Graphic file (type pdf)
 
 <use images/tuebingen4b_um_rot_small.pdf>
 Package pdftex.def Info: images/tuebingen4b_um_rot_small.pdf used on input line
- 25.
+ 24.
 (pdftex.def)             Requested size: 203.39862pt x 71.66577pt.
-LaTeX Font Info:    Try loading font information for T1+aess on input line 25.
+LaTeX Font Info:    Try loading font information for T1+aess on input line 24.
 
 (/usr/share/texlive/texmf-dist/tex/latex/ae/t1aess.fd
 File: t1aess.fd 1997/11/16 Font definitions for T1/aess.
 )
 
 LaTeX Font Warning: Font shape `T1/aess/m/sc' undefined
-(Font)              using `T1/aess/m/n' instead on input line 25.
+(Font)              using `T1/aess/m/n' instead on input line 24.
 
 
 LaTeX Font Warning: Font shape `T1/aess/bx/sc' undefined
-(Font)              using `T1/aess/bx/n' instead on input line 25.
+(Font)              using `T1/aess/bx/n' instead on input line 24.
 
-
-Overfull \hbox (15.98987pt too wide) in paragraph at lines 25--25
+LaTeX Font Info:    Try loading font information for U+rsfs on input line 24.
+(/usr/share/texlive/texmf-dist/tex/latex/jknapltx/ursfs.fd
+File: ursfs.fd 1998/03/24 rsfs font definition file (jk)
+)
+Overfull \hbox (15.98987pt too wide) in paragraph at lines 24--24
 [][][][][][] 
  []
 
@@ -351,114 +361,50 @@ Overfull \hbox (15.98987pt too wide) in paragraph at lines 25--25
 {/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map} <./images/tuebingen4b_um_ro
 t_small.pdf>] [2
 
-] <images/teaser.jpg, id=68, 1309.89375pt x 397.485pt>
+] <images/teaser.jpg, id=72, 1309.89375pt x 397.485pt>
 File: images/teaser.jpg Graphic file (type jpg)
 
 <use images/teaser.jpg>
-Package pdftex.def Info: images/teaser.jpg used on input line 25.
+Package pdftex.def Info: images/teaser.jpg used on input line 24.
 (pdftex.def)             Requested size: 406.79724pt x 123.43741pt.
  (./abstract.tex) (./introduction.tex)
-(./previous-work.tex) (./method.texpdfTeX warning (ext4): destination with the 
-same identifier (name{page.1}) has been already used, duplicate ignored
+(./previous-work.tex
+Underfull \hbox (badness 10000) in paragraph at lines 9--20
+[]\T1/aer/m/n/10 Another GPU-sketch-filter is de-scribed in
+ []
+
+
+Underfull \hbox (badness 1028) in paragraph at lines 9--20
+\T1/aer/m/n/10 they cal-cu-late each in-di-vid-ual pen-cil or brush
+ []
+
+
+Underfull \hbox (badness 1253) in paragraph at lines 9--20
+\T1/aer/m/n/10 strokes us-ing stroke-textures, and our method
+ []
+
+pdfTeX warning (ext4): destination with the same identifier (name{page.1}) has 
+been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.10 
+l.20 
       [1
 
 
 
- <./images/teaser.jpg>]
-Underfull \hbox (badness 2245) in paragraph at lines 42--48
-[]\T1/aer/m/n/10 By in-ter-pret-ing op-ti-cal flow as a reaction-
- []
-
-<images/domain-transform.png, id=99, 227.6505pt x 57.3342pt>
-File: images/domain-transform.png Graphic file (type png)
-
-<use images/domain-transform.png>
-Package pdftex.def Info: images/domain-transform.png used on input line 98.
-(pdftex.def)             Requested size: 226.0pt x 56.92023pt.
-
-Overfull \hbox (5.0pt too wide) in paragraph at lines 98--101
- [][] 
- []
-
-
-LaTeX Warning: `!h' float specifier changed to `!ht'.
-
-
-Underfull \hbox (badness 1308) in paragraph at lines 105--109
-[]\T1/aer/m/n/10 A joined domain-transform fil-ter-ing is used,
+ <./images/teaser.jpg>]) (./method.tex) (./gpu-implementation.tex
+Underfull \hbox (badness 4913) in paragraph at lines 10--14
+ []\T1/aess/bx/sc/10 Disparity Es-ti-ma-tion[] \T1/aer/m/n/10 Dis-par-ity es-ti
+-ma-tion is
  []
 
 pdfTeX warning (ext4): destination with the same identifier (name{page.2}) has 
 been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.109 
-       [2] <images/joint-filter.jpg, id=116, 813.0375pt x 271.0125pt>
-File: images/joint-filter.jpg Graphic file (type jpg)
-
-<use images/joint-filter.jpg>
-Package pdftex.def Info: images/joint-filter.jpg used on input line 123.
-(pdftex.def)             Requested size: 226.0pt x 75.33298pt.
-
-Overfull \hbox (5.0pt too wide) in paragraph at lines 123--126
- [][] 
- []
-
-<images/paths.png, id=118, 216.81pt x 58.5387pt>
-File: images/paths.png Graphic file (type png)
- <use images/paths.png>
-Package pdftex.def Info: images/paths.png used on input line 144.
-(pdftex.def)             Requested size: 226.0pt x 61.0235pt.
-
-Overfull \hbox (5.0pt too wide) in paragraph at lines 144--147
- [][] 
- []
-
-[3 <./images/domain-transform.png> <./images/joint-filter.jpg> <./images/paths.
-png>] <images/confidence.png, id=134, 1617.04124pt x 620.3175pt>
-File: images/confidence.png Graphic file (type png)
-
-<use images/confidence.png>
-Package pdftex.def Info: images/confidence.png used on input line 188.
-(pdftex.def)             Requested size: 226.0pt x 86.69241pt.
-
-Overfull \hbox (5.0pt too wide) in paragraph at lines 188--192
- [][] 
- []
-
-<images/penalty.png, id=136, 642.4pt x 385.44pt>
-File: images/penalty.png Graphic file (type png)
- <use images/penalty.png>
-Package pdftex.def Info: images/penalty.png used on input line 216.
-(pdftex.def)             Requested size: 158.20276pt x 94.91882pt.
-
-<images/improvements.png, id=138, 1419.3025pt x 878.28125pt>
-File: images/improvements.png Graphic file (type png)
-
-<use images/improvements.png>
-Package pdftex.def Info: images/improvements.png used on input line 232.
-(pdftex.def)             Requested size: 226.0pt x 139.84439pt.
-
-Overfull \hbox (5.0pt too wide) in paragraph at lines 232--235
- [][] 
- []
-
-[4 <./images/confidence.png> <./images/penalty.png (PNG copy)> <./images/improv
-ements.png>]
-Overfull \hbox (5.70782pt too wide) in paragraph at lines 257--267
- [][] 
- []
-
-) (./gpu-implementation.tex
-Underfull \hbox (badness 4913) in paragraph at lines 10--14
- []\T1/aess/bx/sc/10 Disparity Es-ti-ma-tion[] \T1/aer/m/n/10 Dis-par-ity es-ti
--ma-tion is
- []
-
-<images/disparity.png, id=155, 1500.60625pt x 527.9725pt>
+l.17 \end{align*}
+                  [2]
+<images/disparity.png, id=110, 1500.60625pt x 527.9725pt>
 File: images/disparity.png Graphic file (type png)
 
 <use images/disparity.png>
@@ -469,7 +415,10 @@ Overfull \hbox (5.0pt too wide) in paragraph at lines 23--27
  [][] 
  []
 
-<images/depth.png, id=158, 1489.565pt x 389.455pt>
+
+LaTeX Warning: Reference `fig:scribble' on page 3 undefined on input line 37.
+
+<images/depth.png, id=112, 1489.565pt x 389.455pt>
 File: images/depth.png Graphic file (type png)
  <use images/depth.png>
 Package pdftex.def Info: images/depth.png used on input line 49.
@@ -479,7 +428,7 @@ Overfull \hbox (5.0pt too wide) in paragraph at lines 49--53
  [][] 
  []
 
-<images/saliency.png, id=160, 1500.60625pt x 195.73125pt>
+<images/saliency.png, id=114, 1500.60625pt x 195.73125pt>
 File: images/saliency.png Graphic file (type png)
 
 <use images/saliency.png>
@@ -490,8 +439,8 @@ Overfull \hbox (5.0pt too wide) in paragraph at lines 67--69
  [][] 
  []
 
-[5 <./images/disparity.png> <./images/depth.png>]) (./performance.tex)
-(./future-work.tex) (./conclusion.tex) (./ScetchFilter.bbl
+) (./performance.tex) (./future-work.tex) (./conclusion.tex [3 <./images/dispar
+ity.png> <./images/depth.png> <./images/saliency.png>]) (./ScetchFilter.bbl
 Underfull \hbox (badness 1622) in paragraph at lines 5--10
 \T1/aer/m/n/10 Cole, Adam Finkel-stein, and Joëlle
  []
@@ -536,7 +485,7 @@ Underfull \hbox (badness 1221) in paragraph at lines 49--53
 \T1/aer/m/n/10 el-ing tem-po-ral co-her-ence for op-ti-cal
  []
 
-[6 <./images/saliency.png>]
+
 Underfull \hbox (badness 2875) in paragraph at lines 60--63
 \T1/aer/m/n/10 Joachim We-ick-ert.  Op-tic flow in
  []
@@ -548,47 +497,48 @@ Underfull \hbox (badness 1565) in paragraph at lines 60--63
  []
 
 )
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 46.
- [7
-
-]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 46.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 45.
+ [4]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 45.
  (./ScetchFilter.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 46.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 46.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 45.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 45.
 Package rerunfilecheck Info: File `ScetchFilter.out' has not changed.
-(rerunfilecheck)             Checksum: 75B821F53FDED42E19311E763F815C20;385.
+(rerunfilecheck)             Checksum: 68E306B078E580C6EFF38290038B7898;445.
 
 
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 46.
+
+LaTeX Warning: There were undefined references.
+
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 45.
  ) 
 Here is how much of TeX's memory you used:
- 6173 strings out of 494935
- 88984 string characters out of 6178122
- 176954 words of memory out of 5000000
- 9236 multiletter control sequences out of 15000+600000
- 28572 words of font info for 54 fonts, out of 8000000 for 9000
+ 6157 strings out of 494935
+ 88716 string characters out of 6178122
+ 175654 words of memory out of 5000000
+ 9239 multiletter control sequences out of 15000+600000
+ 23825 words of font info for 47 fonts, out of 8000000 for 9000
  36 hyphenation exceptions out of 8191
- 35i,12n,28p,392b,411s stack positions out of 5000i,500n,10000p,200000b,80000s
-</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></us
-r/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/shar
-e/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/share/texli
-ve/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texm
-f-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/share/texlive/texmf-dist/f
-onts/type1/public/amsfonts/cm/cmr7.pfb></usr/share/texlive/texmf-dist/fonts/typ
-e1/public/amsfonts/cm/cmr8.pfb></usr/share/texlive/texmf-dist/fonts/type1/publi
-c/amsfonts/cm/cmss10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsf
-onts/cm/cmss12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/c
-m/cmssbx10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cm
-sy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy5.pf
-b></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr
-/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb>
-Output written on ScetchFilter.pdf (9 pages, 2164812 bytes).
+ 35i,11n,28p,392b,329s stack positions out of 5000i,500n,10000p,200000b,80000s
+</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></us
+r/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/shar
+e/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texl
+ive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/share/texlive/tex
+mf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist
+/fonts/type1/public/amsfonts/cm/cmr5.pfb></usr/share/texlive/texmf-dist/fonts/t
+ype1/public/amsfonts/cm/cmr7.pfb></usr/share/texlive/texmf-dist/fonts/type1/pub
+lic/amsfonts/cm/cmss10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/am
+sfonts/cm/cmss12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts
+/cm/cmssbx10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/
+cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.
+pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb></
+usr/share/texlive/texmf-dist/fonts/type1/public/rsfs/rsfs10.pfb>
+Output written on ScetchFilter.pdf (6 pages, 1387864 bytes).
 PDF statistics:
- 252 PDF objects out of 1000 (max. 8388607)
- 199 compressed objects within 2 object streams
- 56 named destinations out of 1000 (max. 500000)
- 120 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 197 PDF objects out of 1000 (max. 8388607)
+ 156 compressed objects within 2 object streams
+ 38 named destinations out of 1000 (max. 500000)
+ 98 words of extra memory for PDF output out of 10000 (max. 10000000)
 
