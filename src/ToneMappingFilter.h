@@ -10,6 +10,10 @@
 #include "ImageFilter.h"
 #include "ToneMap.h"
 
+/*
+ * Important: This filter does not only perform tone mapping,
+ * but also normalizes the value and applies the log2f to it!
+ */
 class ToneMappingFilter: public ImageFilter {
 public:
 	ToneMappingFilter(ToneMap &destinationMap, int *gpuCumHistogram);

@@ -10,14 +10,15 @@
 
 #include "ImageFilter.h"
 
+// This Filter can work inplace: Input Picture can be ouput picture
 class PotentialFilter: public ImageFilter {
 public:
-	PotentialFilter(float *beta);
+	PotentialFilter(float *gpu_beta);
 
 	// overwritten
 	void Run();
 
 private:
-	float *beta;
+	float *gpu_beta_;
 };
 #endif /* POTENTIALFILTER_H_ */
