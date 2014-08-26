@@ -1,2 +1,29 @@
 \section{Introduction}
-Our Paper is: \cite{mainPaper}
+Creating pencil sketches have a very long history. Throughout time artist have
+perfected the art of creating pencil drawings in all thinkable styles, ranging
+from completely abstract to stunningly photorealistic. However such skills are
+rare, and only well trained artists or passionated hobby artists are able to
+actually create pleasing looking images using nothing but the eye, a paper and a
+pencil. Today, in a time where cameras can be used to capture a realworld scene
+in a matter of seconds, with accurate proportions and colors and no skills, the
+need for pencil sketches seem to be gone.  However, photographs do not convey
+the same emotions that sketches do. There is a certain timeless flair to pencil
+sketches that makes them just nice to look at.
+
+Therefore designing an pencil sketch filter, which produces a pencil sketch from
+a regular photograph is an exciting task. The filter described in
+\cite{mainPaper} is such a filter, which consists of two stages: sketching the
+outlines and drawing the shading. In the sketch stage the filter calculates several
+line convolutions and the shading stage solves a huge linear system of
+equations. Both tasks are computationally rather expensive and according to the
+authors their implementation of the filter takes 2 seconds to run on a
+$600\times 600$ image.
+
+
+
+This report presents our efforts to implement the entire filter on the GPU using
+Cuda. The structure is as follows: The filter itself is described in
+\autoref{method}, then in \autoref{gpu-implementation} we describe our
+implementation using Cuda. \autoref{performance} shows our benchmarking results
+for various input images and \autoref{future-work} some possible optimizations
+and applications for our implementation.
