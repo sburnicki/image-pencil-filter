@@ -51,7 +51,7 @@
                 \includegraphics[scale = 0.2]{img/minions-1-gradient.png}
             \end{figure}
             \begin{itemize}
-            	\item Forward gradient calculation on the grayscale version of the image with $G = \left ( \left ( \partial_xI \right )^2 + \left ( \partial_yI \right )^2 \right )^{\frac{1}{2}}$
+            	\item Forward gradient calculation on the gray-scale version of the image with $G = \left ( \left ( \partial_xI \right )^2 + \left ( \partial_yI \right )^2 \right )^{\frac{1}{2}}$
             \end{itemize}
         }
         \frame{
@@ -120,22 +120,26 @@
         \frame{
             \begin{figure}[htbp]
                 \centering
-                \includegraphics[scale = 0.2]{img/minions-6-colouring.png}
+                \includegraphics[scale = 0.2]{img/minions-6-coloring.png}
             \end{figure}
             \begin{itemize}
-                \item Simply use generated output R as Y in YUV colour space, keeping U and V from original image for coloured output
+                \item Simply use generated output R as Y in YUV color space, keeping U and V from original image for colored output
             \end{itemize}
         }
-      \subsection{Kernel Pipeline and Benchmarks}
+      \subsection{Kernel Pipeline and Profiling}
         \frame{
             \frametitle{Kernel Pipeline}
             \begin{figure}[htbp]
                 \centering
-                \includegraphics[scale = 0.2]{img/pipeline.png}
+                \includegraphics[scale = 0.28]{img/pipeline.png}
             \end{figure}
         }
     	\frame{
-        	\frametitle{Benchmarks}
+        	\frametitle{Profiling Results}
+            \begin{figure}[htbp]
+                \centering
+                \includegraphics[scale = 0.23]{img/profiling_all.png}
+            \end{figure}
         }
     \section{Live Demonstration}
         \frame{
@@ -199,8 +203,8 @@
                 \frametitle{Future Improvements}
                 \begin{itemize}
                     \item Better optimization can improve performance even more
-                    \item Pre image analyser could automatically calculate the ideal line length for the line drawing
-                    \item Pre image analyser could also calculate the parameters for the tone drawing
+                    \item Pre image analyzer could automatically calculate the ideal line length for the line drawing
+                    \item Pre image analyzer could also calculate the parameters for the tone drawing
                 \end{itemize}
             }
             \frame{
