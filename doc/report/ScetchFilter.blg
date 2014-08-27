@@ -5,49 +5,46 @@ The style file: alpha.bst
 Database file #1: bibliography.bib
 A bad cross reference---entry "mainPaper"
 refers to entry "conf/npar/2012", which doesn't exist
-A bad cross reference---entry "conf/iccv/VolzBVZ11"
-refers to entry "conf/iccv/2011", which doesn't exist
 Warning--I didn't find a database entry for "conf/npar/2012"
-Warning--I didn't find a database entry for "conf/iccv/2011"
-You've used 10 entries,
+You've used 3 entries,
             2543 wiz_defined-function locations,
-            637 strings with 6620 characters,
-and the built_in function-call counts, 4910 in all, are:
-= -- 481
-> -- 285
-< -- 4
-+ -- 101
-- -- 101
-* -- 376
-:= -- 820
-add.period$ -- 36
-call.type$ -- 10
-change.case$ -- 72
-chr.to.int$ -- 10
-cite$ -- 10
-duplicate$ -- 183
-empty$ -- 330
-format.name$ -- 109
-if$ -- 1013
+            579 strings with 5096 characters,
+and the built_in function-call counts, 1427 in all, are:
+= -- 130
+> -- 93
+< -- 1
++ -- 33
+- -- 33
+* -- 106
+:= -- 250
+add.period$ -- 10
+call.type$ -- 3
+change.case$ -- 23
+chr.to.int$ -- 3
+cite$ -- 3
+duplicate$ -- 54
+empty$ -- 94
+format.name$ -- 35
+if$ -- 289
 int.to.chr$ -- 1
 int.to.str$ -- 0
-missing$ -- 12
-newline$ -- 55
-num.names$ -- 34
-pop$ -- 69
+missing$ -- 3
+newline$ -- 19
+num.names$ -- 11
+pop$ -- 26
 preamble$ -- 1
-purify$ -- 84
+purify$ -- 26
 quote$ -- 0
-skip$ -- 153
+skip$ -- 44
 stack$ -- 0
-substring$ -- 246
-swap$ -- 42
-text.length$ -- 4
-text.prefix$ -- 1
+substring$ -- 41
+swap$ -- 12
+text.length$ -- 1
+text.prefix$ -- 0
 top$ -- 0
-type$ -- 72
+type$ -- 24
 warning$ -- 0
-while$ -- 43
-width$ -- 13
-write$ -- 139
-(There were 2 error messages)
+while$ -- 12
+width$ -- 5
+write$ -- 41
+(There was 1 error message)

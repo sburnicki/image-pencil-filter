@@ -50,9 +50,102 @@ $G_i$:
 TODO: Bilder einfügen!
 
 \subsection{Shading}
-Raphael
-\paragraph{Histogram Matching}
-Raphael
+The other important step in creating a believable pencil sketch image from a
+natural image is to produce a hatching texture to create the shading. This is
+done in two steps. First the histogram of the input image $I_g$ is matched to a
+histogram model that was derived in \cite{mainPaper}. This way the tone
+distribution is forced to correspond to tone distributions that were measured in
+real pencil sketch images. Then the image of a given hatching pattern is used to
+render the hatching texture for the input image. 
 
+\paragraph{Histogram Matching}
+Tones in natural images do not follow any specific pattern. In pencil drawings
+however the tones are basically created only by two basic tones, namely the
+white paper and the graphite strokes in different strengths. Heavy strokes are
+used in very dark areas, mid tone strokes are used to produce impression of 3D
+layered information and in bright areas the paper is just left white.
+\autoref{fig:real-histograms} shows the tone distributions of some real pencil
+sketches. One can easily see the three regions, the peak in the dark regions,
+which represent the heavy strokes, the constant distribution in the mid tones,
+which are used for the layering and very much bright pixels, originating from
+the white paper, that was just left blank.
+
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=0.4\textwidth]{images/real-histograms.png}
+  \caption{Examples for real pencil sketches and their measured tone
+    distributions. Note: This image was taken from \cite{mainPaper}}
+  \label{fig:real-histograms}
+\end{figure}
+
+\cite{mainPaper} used this observation to create a parametric histogram model
+for pencil drawings which consists of three functions, which represent those
+three tone levels:
+
+For the bright part of the histogram they use a Laplacian distribution with a
+peak at the brightest value. This adds some variation in the bright areas, which
+originate from slight illumination variances or the use of a eraser.
+
+\begin{align}
+  p_1(v) = \frac{255}{\sigma_b} e ^{-\frac{255-v}{\sigma_b}} \label{eq:p_1}
+\end{align}
+
+The parameter for this function is just $\sigma_b$, which controls the sharpness of
+the function. This distribution can be seen on the very right of the histograms
+in \autoref{fig:real-histograms}.
+
+The mid layer is composed of strokes with different pressures and therefore in
+different gray levels. So the distributions of those gray levels is equally
+distributed as indicated in the histograms in \autoref{fig:real-histograms}. To
+represent this part a constant function was chosen to use all those possible
+gray levels.
+
+\begin{align}
+  p_2(v) = \begin{cases} \frac{1}{u_b - u_a} & \text{if } u_d < v \leq u_b\\
+    0 & \text{otherwise}
+  \end{cases} \label{eq:p_2}
+\end{align}
+
+The controlling parameters for this function are the range boundaries $u_d$
+and $u_b$.
+
+Finally the dark region which shows up as this bell shaped peak in the dark
+regions in \autoref{fig:real-histograms} is represented as a Gauss-curve. The
+position and shape of the dark regions depend on the maximum pressure an artist is using,
+and the softness of the pencil that is used.
+
+\begin{align}
+  p_1(g) = \frac{1}{\sqrt{2\pi \sigma_d}} e^{-\frac{(v-\mu_d)^2}{2\sigma_d^2}} 
+  \label{eq:p_3}
+\end{align}
+
+The width of the bell is controlled with the parameter $\sigma_d$ and the
+position with $\mu_d$.
+
+Plots for the three functions can be seen in \autoref{fig:p}.
+
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=0.4\textwidth]{images/p_i.png}
+  \caption{Plots of the three functions $p_i$. Note: picture taken from
+    \cite{mainPaper}.}
+  \label{fig:p}
+\end{figure}
+
+The final tone distribution is now simply composited out of those three
+function by creating a weighted sum from $p_1$, $p_2$ and $p_3$:
+\begin{align}
+  p(v) = \frac{1}{Z} \sum_{i=1}^{3}\omega_i p_i(v)
+  \label{eq:p}
+\end{align}
+Where $Z$ is a normalization factor to make $\int_0^{255}p(v)dv = 1$ and the
+$\omega_i$ are weighting parameters which can used to weight the importance of
+the functions.
+
+In \cite{mainPaper} they learned the parameters for those functions from a set
+of different styled pencil sketches using Maximum Likelihood Estimation. We skipped this part and left those
+parameters to be controlled by the user.
+
+TODO matching .. matching
 \paragraph{Textureing}
 Raphael

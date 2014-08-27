@@ -1,5 +1,5 @@
 \newcommand{\etalchar}[1]{$^{#1}$}
-\begin{thebibliography}{RHB{\etalchar{+}}11}
+\begin{thebibliography}{BLC{\etalchar{+}}12}
 
 \bibitem[BLC{\etalchar{+}}12]{Benard:2012:ASC}
 Pierre B{\'e}nard, Jingwan Lu, Forrester Cole, Adam Finkelstein, and Jo{\"e}lle
@@ -8,57 +8,16 @@ Pierre B{\'e}nard, Jingwan Lu, Forrester Cole, Adam Finkelstein, and Jo{\"e}lle
 \newblock {\em NPAR 2012, Proceedings of the 10th International Symposium on
   Non-photorealistic Animation and Rendering}, June 2012.
 
-\bibitem[GO11]{GastalOliveira2011DomainTransform}
-Eduardo S.~L. Gastal and Manuel~M. Oliveira.
-\newblock Domain transform for edge-aware image and video processing.
-\newblock {\em ACM TOG}, 30(4):69:1--69:12, 2011.
-\newblock Proceedings of SIGGRAPH 2011.
-
 \bibitem[LSF10]{Lu:2010:IPS}
 Jingwan Lu, Pedro~V. Sander, and Adam Finkelstein.
 \newblock Interactive painterly stylization of images, videos and {3D}
   animations.
 \newblock In {\em Proceedings of I3D 2010}, February 2010.
 
-\bibitem[LTF{\etalchar{+}}05]{journals/tog/LiuTFDA05}
-Ce~Liu, Antonio Torralba, William~T. Freeman, Frédo Durand, and Edward~H.
-  Adelson.
-\newblock Motion magnification.
-\newblock {\em ACM Trans. Graph.}, 24(3):519--526, 2005.
-
 \bibitem[LXJ12]{mainPaper}
 Cewu Lu, Li~Xu, and Jiaya Jia.
 \newblock Combining sketch and tone for pencil drawing production.
 \newblock In Paul Asente and Cindy Grimm, editors, {\em Expressive}, pages
   65--73. ACM, 2012.
-
-\bibitem[PKT09]{paris2009bilateral}
-S.~Paris, P.~Kornprobst, and J.~Tumblin.
-\newblock {\em Bilateral Filtering: Theory and Applications}.
-\newblock Foundations and trends in computer graphics and vision. Now
-  Publishers, 2009.
-
-\bibitem[RHB{\etalchar{+}}11]{Rhemann:2011:FCF:2191740.2191908}
-C.~Rhemann, A.~Hosni, M.~Bleyer, C.~Rother, and M.~Gelautz.
-\newblock Fast cost-volume filtering for visual correspondence and beyond.
-\newblock In {\em Proceedings of the 2011 IEEE Conference on Computer Vision
-  and Pattern Recognition}, CVPR '11, pages 3017--3024, Washington, DC, USA,
-  2011. IEEE Computer Society.
-
-\bibitem[VBVZ11]{conf/iccv/VolzBVZ11}
-Sebastian Volz, Andrés Bruhn, Levi Valgaerts, and Henning Zimmer.
-\newblock Modeling temporal coherence for optical flow.
-\newblock In Dimitris~N. Metaxas, Long Quan, Alberto Sanfeliu, and Luc J.~Van
-  Gool, editors, {\em ICCV}, pages 1116--1123. IEEE, 2011.
-
-\bibitem[Wei98]{Weickert:1998}
-Joachim Weickert.
-\newblock {\em {Anisotropic Diffusion in Image Processing}}.
-\newblock ECMI Series. Teubner, Stuttgart, 1998.
-
-\bibitem[ZBW11]{Zimmer:2011:OFH:1969654.1969711}
-Henning Zimmer, Andr{\'e}s Bruhn, and Joachim Weickert.
-\newblock Optic flow in harmony.
-\newblock {\em Int. J. Comput. Vision}, 93(3):368--388, July 2011.
 
 \end{thebibliography}
