@@ -101,7 +101,13 @@ copying process and later to calculate the convolution results.
 
 
 \subsection{Histogram}
-Andreeas
+The histogram calculation uses the shared memory per block to compute a partial
+histogram within each block.  Each block computes an additional accumulative
+histogram with the use of parallel prefix sum.  The partial results are being
+combined at the end of the kernel per thread, by accumulating the results in
+global memory.  As we require a 256-bin histogram the shared memory per block
+is only two times 256 Integers of size, one for the simple histogram and one
+for the accumulative histogram.
 
 \subsection{Histogram Matching}
 The histogram matching is used to adjust the tone distribution of the 
