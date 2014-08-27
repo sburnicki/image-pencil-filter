@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2014.4.22)  27 AUG 2014 12:23
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2014.4.22)  27 AUG 2014 14:18
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -264,20 +264,20 @@ Package: hypcap 2011/02/16 v1.11 Adjusting the anchors of captions (HO)
 (./ScetchFilter.aux)
 \openout1 = `ScetchFilter.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 14.
-LaTeX Font Info:    ... okay on input line 14.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 14.
-LaTeX Font Info:    ... okay on input line 14.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 14.
-LaTeX Font Info:    ... okay on input line 14.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 14.
-LaTeX Font Info:    ... okay on input line 14.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 14.
-LaTeX Font Info:    ... okay on input line 14.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 14.
-LaTeX Font Info:    ... okay on input line 14.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 14.
-LaTeX Font Info:    ... okay on input line 14.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 15.
+LaTeX Font Info:    ... okay on input line 15.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 15.
+LaTeX Font Info:    ... okay on input line 15.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 15.
+LaTeX Font Info:    ... okay on input line 15.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 15.
+LaTeX Font Info:    ... okay on input line 15.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 15.
+LaTeX Font Info:    ... okay on input line 15.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 15.
+LaTeX Font Info:    ... okay on input line 15.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 15.
+LaTeX Font Info:    ... okay on input line 15.
 
 (/usr/share/texlive/texmf-dist/tex/context/base/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
@@ -308,7 +308,7 @@ File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
 e
 ))
 \AtBeginShipoutBox=\box29
-Package hyperref Info: Link coloring OFF on input line 14.
+Package hyperref Info: Link coloring OFF on input line 15.
 
 (/usr/share/texlive/texmf-dist/tex/latex/hyperref/nameref.sty
 Package: nameref 2012/10/27 v2.43 Cross-referencing by name of section
@@ -318,9 +318,9 @@ Package: gettitlestring 2010/12/03 v1.4 Cleanup title references (HO)
 )
 \c@section@level=\count116
 )
-LaTeX Info: Redefining \ref on input line 14.
-LaTeX Info: Redefining \pageref on input line 14.
-LaTeX Info: Redefining \nameref on input line 14.
+LaTeX Info: Redefining \ref on input line 15.
+LaTeX Info: Redefining \pageref on input line 15.
+LaTeX Info: Redefining \nameref on input line 15.
 
 (./ScetchFilter.out) (./ScetchFilter.out)
 \@outlinefile=\write3
@@ -332,26 +332,26 @@ File: images/tuebingen4b_um_rot_small.pdf Graphic file (type pdf)
 
 <use images/tuebingen4b_um_rot_small.pdf>
 Package pdftex.def Info: images/tuebingen4b_um_rot_small.pdf used on input line
- 26.
+ 27.
 (pdftex.def)             Requested size: 203.39862pt x 71.66577pt.
-LaTeX Font Info:    Try loading font information for T1+aess on input line 26.
+LaTeX Font Info:    Try loading font information for T1+aess on input line 27.
 
 (/usr/share/texlive/texmf-dist/tex/latex/ae/t1aess.fd
 File: t1aess.fd 1997/11/16 Font definitions for T1/aess.
 )
 
 LaTeX Font Warning: Font shape `T1/aess/m/sc' undefined
-(Font)              using `T1/aess/m/n' instead on input line 26.
+(Font)              using `T1/aess/m/n' instead on input line 27.
 
 
 LaTeX Font Warning: Font shape `T1/aess/bx/sc' undefined
-(Font)              using `T1/aess/bx/n' instead on input line 26.
+(Font)              using `T1/aess/bx/n' instead on input line 27.
 
-LaTeX Font Info:    Try loading font information for U+rsfs on input line 26.
+LaTeX Font Info:    Try loading font information for U+rsfs on input line 27.
 (/usr/share/texlive/texmf-dist/tex/latex/jknapltx/ursfs.fd
 File: ursfs.fd 1998/03/24 rsfs font definition file (jk)
 )
-Overfull \hbox (15.98987pt too wide) in paragraph at lines 26--26
+Overfull \hbox (15.98987pt too wide) in paragraph at lines 27--27
 [][][][][][] 
  []
 
@@ -365,7 +365,7 @@ t_small.pdf>] [2
 File: images/teaser.png Graphic file (type png)
 
 <use images/teaser.png>
-Package pdftex.def Info: images/teaser.png used on input line 26.
+Package pdftex.def Info: images/teaser.png used on input line 27.
 (pdftex.def)             Requested size: 406.79724pt x 81.16653pt.
  (./abstract.tex) (./introduction.tex)
 (./previous-work.tex
@@ -393,32 +393,72 @@ l.20
 
 
  <./images/teaser.png>]) (./method.tex
-<images/real-histograms.png, id=112, 1631.09375pt x 645.41125pt>
-File: images/real-histograms.png Graphic file (type png)
+<images/sketch-steps.png, id=112, 466.74374pt x 142.5325pt>
+File: images/sketch-steps.png Graphic file (type png)
 
-<use images/real-histograms.png>
-Package pdftex.def Info: images/real-histograms.png used on input line 75.
-(pdftex.def)             Requested size: 180.79724pt x 71.5371pt.
+<use images/sketch-steps.png>
+Package pdftex.def Info: images/sketch-steps.png used on input line 51.
+(pdftex.def)             Requested size: 180.79724pt x 55.21118pt.
 pdfTeX warning (ext4): destination with the same identifier (name{page.2}) has 
 been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.85 F
-      or the bright part of the histogram they use a Laplacian distribution ...
-[2] <images/p_i.png, id=134, 1243.044pt x 241.1409pt>
+l.77 
+      [2 <./images/sketch-steps.png>]
+<images/real-histograms.png, id=131, 1631.09375pt x 645.41125pt>
+File: images/real-histograms.png Graphic file (type png)
+
+<use images/real-histograms.png>
+Package pdftex.def Info: images/real-histograms.png used on input line 80.
+(pdftex.def)             Requested size: 180.79724pt x 71.5371pt.
+
+<images/p_i.png, id=139, 1243.044pt x 241.1409pt>
 File: images/p_i.png Graphic file (type png)
  <use images/p_i.png>
-Package pdftex.def Info: images/p_i.png used on input line 129.
+Package pdftex.def Info: images/p_i.png used on input line 134.
 (pdftex.def)             Requested size: 180.79724pt x 35.07307pt.
 
-Underfull \hbox (badness 2269) in paragraph at lines 140--144
+Underfull \hbox (badness 2269) in paragraph at lines 145--149
 \T1/aer/m/n/10 Where $\OML/cmm/m/it/10 Z$ \T1/aer/m/n/10 is a nor-mal-iza-tion 
 fac-tor to make
  []
 
+<images/tone-result.png, id=145, 1353.055pt x 355.3275pt>
+File: images/tone-result.png Graphic file (type png)
+
+<use images/tone-result.png>
+Package pdftex.def Info: images/tone-result.png used on input line 160.
+(pdftex.def)             Requested size: 226.0pt x 59.34761pt.
+
+Overfull \hbox (5.0pt too wide) in paragraph at lines 160--161
+ [][] 
+ []
+
+[3 <./images/real-histograms.png> <./images/p_i.png> <./images/tone-result.png>
+] <images/texture-result.png, id=165, 1353.055pt x 355.3275pt>
+File: images/texture-result.png Graphic file (type png)
+
+<use images/texture-result.png>
+Package pdftex.def Info: images/texture-result.png used on input line 195.
+(pdftex.def)             Requested size: 226.0pt x 59.34761pt.
+
+Overfull \hbox (5.0pt too wide) in paragraph at lines 195--196
+ [][] 
+ []
+
+<images/final-result.png, id=167, 1353.055pt x 853.1875pt>
+File: images/final-result.png Graphic file (type png)
+
+<use images/final-result.png>
+Package pdftex.def Info: images/final-result.png used on input line 219.
+(pdftex.def)             Requested size: 226.0pt x 142.50133pt.
+
+Overfull \hbox (5.0pt too wide) in paragraph at lines 219--220
+ [][] 
+ []
+
 ) (./gpu-implementation.tex) (./performance.tex) (./future-work.tex)
-(./conclusion.tex) (./ScetchFilter.bbl [3 <./images/real-histograms.png> <./ima
-ges/p_i.png>]
+(./conclusion.tex) (./ScetchFilter.bbl
 Underfull \hbox (badness 2012) in paragraph at lines 5--10
 \T1/aer/m/n/10 Cole, Adam Finkel-stein, and Joëlle
  []
@@ -433,31 +473,32 @@ Underfull \hbox (badness 1308) in paragraph at lines 12--16
 []\T1/aer/m/n/10 Jingwan Lu, Pe-dro V. Sander, and
  []
 
-)
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 47.
- [4
+[4 <./images/texture-result.png> <./images/final-result.png>])
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 48.
+ [5
 
 ]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 47.
- (./ScetchFilter.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 47.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 47.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 48.
+
+(./ScetchFilter.aux)
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 48.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 48.
 Package rerunfilecheck Info: File `ScetchFilter.out' has not changed.
-(rerunfilecheck)             Checksum: 82FB12DBEAC4F8F3419F7C8BAAF8DD58;694.
+(rerunfilecheck)             Checksum: 0FF2F60511842B76D6ABE84AA0E09B69;694.
 
 
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 47.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 48.
  ) 
 Here is how much of TeX's memory you used:
- 6143 strings out of 494935
- 88296 string characters out of 6178122
- 173945 words of memory out of 5000000
- 9231 multiletter control sequences out of 15000+600000
+ 6175 strings out of 494935
+ 88951 string characters out of 6178122
+ 175349 words of memory out of 5000000
+ 9252 multiletter control sequences out of 15000+600000
  24644 words of font info for 46 fonts, out of 8000000 for 9000
  36 hyphenation exceptions out of 8191
- 35i,16n,28p,286b,329s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 35i,16n,28p,286b,415s stack positions out of 5000i,500n,10000p,200000b,80000s
 </usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></us
 r/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/shar
 e/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi5.pfb></usr/share/texli
@@ -472,10 +513,10 @@ msy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy5.p
 fb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></us
 r/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb></usr/shar
 e/texlive/texmf-dist/fonts/type1/public/rsfs/rsfs10.pfb>
-Output written on ScetchFilter.pdf (6 pages, 2504546 bytes).
+Output written on ScetchFilter.pdf (7 pages, 4227115 bytes).
 PDF statistics:
- 217 PDF objects out of 1000 (max. 8388607)
- 172 compressed objects within 2 object streams
- 34 named destinations out of 1000 (max. 500000)
- 125 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 246 PDF objects out of 1000 (max. 8388607)
+ 192 compressed objects within 2 object streams
+ 41 named destinations out of 1000 (max. 500000)
+ 145 words of extra memory for PDF output out of 10000 (max. 10000000)
 

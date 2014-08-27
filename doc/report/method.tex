@@ -4,10 +4,10 @@ The following subsections shed some light on how both stages work precisely.
 
 The input for the filter is a regular RGB-image $I_{rgb}$. In the first step a
 grayscale image $I_g$ is calculated using the $Y$-channel of the
-$YUV$-transformed image $I_{iuv}$. $I_g$ now serves as input for the future
+$YUV$-transformed image $I_{yuv}$. $I_g$ now serves as input for the future
 steps.
 
-\subsection{Line Scetching}
+\subsection{Line Sketching}
 One prominent task of the filter is to create sketchy looking outlines. The main
 objective here is to mimic freehand sketching, which is typically done by
 drawing short straight lines aligned to the outlines. The outlines are detected
@@ -19,11 +19,7 @@ The Outlines are detected and stored in the image $G$ using gradient magnitudes:
 \begin{align*}
   G = ((\partial_x G)^2 + (\partial_y G)^2)^{\frac{1}{2}}
 \end{align*}
-TODO Bild verweis!!
-
-To classify each pixel to a line direction it would be possible to just use
-gradient directions, however those are typically noisy. Therefore a very stable
-convolution based direction classification is used. 
+In the center of \autoref{fig:sketch-steps} you can see how $G$ looks like.
 
 \paragraph{Line Convolution Filter}
 Given just the gradient magnitudes $G$ for each line direction $i \in
@@ -47,7 +43,16 @@ $G_i$:
  L = \max(\lbrace G_i\rbrace) \quad \forall i \in  \lbrace1,\cdots,N\rbrace
 \end{align*}
 
-TODO: Bilder einfügen!
+In a final step $L$ is inverted, such that the lines are dark and the rest is
+white. The result can be seen on the right side in \autoref{fig:sketch-steps}.
+
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=0.4\textwidth]{images/sketch-steps.png}
+  \caption{The intermediate results when calculating the line sketches. Left:
+  input image, Center: Gradient image, Right: result $L$.}
+  \label{fig:sketch-steps}
+\end{figure}
 
 \subsection{Shading}
 The other important step in creating a believable pencil sketch image from a
@@ -146,6 +151,72 @@ In \cite{mainPaper} they learned the parameters for those functions from a set
 of different styled pencil sketches using Maximum Likelihood Estimation. We skipped this part and left those
 parameters to be controlled by the user.
 
-TODO matching .. matching
-\paragraph{Textureing}
-Raphael
+Histogram Matching is used to apply the tone distribution from \autoref{eq:p} to
+the input image. The result $J$ is then used to calculate the hatching texture.
+$J$ can be seen on the right side of \autoref{fig:hist-result}.
+
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=0.5\textwidth]{images/tone-result.png}
+  \caption{Left input. Right: Result of Histogram matching for minions.}
+  \label{fig:hist-result}
+\end{figure}
+
+\paragraph{Texturing}
+The filter uses a men made pencil hatching pattern $H$. A human repetitively draws
+at the same position to generate the correct tone in the hatching texture. A
+exponential function can be used to simulate this process of placing multiple
+strokes at the same position: $H(x)^{\beta(x)} \approx J(x)$. This corresponds
+to drawing $H$ $\beta$ times at the same position to approximately match
+the tone that is dictated by our tonal map $J$. In the logarithmic domain this
+boils down to $\beta(x) \ln\left( H(x) \right) \approx \ln\left( J(x)
+\right)$.
+
+Just solving for $\beta$ in this equation is going to destroy the hatching
+pattern because $\beta$ can be calculated for each pixel independently, such
+that in the end $H^{\beta} = J$. Therefore a smoothness constraint is
+introduced:
+\begin{align}
+  \beta = \arg \min_{\beta}\norm{\beta\ln(H) - \ln(J)}_2^2 + \lambda
+  \norm{\nabla \beta}_2^2
+  \label{eq:beta}
+\end{align}
+The smoothness weighting factor $\lambda$ can be used to determine how strong
+the hatching pattern $H$ will show through in the result.
+
+The hatching texture $T$ is then calculated as the pixelwise exponentiation
+\begin{align*}
+  T = H^{\beta}
+\end{align*}
+\autoref{fig:texture-result} shows the result for the minion.
+
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=0.5\textwidth]{images/texture-result.png}
+  \caption{Left: $J$. Right: Result of texture rendering $T$.}
+  \label{fig:texture-result}
+\end{figure}
+
+
+
+\paragraph{Combining Results}
+Finally the results from the line sketching $L$ and the hatching texture $T$ is
+combined to the finished pencil drawing $R$ by simply multiplying the images
+pixelwise:
+\begin{align*}
+  R = L  \cdot T
+\end{align*}
+
+If desired it is also possible to create colored pencil drawings using the $YUV$
+decomposed image $I_{yuv}$ from the beginning and replace the $Y$ channel with
+$R$. The resulting RGB-image can then easily be calculated by a color space
+transformation.
+
+In \autoref{fig:final-result} both, grayscale and colored results are shown.
+
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=0.5\textwidth]{images/final-result.png}
+  \caption{combination of the results from the line drawing and shading.}
+  \label{fig:final-result}
+\end{figure}
