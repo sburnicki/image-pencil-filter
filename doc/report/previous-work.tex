@@ -2,27 +2,27 @@
 This work is based on \cite{mainPaper}, as this paper describes the filter that
 is implemented. The filter requires quite some parameters. In the original paper
 they use a parameter learning approach to automatically select those parameters.
-In this work the filter is kept slightly simpler than in the origin paper, e.g.
+In this work the filter is kept slightly simpler than the original one, e.g.
 the line filter is slightly simplified and the filter parameters are left as
-user controllable options. 
+user controllable options.
 
 Another GPU-sketch-filter is described in \cite{Lu:2010:IPS}, though it uses the
-a regular shaderpipeline. Based on the neighborhood informations of each pixel
-it calculates weather to place a stroke at this point or not. The strokes are
-then rendered as stroke-textures. The strokes are made in three different detail
-layers based on the gradientmagnitude. Furthermore it is possible to filter
+a regular shader pipeline instead of Cuda. Based on the neighborhood information
+of each pixel it calculates whether to place a stroke at this point or not. The
+strokes are then rendered as stroke-textures. The strokes are made in three different
+detail layers based on the gradient magnitude. Furthermore it is possible to filter
 animations using optical flow. The greatest difference to the filter that we
 implement is that they calculate each individual pencil or brush stroke based on
 the gradient and then render those strokes using stroke-textures. Our method
 uses traditional filters to alter the original image, which produces better
-pencil sketches with respect to the tonal appearance. However their filter is
-more versatile, as it allows different painting stiles and techniques by
+pencil sketches with respect to the tonal appearance. However, their filter is
+more versatile, as it allows different painting styles and techniques by
 changing the stroke-textures and weighting the detail layers.
 
 
-A partially GPU based method is described in \cite{Benard:2012:ASC}. However
+Another partially GPU based method is described in \cite{Benard:2012:ASC}. However
 they concentrate on rendering temporal coherent line drawing animations from a
-given 3D-scene. First they find active contours that are then adapted throughout
-the animation. The result pictures are rendered by parameterizing the and then
+given 3D-scene. To do so, they first find active contours that are then adapted throughout
+the animation. The result pictures are rendered by parameterizing them and then
 add a certain style to the path. While this method yields amazing results for
 very stylistic animations, it needs 3D input data.
