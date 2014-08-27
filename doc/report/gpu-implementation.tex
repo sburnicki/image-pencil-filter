@@ -12,19 +12,20 @@ The first step loads the image, which happens on the CPU.  The conversion of
 the image from RGB to YUV on the GPU is run in parallel with the loading of the
 pencil textures on the CPU.  The next kernel extracts the gray-scale version of
 the image from the RGB to YUV result.  The gray-scale version is used for the
-gradient calculation, which is then applied to the convolution filter.  This
-accomplishes the line drawing step.  In preparation for the tone drawing step,
-the CPU is computing the target histogram.  The histogram calculation in the
-tone drawing step receives the gray-scale version as the input image.  The
-result is being passed to the histogram mapping, together with the computed
-target histogram.  Another kernel receives the loaded pencil textures and
-expands them to the image size.  The expanded textures and the histogram
-mapping are being used for the texture calculation.  The last kernel in the
-tone drawing, the texture rendering kernel, computes the result of the tone
-drawing.  The last two kernels represent the merge.  One kernel combines the
-results of the line drawing and the tone drawing step and generates the final
-image.  The last kernel applies the coloring if requested and converts the YUV
-back to RGB.  The CPU takes care of saving the image.
+gradient calculation, which is then feed into the convolution filter.  This
+finalizes the line drawing step.  In preparation for the tone drawing step,
+the CPU is computing the target histogram using \autoref{eq:p}.  The histogram
+calculation in the tone drawing step receives the gray-scale version as the
+input image.  The result is then passed to the histogram mapping kernel,
+together with the CPU-computed target histogram. Jet Another kernel expands the
+hatching pattern image $H$ to image size.  The expanded textures and the
+tonal texture $J$ are used for the texture calculation.  The last kernel
+in the tone drawing section - the texture rendering kernel - computes the final
+hatching texture for the image.  The last two kernels merge line drawing and
+hatching texture. One kernel combines the results of the line drawing and the
+tone drawing step and generates the final image, the last kernel adds back the
+colors if requested and converts the YUV back to RGB. The CPU takes care of
+saving the image.
 
 \subsection{Sketch Filter}
 Calculating the grayscale image $I_g$ and Gradient $G$ on the GPU is no big
