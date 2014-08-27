@@ -34,9 +34,9 @@ calculation is more interesting.
 
 To calculate the value $L(x)$, first all $G_i(x)$ have to
 be computed (see \autoref{eq:Gi}) and the maximum from all line convolution
-results is selected (see \autoref{eq:L}). The following paragraphs describe the
+results then has to be selected (see \autoref{eq:L}). The following paragraphs describe the
 implementation of the Cuda-Kernel, which computes $L$ directly from $G$ given
-the desired line length and strength.
+the desired line length, strength and count.
 
 \paragraph{Compute the line convolutions} 
 To compute the convolution result $G_i(x)$ for pixel $x$ and line $i$ all values of $G$
@@ -52,8 +52,10 @@ convolution-kernel of the line segment $\mathscr{L}_i$ can be described as
 Collecting the right pixels for the right line is done by iterating over the
 pixels of a horizontal line with the desired length and strength. This line
 starts at $x$. Then the coordinates are rotated to get the pixels for line $i$.
-All line convolutions for one pixel is calculated by a single thread. The
-results for a line is keep as maximum if it is bigger than all its predecessors. 
+The rotation angle depends on the line count, as the angle between two lines is
+$\frac{360^{\circ}}{\text{line count}}$.  All line convolutions for one pixel
+are calculated by a single thread. The results for a line is keep as maximum if
+it is bigger than all its predecessors. 
 
 Finally the inversion, a gamma correction and clipping is used to create the
 final value for $L(x)$:
@@ -63,27 +65,28 @@ final value for $L(x)$:
 The $\gamma$ parameter can be used to intensify or weaken the lines.
 
 \paragraph{Shared Memory}
-The same pixel values from $G$ have to be loaded from neighboring quite often.
-Therefore it makes sens to use shared memory to speed up memory access.
-As each pixel is calculated by a individual thread, and we can only use 1024
-threads in one block we get blocks of size $32\times32$, as shown in
-\autoref{fig:shared-memory}
+The same pixel values from $G$ have to be loaded from neighboring quite often to
+calculate all convolution results.  Therefore it makes sense to use shared memory
+to speed up memory access.  Each pixel is calculated by a individual thread,
+and as we can only use 1024 threads in one block we get blocks of size
+$32\times32$, as shown in \autoref{fig:shared-memory}
 
 \begin{figure}[htb]
   \centering
   \includegraphics[width=0.2\textwidth]{images/shared-memory.png}
-  \caption{Block and shared memory dimensions}
+  \caption{Block dimension (blue) and shared memory dimension (green)}
   \label{fig:shared-memory}
 \end{figure}
 
 On our device the maximum size of shared memory per block is $48kb$, so we can
-only store a $109\times109$ block of float values. Therefore we only allow line
-lengths up to 45 pixels.
+only store a $109\times109$ block of float values. Therefore only line
+lengths up to 45 pixels are allowed which is more than enough for the purpose of
+creating pencil sketches.
 
 The data from $G$ is copied by assigning the thread number to the linear
-indexes of the data. As there is more data than threads, one thread copies
-multiple data elements. The pattern is shown in \autoref{fig:shared-copy}.
-\autoref{fig:shared-copy}.
+indexes of the data. Because there is more data elements than threads, one
+thread copies multiple data elements. The pattern is implied in
+\autoref{fig:shared-copy}.  \autoref{fig:shared-copy}.
 \begin{figure}[htb]
   \centering
   \includegraphics[width=0.5\textwidth]{images/shared-copy.png}
@@ -92,7 +95,7 @@ multiple data elements. The pattern is shown in \autoref{fig:shared-copy}.
 \end{figure}
 
 The coordinate calculations for the line convolution computations are done such
-that they generate the correct coordinates for the shared memory block. Due to
+that they generate the correct coordinates inside the shared memory block. Due to
 the coordinate rotations the access patterns are very chaotic, which might lead
 to unavoidable bank conflicts.
 
