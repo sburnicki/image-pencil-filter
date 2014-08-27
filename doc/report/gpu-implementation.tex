@@ -105,48 +105,43 @@ copying process and later to calculate the convolution results.
 
 
 \subsection{Histogram}
-The histogram calculation uses the shared memory per block to compute a partial
-histogram within each block.  Each block computes an additional accumulative
-histogram with the use of parallel prefix sum.  The partial results are being
-combined at the end of the kernel per thread, by accumulating the results in
-global memory.  As we require a 256-bin histogram the shared memory per block
-is only two times 256 Integers of size, one for the simple histogram and one
-for the accumulative histogram.
+The histogram calculation calculates a partial histogram within multiple blocks.
+This is done in shared memory.  Additionally every block computes an additional
+cumulative histogram using a parallel prefix sum. The partial results are being
+combined at the end by 256 threads. They add the local results from shared
+memory in to global memory using \texttt{atomicAdd}. As we our histograms have
+256 bins the needed shared memory size per block is only two times 256 Integers,
+one for the simple histogram and one for the cumulative histogram.
 
 \subsection{Histogram Matching}
-The histogram matching is used to adjust the tone distribution of the 
-grayscale image to match a specific target tone distribution by using
-their corresponding histogram. In this context, the target tone
-distribution is artificially created to be similar to those of pencil
-sketches as explained above.
+Histogram matching is used to adjust the tone distribution of the 
+image $I_g$ to match a specific target tone distribution. In this context, the
+target tone distribution is artificially created using the model in
+\autoref{eq:p}. This model creates a histogram which is similar to those of real
+pencil sketches as explained above.
 
 The cumulative target histogram is created on the CPU by simply applying
-the the parametric model to the values 0 to 255 and summing it up with
-the values below.
-This step is done on the CPU as the target distribution only has to
-be evaluated 256 times which is negligible effort and can be either be
-precomputed or done while the GPU is busy with other steps of the pipeline.
+the parametric model to the values 0 to 255 and summing them up. This step is done
+on the CPU as the target distribution only has to be evaluated 256 times which
+is negligible effort and can be either be precomputed or done while the GPU is
+busy with other steps of the pipeline.
 
 Once this histogram is uploaded to the GPU it can be used together with
-the histogram from the image created in the previous step to adjust the
-tones of the grayscale image. This is done in a kernel with one thread
-per image pixel. A thread will the obtain the tone value of the pixel
-it corresponds to and look up it's cumulative probability value in
-the source histogram map.
-Afterwards, the cumulative target histogram is used in inverse to find
-out which tone the value corresponds to in it. The pixel is then set to
-the looked up target tone value.
-
-The inverse lookup in the cumulative target histogram is implemented
-as a binary search function which is used in the kernel. Although
-one would think that a binary search is inefficient when multiple threads
-are executed in a warp and search for different values, it really isn't.
-As the cumulative target histogram map only consist of 256 values,
+the histogram from the input image, which was created in the previous step, to
+adjust the tones of the grayscale image. This is done in a kernel with one
+thread per image pixel. A thread will then obtain the tone value of the pixel it
+belongs to and look up it's cumulative probability value in the source histogram
+map.  Afterwards, the cumulative target histogram is used inversely to find out
+which tone the value corresponds to in it. The pixel is then set to the value
+that was looked up. The lookup is done using binary search.
+One would think that a binary search is inefficient when multiple threads
+are executed in a warp and search for different values, and it really is.
+But as the cumulative target histogram map only consist of 256 values,
 the binary search will need at maximum $log_2 256=8$ loop runs to end
 up at the correct value. Because the threads are executed in a warp,
 the branches might get executed in serial. However, there is just one 
 real branching operation inside the loop body, which could double the
-effort. Still, the total effort negligible in contrast to a linear search
+effort. Still, the total effort is negligible in contrast to a linear search
 through the map with a worst case complexity of 256.
 
 \subsection{Texturing}
