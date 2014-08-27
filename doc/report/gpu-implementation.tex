@@ -10,32 +10,32 @@
 \autoref{fig:pipeline} displays the GPU and CPU pipeline of the implementation.
 The first step loads the image, which happens on the CPU.  The conversion of
 the image from RGB to YUV on the GPU is run in parallel with the loading of the
-pencil textures on the CPU.  The next kernel extracts the gray-scale version of
-the image from the RGB to YUV result.  The gray-scale version is used for the
-gradient calculation, which is then feed into the convolution filter.  This
-finalizes the line drawing step.  In preparation for the tone drawing step,
-the CPU is computing the target histogram using \autoref{eq:p}.  The histogram
-calculation in the tone drawing step receives the gray-scale version as the
-input image.  The result is then passed to the histogram mapping kernel,
-together with the CPU-computed target histogram. Jet Another kernel expands the
-hatching pattern image $H$ to image size.  The expanded textures and the
-tonal texture $J$ are used for the texture calculation.  The last kernel
+pencil textures on the CPU.  The next kernel extracts the grayscale version of
+the image from the RGB to YUV result.  The grayscale version is used for the
+gradient calculation, which is then fed into the convolution filter.  This
+finalizes the line drawing step.  In preparation for the shading or tone drawing
+step, the CPU is computing the target histogram using \autoref{eq:p}.  The histogram
+calculation in the tone drawing step receives the grayscale version as the
+input image. The result is then passed to the histogram mapping kernel,
+together with the CPU-computed target histogram. Yet Another kernel expands the
+hatching pattern image $H$ to image size. The expanded textures and the
+tonal texture $J$ are used for the texture calculation. The last kernel
 in the tone drawing section - the texture rendering kernel - computes the final
-hatching texture for the image.  The last two kernels merge line drawing and
+hatching texture for the image. The last two kernels merge line drawing and
 hatching texture. One kernel combines the results of the line drawing and the
 tone drawing step and generates the final image, the last kernel adds back the
 colors if requested and converts the YUV back to RGB. The CPU takes care of
-saving the image.
+saving the image to disk again.
 
 \subsection{Sketch Filter}
-Calculating the grayscale image $I_g$ and Gradient $G$ on the GPU is no big
+Calculating the grayscale image $I_g$ and gradient $G$ on the GPU is no big
 challenge. However the efficient implementation of the line convolution
 calculation is more interesting.
 
 To calculate the value $L(x)$, first all $G_i(x)$ have to
 be computed (see \autoref{eq:Gi}) and the maximum from all line convolution
 results then has to be selected (see \autoref{eq:L}). The following paragraphs describe the
-implementation of the Cuda-Kernel, which computes $L$ directly from $G$ given
+implementation of the Cuda-Kernel which computes $L$ directly from $G$ given
 the desired line length, strength and count.
 
 \paragraph{Compute the line convolutions} 
@@ -54,10 +54,10 @@ pixels of a horizontal line with the desired length and strength. This line
 starts at $x$. Then the coordinates are rotated to get the pixels for line $i$.
 The rotation angle depends on the line count, as the angle between two lines is
 $\frac{360^{\circ}}{\text{line count}}$.  All line convolutions for one pixel
-are calculated by a single thread. The results for a line is keep as maximum if
-it is bigger than all its predecessors. 
+are calculated by a single thread. The results for a line is kept as maximum if
+it is bigger than all its predecessors.
 
-Finally the inversion, a gamma correction and clipping is used to create the
+Finally in the inversion, a gamma correction and clipping is used to create the
 final value for $L(x)$:
 \begin{align*}
   L(x) = \max(255 - \max(G_i)^{\gamma}, 50)
@@ -85,7 +85,7 @@ creating pencil sketches.
 
 The data from $G$ is copied by assigning the thread number to the linear
 indexes of the data. Because there is more data elements than threads, one
-thread copies multiple data elements. The pattern is implied in
+thread copies multiple data elements. The pattern is depicted in
 \autoref{fig:shared-copy}.  \autoref{fig:shared-copy}.
 \begin{figure}[htb]
   \centering
@@ -99,17 +99,14 @@ that they generate the correct coordinates inside the shared memory block. Due t
 the coordinate rotations the access patterns are very chaotic, which might lead
 to unavoidable bank conflicts.
 
-Coordinates which lie outside the input image must not be included in the
-copying process and later to calculate the convolution results.
-
 
 
 \subsection{Histogram}
 The histogram calculation calculates a partial histogram within multiple blocks.
-This is done in shared memory.  Additionally every block computes an additional
+This is done in shared memory. Further more every block computes an additional
 cumulative histogram using a parallel prefix sum. The partial results are being
 combined at the end by 256 threads. They add the local results from shared
-memory in to global memory using \texttt{atomicAdd}. As we our histograms have
+memory in to global memory using \texttt{atomicAdd}. As our histograms have
 256 bins the needed shared memory size per block is only two times 256 Integers,
 one for the simple histogram and one for the cumulative histogram.
 
@@ -135,12 +132,12 @@ map.  Afterwards, the cumulative target histogram is used inversely to find out
 which tone the value corresponds to in it. The pixel is then set to the value
 that was looked up. The lookup is done using binary search.
 One would think that a binary search is inefficient when multiple threads
-are executed in a warp and search for different values, and it really is.
-But as the cumulative target histogram map only consist of 256 values,
+are executed in a warp and search for different values, but it really isn't.
+Because the cumulative target histogram map only consist of 256 values,
 the binary search will need at maximum $\log_2(256)=8$ loop runs to end
-up at the correct value. Because the threads are executed in a warp,
-the branches might get executed in serial. However, there is just one 
-real branching operation inside the loop body, which could double the
+up at the correct value. As the threads are executed in a warp,
+the branches might get executed in serial. However there is just one 
+real branching operation inside the loop body which could double the
 effort. Still, the total effort is negligible in contrast to a linear search
 through the map with a worst case complexity of 256.
 
@@ -156,23 +153,23 @@ equation:
 $x$, in our case, is the solution image $\beta$ in vector shape. $A$ is a diagonal matrix.
 Each diagonal element corresponds to one pixel in $\ln(H)$. $b$ is the
 vectorized $\ln(J)$ image and $\Gamma$ is a diagonal matrix with two diagonals
-which represents if multiplied to a vectorized image the gradient operator.
+representing the gradient operator, if multiplied to a vectorized image.
 
-The iterative Conjugate Gradient solver from the cuda sparce library
+The iterative Conjugate Gradient solver from the cuda sparse library
 (\texttt{cusp}) is used to solve the linear system $A^* x = b^*$.
 
-For this the input images $\ln(J)$ and $\ln(H)$ are downloaded from the GPU,
-feed into diagonal matrices from \texttt{cusp} then again uploaded to solve the
+To do so the input images $\ln(J)$ and $\ln(H)$ are downloaded from the GPU,
+fed into diagonal matrices from \texttt{cusp} and then uploaded again to solve the
 equation. After that the result is downloaded and uploaded again in our regular
 data representation for the final composition with the line image $L$.
 
 Matrix $A*$ and vector $b^*$ (\autoref{eq:tikhonov}) could be calculated using
-\texttt{cusp}. For this one would upload $\ln(H)$, $\ln(H)$ and $\Gamma$, and
+\texttt{cusp}. Therefore it's necessary to upload $\ln(H)$, $\ln(H)$ and $\Gamma$, and
 use the matrix operations included in \texttt{cusp} to calculate the
 matrix-matrix and matrix-vector multiplications. However it is much more
 effective to construct $A^*$ and $b^*$ on the CPU and upload only those two
 objects, because \texttt{cusp} needs an output target matrix for each operation.
-So a lot of unnecessary memory needs to be allocated and used for the
+So a lot of unnecessary memory would be needed to be allocated and used for the
 calculations on the GPU. Due to the nice structure of the matrices, $A^*$ and
 $b^*$  can be
 calculated in $\mathcal{O}(n)$, with $n =$ number of pixel in the input image.
