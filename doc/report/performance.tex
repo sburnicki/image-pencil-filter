@@ -1,5 +1,5 @@
 \section{Performance} \label{performance}
-An important issue of the GPU implementation is of course the performance.
+An important topic for the GPU implementation is of course the performance.
 The described algorithm was implemented in a program that loads an image
 from JPEG file, applies the filter to it, and saves it again to file.
 Profiling this program showed very fast that loading the image, allocating the
@@ -12,12 +12,11 @@ overhead in our measurements. This approach is legitimate, as in time critic
 applications where the filter would be needed to be applied to multiple images,
 the loading of the image and copying to GPU could be done while the GPU
 is still busy with the previous image. Also the buffers can be reused,
-s.t. their initialization doesn't really count.
+such that their initialization doesn't really count.
 
 We measured the time the GPU pipeline needs to execute by repeating the
-filter 100 times on the same image to compensate fluctuation. As
-image resolutions known from videos are very easy to think of,
-we chose to do benchmarks with image resolutions known from
+filter 100 times on the same image to compensate for fluctuation. We chose to do
+our benchmarks with image resolutions known from common video formats:
 DVD/PAL (720x576), 720p (1280x720) and FullHD (1920x1080). The filter
 application to the DVD quality test image took 30 ms, the 720p version
 took 60ms and the FullHD image took 130ms which are all a lot faster
@@ -26,14 +25,14 @@ then the original implementation \cite{mainPaper}.
 Although the implementation is fast enough to be applied in real-time when watching
 a video in DVD quality, it doesn't make sense to use it as a video filter.
 The reason for this is that static textures are used for the shading effect
-which would repeat in each video frame, such that the video would look very
-unnatural.
+which would be repeated in each video frame, such that the shading would look
+very unnatural.
 
 To determine why our implementation takes so "long" for a FullHD image,
-we profiled its application to the test image. We found out that one step
-in the "Texturing" part takes nearly half of the time the whole filter
-application does. The crucial part is the upload of a matrix to the GPU
-which will then solve an equation with it using conjugate gradient. If
-this matrix would be directly created on the GPU, the performance of the
-filter would roughly double. Unfortunately, we didn't found a good solution
-to this problem in the scope of this project.
+we profiled its application to the test image to find bottlenecks. We found out
+that one step in the "hatch texture calculation" part takes nearly half the
+time for the whole filter application. The crucial part is to upload matrix
+$A^*$ to the GPU. If this \texttt{cusp} matrix could be directly created on the
+GPU from the data that is already there, the performance of the filter would
+roughly be doubled.  Unfortunately, we didn't find a good solution to this problem
+in the scope of this project.
