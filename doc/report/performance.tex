@@ -2,17 +2,17 @@
 An important topic for the GPU implementation is of course the performance.
 The described algorithm was implemented in a program that loads an image
 from JPEG file, applies the filter to it, and saves it again to file.
-Profiling this program showed very fast that loading the image, allocating the
+Profiling this program showed that loading the image, allocating the
 needed buffers, copying it to GPU, downloading it afterwards, and saving it
 as JPEG to disk take the most time by far.
 
 As these are factors that aren't under our control, we chose to measure
 the time it takes to apply the implemented filter, and ignore the mentioned
 overhead in our measurements. This approach is legitimate, as in time critic
-applications where the filter would be needed to be applied to multiple images,
-the loading of the image and copying to GPU could be done while the GPU
-is still busy with the previous image. Also the buffers can be reused,
-such that their initialization doesn't really count.
+applications the filter would be needed to be applied to multiple images. But this
+would also mean that loading the image and copying it to GPU could be done while
+the GPU is still busy with the previous image. Also the buffers can be reused,
+such that their initialization doesn't count for performance measurements.
 
 We measured the time the GPU pipeline needs to execute by repeating the
 filter 100 times on the same image to compensate for fluctuation. We chose to do

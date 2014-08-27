@@ -1,13 +1,12 @@
 \section{Future Work} \label{future-work}
-In the scope of our project we didn't jet implement the entire pipeline of the
+In the scope of our project we didn't yet implement the entire pipeline of the
 original paper. 
-
-The quality of our line sketch filter for example could be boosted by getting
-rid of the blurriness, which would require one further processing step which is
+The quality of our line sketch filter for example could be increased by getting
+rid of the blurriness, which would require one further processing step that is
 described in \cite{mainPaper}.
 
 As mentioned before, it would be nice if there was a way to construct matrix
-$A^*$ and vector $b^*$ directly on the GPU with the data, that is already
+$A^*$ and vector $b^*$ directly on the GPU with the data that is already
 there. This might be possible with the use of \texttt{cusp}s LinearOperator
 classes.
 
@@ -16,7 +15,8 @@ helpful to create some parameter presets, which can be selected and adapted on
 the fly. Those presets could be created by the user on the fly and saved to disk
 or learned from real pencil drawings as described in \cite{mainPaper}.
 
-For this a GUI with real time response would be great to immediately see the
+Another idea regarding the parameters would be a graphical user interface that immediately
+re-applies the filter, such that the user could immediately see the
 response to parameter changes. 
 
 If one could find a way to enforce temporal consistency in real time the filter
