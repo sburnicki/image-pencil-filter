@@ -137,7 +137,7 @@ that was looked up. The lookup is done using binary search.
 One would think that a binary search is inefficient when multiple threads
 are executed in a warp and search for different values, and it really is.
 But as the cumulative target histogram map only consist of 256 values,
-the binary search will need at maximum $log_2 256=8$ loop runs to end
+the binary search will need at maximum $\log_2(256)=8$ loop runs to end
 up at the correct value. Because the threads are executed in a warp,
 the branches might get executed in serial. However, there is just one 
 real branching operation inside the loop body, which could double the
