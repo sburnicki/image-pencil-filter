@@ -1,5 +1,30 @@
 \section{GPU Implementation} \label{gpu-implementation}
-Pipeline (Andreas)
+
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=0.5\textwidth]{images/pipeline.png}
+  \caption{GPU and CPU pipeline of the implementation}
+  \label{fig:pipeline}
+\end{figure}
+
+\autoref{fig:pipeline} displays the GPU and CPU pipeline of the implementation.
+The first step loads the image, which happens on the CPU.  The conversion of
+the image from RGB to YUV on the GPU is run in parallel with the loading of the
+pencil textures on the CPU.  The next kernel extracts the gray-scale version of
+the image from the RGB to YUV result.  The gray-scale version is used for the
+gradient calculation, which is then applied to the convolution filter.  This
+accomplishes the line drawing step.  In preparation for the tone drawing step,
+the CPU is computing the target histogram.  The histogram calculation in the
+tone drawing step receives the gray-scale version as the input image.  The
+result is being passed to the histogram mapping, together with the computed
+target histogram.  Another kernel receives the loaded pencil textures and
+expands them to the image size.  The expanded textures and the histogram
+mapping are being used for the texture calculation.  The last kernel in the
+tone drawing, the texture rendering kernel, computes the result of the tone
+drawing.  The last two kernels represent the merge.  One kernel combines the
+results of the line drawing and the tone drawing step and generates the final
+image.  The last kernel applies the coloring if requested and converts the YUV
+back to RGB.  The CPU takes care of saving the image.
 
 \subsection{Sketch Filter}
 Calculating the grayscale image $I_g$ and Gradient $G$ on the GPU is no big
@@ -115,4 +140,60 @@ effort. Still, the total effort negligible in contrast to a linear search
 through the map with a worst case complexity of 256.
 
 \subsection{Texturing}
-Equation dings Raphael
+The \autoref{eq:beta} has the same shape as a Tikhonov regularization and
+therefore can be solved exactly the same way by solving the following normal
+equation:
+\begin{align}
+  \underbrace{(A A^T + \lambda \cdot \Gamma \Gamma^T)}_{A^*} x = \underbrace{A^T
+  b}_{b^*}
+  \label{eq:tikhonov}
+\end{align}
+$x$ is the solution image $\beta$ in vector shape. $A$ is a diagonal matrix.
+Each diagonal element corresponds to one pixel in $\ln(H)$. $b$ is the
+vectorized $\ln(J)$ image and $\Gamma$ is a diagonal matrix with two diagonals
+which represents if multiplied to a vectorized image the gradient operator.
+
+The iterative Conjugate Gradient solver from the cuda sparce library
+(\texttt{cusp}) is used to solve the linear system $A^* x = b^*$.
+
+For this the input images $\ln(J)$ and $\ln(H)$ are downloaded from the GPU,
+feed into diagonal matrices from \texttt{cusp} then again uploaded to solve the
+equation, once more downloaded and uploaded for the final composition with the
+line image $L$.
+
+Matrix $A*$ and vector $b^*$ (\autoref{eq:tikhonov}) could be calculated using
+\texttt{cusp}. For this one would upload $\ln(H)$, $\ln(H)$ and $\Gamma$, and
+use the matrix operations included in \texttt{cusp} to calculate the
+matrix-matrix and matrix-vector multiplications. However it is much more
+effective to construct $A^*$ and $b^*$ on the CPU and upload just those results,
+because \texttt{cusp} needs an output target matrix for each operation. So a lot
+of unnecessary memory needs to be allocated and used for the calculations on the
+GPU.  Due to the nice structure of the matrices, $A^*$ and $b^*$  can be
+calculated in $\mathcal{O}(n)$, with $n =$ number of pixel in the input image.
+This is illustrated in \autoref{fig:matrix-mult}.
+
+\begin{figure}[htb]
+  \centering
+  {\small
+  \begin{align*}
+    A*= \begin{pmatrix}
+      a & 0 & -\lambda & 0 & 0 & 0 & 0 & \dots\\
+      0 & b & 0 & -\lambda & 0 & 0 & 0 & \dots\\
+      -\lambda & 0 & b & 0 & -\lambda & 0 & 0 & \dots\\
+      0 & -\lambda & 0 & b & 0 & -\lambda & 0 & \dots\\
+      0 & 0 & -\lambda & 0 & b & 0 & -\lambda & \ddots\\
+      \vdots& &  &  &\ddots  \\
+      0 & 0 & \dots & 0 & -\lambda & 0 & b & 0 & -\lambda\\
+      0 & 0 & \dots & 0 & 0 &-\lambda & 0 & b & 0\\
+      0 & 0 & \dots & 0 & 0 & 0 &-\lambda & 0 & a \\
+    \end{pmatrix}
+  \end{align*}
+}
+  \caption{Closed form for Matrix $A^*$. Substitute $a = \lambda +
+  \ln(H(i))^2$ and substitute $b = 2\lambda + \ln(H(i))^2$ with $i$ being the line
+in the matrix.}
+  \label{fig:matrix-mult}
+\end{figure}
+
+According to our tests assembling the Matrix on the CPU gains a total speedup
+of the program of factor 2.02 compared to the GPU method.
