@@ -29,7 +29,7 @@
 
 #ifdef BENCHMARKING
 	#include <time.h>
-	#define BENCHMARK_REPETITIONS 50
+	#define BENCHMARK_REPETITIONS 100
 	#define COUT(msg) DUMMYOP()
 #else
 	#define COUT(msg) std::cout << msg << std::endl;

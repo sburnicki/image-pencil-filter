@@ -6,18 +6,7 @@
  */
 
 #include "ImageMultiplicationFilter.h"
-
-// TODO: remove/resolve duplicate code:
-__device__ __host__ int PixelIndexOf3(int x, int y, int width) {
-	return x + y * width;
-}
-
-__device__ __host__ bool IsInImage3(int x, int y, int width, int height) {
-	return x >= 0 && x < width &&
-			y >= 0 && y < height;
-}
-
-// TODO: remove the /255.0 operations and decide in which space we are
+#include "macros.h"
 
 __global__ void ImageMultiplicationKernel(
 		float *base_img,
@@ -28,8 +17,8 @@ __global__ void ImageMultiplicationKernel(
 	int x = threadIdx.x + blockDim.x * blockIdx.x;
 	int y = threadIdx.y + blockDim.y * blockIdx.y;
 
-	if (IsInImage3(x, y, image_width, image_height)) {
-		int pixel_index = PixelIndexOf3(x, y, image_width);
+	if (IS_IN_IMAGE(x, y, image_width, image_height)) {
+		int pixel_index = PIXEL_INDEX_OF(x, y, image_width);
 		result[pixel_index] = base_img[pixel_index] * add_img[pixel_index] / 255.0;
 	}
 }

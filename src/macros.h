@@ -34,5 +34,7 @@
 #define RGB_TO_Y(R, G, B) \
 	(R*0.299 + G*0.587 + B*0.114)
 
+#define PIXEL_INDEX_OF(x, y, width) (x + y * width)
+#define IS_IN_IMAGE(x, y, width, height) (x >= 0 && x < width && y >= 0 && y < height)
 
 #endif /* MACROS_H_ */

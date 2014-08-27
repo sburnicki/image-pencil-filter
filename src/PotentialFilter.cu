@@ -1,14 +1,5 @@
 #include "PotentialFilter.h"
-
-// TODO: remove/resolve duplicate code:
-__device__ __host__ int PixelIndexOf5(int x, int y, int width) {
-	return x + y * width;
-}
-
-__device__ __host__ bool IsInImage5(int x, int y, int width, int height) {
-	return x >= 0 && x < width &&
-			y >= 0 && y < height;
-}
+#include "macros.h"
 
 __global__ void PotentialKernel(
 		float *img,
@@ -19,8 +10,8 @@ __global__ void PotentialKernel(
 	int x = threadIdx.x + blockDim.x * blockIdx.x;
 	int y = threadIdx.y + blockDim.y * blockIdx.y;
 
-	if (IsInImage5(x, y, image_width, image_height)) {
-		int pixel_index = PixelIndexOf5(x, y, image_width);
+	if (IS_IN_IMAGE(x, y, image_width, image_height)) {
+		int pixel_index = PIXEL_INDEX_OF(x, y, image_width);
 		// * 2 because img[pixel_index] is the log2f of the real value
 		result[pixel_index] = exp2f(img[pixel_index] * beta[pixel_index]) * 255.f;
 	}
