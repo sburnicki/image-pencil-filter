@@ -153,7 +153,7 @@ equation:
   b}_{b^*}
   \label{eq:tikhonov}
 \end{align}
-$x$ is the solution image $\beta$ in vector shape. $A$ is a diagonal matrix.
+$x$, in our case, is the solution image $\beta$ in vector shape. $A$ is a diagonal matrix.
 Each diagonal element corresponds to one pixel in $\ln(H)$. $b$ is the
 vectorized $\ln(J)$ image and $\Gamma$ is a diagonal matrix with two diagonals
 which represents if multiplied to a vectorized image the gradient operator.
@@ -163,19 +163,24 @@ The iterative Conjugate Gradient solver from the cuda sparce library
 
 For this the input images $\ln(J)$ and $\ln(H)$ are downloaded from the GPU,
 feed into diagonal matrices from \texttt{cusp} then again uploaded to solve the
-equation, once more downloaded and uploaded for the final composition with the
-line image $L$.
+equation. After that the result is downloaded and uploaded again in our regular
+data representation for the final composition with the line image $L$.
 
 Matrix $A*$ and vector $b^*$ (\autoref{eq:tikhonov}) could be calculated using
 \texttt{cusp}. For this one would upload $\ln(H)$, $\ln(H)$ and $\Gamma$, and
 use the matrix operations included in \texttt{cusp} to calculate the
 matrix-matrix and matrix-vector multiplications. However it is much more
-effective to construct $A^*$ and $b^*$ on the CPU and upload just those results,
-because \texttt{cusp} needs an output target matrix for each operation. So a lot
-of unnecessary memory needs to be allocated and used for the calculations on the
-GPU.  Due to the nice structure of the matrices, $A^*$ and $b^*$  can be
+effective to construct $A^*$ and $b^*$ on the CPU and upload only those two
+objects, because \texttt{cusp} needs an output target matrix for each operation.
+So a lot of unnecessary memory needs to be allocated and used for the
+calculations on the GPU. Due to the nice structure of the matrices, $A^*$ and
+$b^*$  can be
 calculated in $\mathcal{O}(n)$, with $n =$ number of pixel in the input image.
-This is illustrated in \autoref{fig:matrix-mult}.
+This is illustrated for $A^*$ in \autoref{fig:matrix-mult}. The closed form of
+$b^*$ is:
+\begin{align*}
+  b^*(i) = \ln(J(i)) \cdot \ln(H(i))
+\end{align*}
 
 \begin{figure}[htb]
   \centering
@@ -200,5 +205,5 @@ in the matrix.}
   \label{fig:matrix-mult}
 \end{figure}
 
-According to our tests assembling the Matrix on the CPU gains a total speedup
-of the program of factor 2.02 compared to the GPU method.
+According to our tests assembling the Matrix on the CPU makes the filter
+approximately two times faster compared to the GPU method.
