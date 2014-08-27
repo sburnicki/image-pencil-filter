@@ -5,16 +5,6 @@
 #include "ImagePencilFilter.h"
 #define EPSILON 0.0001
 
-// TODO: remove/resolve duplicate code:
-__device__ __host__ int PixelIndexOf2(int x, int y, int width) {
-	return x + y * width;
-}
-
-__device__ __host__ bool IsInImage2(int x, int y, int width, int height) {
-	return x >= 0 && x < width &&
-			y >= 0 && y < height;
-}
-
 // search function
 __device__ __host__ int binarySearch(float value, float* target, int minidx, int maxidx) {
     while(true)
@@ -55,8 +45,8 @@ __global__ void ToneMappingKernel(
 	int y = threadIdx.y + blockDim.y * blockIdx.y;
 	float numpixels = image_width * image_height;
 
-	if (IsInImage2(x, y, image_width, image_height)) {
-		int pixel_index = PixelIndexOf2(x, y, image_width);
+	if (IS_IN_IMAGE(x, y, image_width, image_height)) {
+		int pixel_index = PIXEL_INDEX_OF(x, y, image_width);
 		float find = ((float) origHist[(int) image[pixel_index]]) / numpixels;
 		int targetValue = binarySearch(find, destHist, 0, num_tones - 1);
 		result[pixel_index] = log2f(targetValue / 255.0);

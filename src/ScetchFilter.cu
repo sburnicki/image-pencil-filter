@@ -24,15 +24,6 @@ __device__ __host__ int clamp(int value, int mi, int ma) {
   return max(mi, min(ma, value));
 }
 
-__device__ __host__ int PixelIndexOf(int x, int y, int width) {
-  return x + y * width;
-}
-
-__device__ __host__ bool IsInImage(int x, int y, int width, int height) {
-  return x >= 0 && x < width &&
-    y >= 0 && y < height;
-}
-
 __device__ __host__ bool IsInSharedMemoryBlock(int x, int y, int block_dim) {
   return x >= 0 && y >= 0 &&
     x < block_dim && y < block_dim;
@@ -69,7 +60,7 @@ __device__ __host__ bool CalculateCoordinatesInSharedMemoryBlock(
   *shared_x = current_x + thread_x;
   *shared_y = current_y + thread_y;
   return IsInSharedMemoryBlock(*shared_x, *shared_y, shared_width) &&
-         IsInImage(rotated_image_x, rotated_image_y, image_width, image_height);
+         IS_IN_IMAGE(rotated_image_x, rotated_image_y, image_width, image_height);
 }
 
 __device__ __host__ void ImageCoordinatesFromSharedAddress(
@@ -123,15 +114,15 @@ __global__ void HighSpeedScetchKernel(
           start_y,
           &x,
           &y);
-      if (IsInImage(x, y, image_width, image_height))
-        image_block[shared_address] = image[PixelIndexOf(x, y, image_width)];
+      if (IS_IN_IMAGE(x, y, image_width, image_height))
+        image_block[shared_address] = image[PIXEL_INDEX_OF(x, y, image_width)];
       else // TODO(Raphael) debug! Necessary?
         image_block[shared_address] = 0.f;
     }
   }
   __syncthreads();
 
-  if (IsInImage(x_image, y_image, image_width, image_height)) {
+  if (IS_IN_IMAGE(x_image, y_image, image_width, image_height)) {
     // calculate line convolution for all directions
     float angle_step = 2.f * M_PI / line_count;
     float max_convolution_result = 0.f;
@@ -153,7 +144,7 @@ __global__ void HighSpeedScetchKernel(
               image_width, image_height,
               &shared_x, &shared_y);
           if (is_inside_block) {
-            sum += image_block[PixelIndexOf(shared_x, shared_y, shared_width)];
+            sum += image_block[PIXEL_INDEX_OF(shared_x, shared_y, shared_width)];
             n_pixels += 1;
           }
         }
@@ -162,7 +153,7 @@ __global__ void HighSpeedScetchKernel(
       max_convolution_result = max(max_convolution_result, sum / n_pixels);
     }
     // calculate gamma
-    result[PixelIndexOf(x_image, y_image, image_width)] =
+    result[PIXEL_INDEX_OF(x_image, y_image, image_width)] =
       max(255.f - __powf(max_convolution_result, gamma), 50.f);
   }
 }
