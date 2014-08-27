@@ -6,6 +6,40 @@ Raphael
 \subsection{Histogram}
 Andreeas
 \subsection{Histogram Matching}
-Stefan
+The histogram matching is used to adjust the tone distribution of the 
+grayscale image to match a specific target tone distribution by using
+their corresponding histogram. In this context, the target tone
+distribution is artifically created to be similar to those of pencil
+scetches as explained above.
+
+The cummulative target histogram is created on the CPU by simply applying
+the the parametric model to the values 0 to 255 and summing it up with
+the values below.
+This step is done on the CPU as the target distribution only has to
+be evaluated 256 times which is negligible effort and can be either be
+precomputed or done while the GPU is busy with other steps of the pipeline.
+
+Once this histogram is uploaded to the GPU it can be used together with
+the histogram from the image created in the previous step to adjust the
+tones of the grayscale image. This is done in a kernel with one thread
+per image pixel. A thread will the obtain the tone value of the pixel
+it corresponds to and look up it's cumulative probabilityvalue in
+the source histogram map.
+Afterwards, the cummulative target historgam is used in iverse to find
+out which tone the value corresponds to in it. The pixel is then set to
+the looked up target tone value.
+
+The inverse lookup in the cummulative target historgam is implemented
+as a binary search function which is used in the kernel. Although
+one would think that a binary search is inefficient when multiple threads
+are executed in a warp and search for different values, it really isn't.
+As the cummulative target histogram map only consist of 256 values,
+the binary search will need at maximum $log_2 256=8$ loop runs to end
+up at the correct value. Because the threads are executed in a warp,
+the branches might get executed in serial. However, there is just one 
+real branching operation inside the loop body, which could double the
+effort. Still, the total effort negligible in contrast to a linear search
+through the map with a worst case complexity of 256.
+
 \subsection{Texturing}
 Equation dings Raphael
