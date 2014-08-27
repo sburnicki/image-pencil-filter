@@ -4,15 +4,15 @@ The following subsections shed some light on how both stages work precisely.
 
 The input for the filter is a regular RGB-image $I_{rgb}$. In the first step a
 grayscale image $I_g$ is calculated using the $Y$-channel of the
-$YUV$-transformed image $I_{yuv}$. $I_g$ now serves as input for the future
+$YUV$-transformed image $I_{yuv}$. $I_g$ now serves as input for all coming
 steps.
 
 \subsection{Line Sketching}
 One prominent task of the filter is to create sketchy looking outlines. The main
 objective here is to mimic freehand sketching, which is typically done by
-drawing short straight lines aligned to the outlines. The outlines are detected
-using a simple gradient operator. Then each pixel is assigned to a line
-direction and finally the pixel is drawn as part of its line.
+drawing short straight lines aligned to the outlines of objects. The outlines
+are detected using a simple gradient operator. Then each pixel is assigned to a
+line direction and finally the pixel is drawn as part of its line.
 
 \paragraph{Gradient Image}
 The Outlines are detected and stored in the image $G$ using gradient magnitudes:
@@ -30,10 +30,10 @@ $G$ and each line segment $\mathscr{L}_i$ is calculated.
   \label{eq:Gi}
 \end{align}
 
-The value $G_i(p)$ of pixel $p$ will be very big, if that pixel lies directly on
-a line in $G$ (edge) and if $\mathscr{L}_i$ is following this line, such that only big
+The value $G_i(p)$ of pixel $p$ will be big, if that pixel lies directly on
+a line in $G$ (edge) and if $\mathscr{L}_i$ is following this edge, such that only big
 values are collected in the convolution. If the pixel doesn't lie on or close to
-a line it can not gather high values and therefore stay dark. Pixels which lie
+an edge it can not gather high values and therefore stay dark. Pixels which lie
 very close to edges can still gather some brightness if the
 line segment $\mathscr{L}_i$ intersects the edge. This way lines in $G$ which
 follow the direction of $\mathscr{L}_i$ show up and slightly overshoot in $G_i$.
@@ -47,6 +47,9 @@ $G_i$:
 
 In a final step $L$ is inverted, such that the lines are dark and the rest is
 white. The result can be seen on the right side in \autoref{fig:sketch-steps}.
+The blurriness comes from the fact that pixels close to edges collect some
+brightness from the Lines that intersect the edge. See \autoref{future-work} for
+more information on that issue.
 
 \begin{figure}[htb]
   \centering
@@ -58,7 +61,7 @@ white. The result can be seen on the right side in \autoref{fig:sketch-steps}.
 
 \subsection{Shading}
 The other important step in creating a believable pencil sketch image from a
-natural image is to produce a hatching texture to create the shading. This is
+natural image, is to produce a hatching texture to create the shading. This is
 done in two steps. First the histogram of the input image $I_g$ is matched to a
 histogram model that was derived in \cite{mainPaper}. This way the tone
 distribution is forced to correspond to tone distributions that were measured in
@@ -67,7 +70,7 @@ render the hatching texture for the input image.
 
 \paragraph{Histogram Matching}
 Tones in natural images do not follow any specific pattern. In pencil drawings
-however the tones are basically created only by two basic tones, namely the
+however the tones are basically created only from two basic tones, namely the
 white paper and the graphite strokes in different strengths. Heavy strokes are
 used in very dark areas, mid tone strokes are used to produce impression of 3D
 layered information and in bright areas the paper is just left white.
@@ -98,8 +101,8 @@ originate from slight illumination variances or the use of a eraser.
 \end{align}
 
 The parameter for this function is just $\sigma_b$, which controls the sharpness of
-the function. This distribution can be seen on the very right of the histograms
-in \autoref{fig:real-histograms}.
+the function. This distribution can be seen on the left 
+in \autoref{fig:p}.
 
 The mid layer is composed of strokes with different pressures and therefore in
 different gray levels. So the distributions of those gray levels is equally
@@ -116,7 +119,7 @@ gray levels.
 The controlling parameters for this function are the range boundaries $u_d$
 and $u_b$.
 
-Finally the dark region which shows up as this bell shaped peak in the dark
+Finally the dark region which shows up as bell shaped peak in the dark
 regions in \autoref{fig:real-histograms} is represented as a Gauss-curve. The
 position and shape of the dark regions depend on the maximum pressure an artist is using,
 and the softness of the pencil that is used.
@@ -139,23 +142,24 @@ Plots for the three functions can be seen in \autoref{fig:p}.
   \label{fig:p}
 \end{figure}
 
-The final tone distribution is now simply composited out of those three
+The final tone distribution is now simply composed out of those three
 function by creating a weighted sum from $p_1$, $p_2$ and $p_3$:
 \begin{align}
   p(v) = \frac{1}{Z} \sum_{i=1}^{3}\omega_i p_i(v)
   \label{eq:p}
 \end{align}
 Where $Z$ is a normalization factor to make $\int_0^{255}p(v)dv = 1$ and the
-$\omega_i$ are weighting parameters which can used to weight the importance of
-the functions.
+$\omega_i$ are weighting parameters which can be used to weight the importance of
+the individual Histogram parts.
 
 In \cite{mainPaper} they learned the parameters for those functions from a set
 of different styled pencil sketches using Maximum Likelihood Estimation. We skipped this part and left those
 parameters to be controlled by the user.
 
 Histogram Matching is used to apply the tone distribution from \autoref{eq:p} to
-the input image. The result $J$ is then used to calculate the hatching texture.
-$J$ can be seen on the right side of \autoref{fig:hist-result}.
+the input image. The result $J$ of the Histogram Matching is then used as input
+for the calculation of the hatching texture.  $J$ can be seen on the right side
+of \autoref{fig:hist-result}.
 
 \begin{figure}[htb]
   \centering
@@ -165,16 +169,24 @@ $J$ can be seen on the right side of \autoref{fig:hist-result}.
 \end{figure}
 
 \paragraph{Texturing}
-The filter uses a men made pencil hatching pattern $H$. A human repetitively draws
-at the same position to generate the correct tone in the hatching texture. A
-exponential function can be used to simulate this process of placing multiple
-strokes at the same position: $H(x)^{\beta(x)} \approx J(x)$. This corresponds
-to drawing $H$ $\beta$ times at the same position to approximately match
-the tone that is dictated by our tonal map $J$. In the logarithmic domain this
-boils down to $\beta(x) \ln\left( H(x) \right) \approx \ln\left( J(x)
-\right)$.
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=0.4\textwidth]{images/texture2.jpg}
+  \caption{A possible men made pencil hatching pattern $H$.}
+  \label{fig:hatching-pattern}
+\end{figure}
+The filter uses a men made pencil hatching pattern $H$ as shown in
+\autoref{fig:hatching-pattern}. To create the correct shading in a pencil
+sketch, humans repetitively draw on the same position. A exponential function
+can be used to simulate this process of placing multiple strokes at the same
+position: $H(x)^{\beta(x)} \approx J(x)$. This corresponds to drawing $H$
+$\beta$ times at the same position to approximately match the tone that is
+dictated by our tonal map $J$. In the logarithmic domain this boils down to
+$\beta(x) \ln\left( H(x) \right) \approx \ln\left( J(x) \right)$.
 
-Just solving for $\beta$ in this equation is going to destroy the hatching
+
+
+Just solving this equation for $\beta$ is going to destroy the hatching
 pattern because $\beta$ can be calculated for each pixel independently, such
 that in the end $H^{\beta} = J$. Therefore a smoothness constraint is
 introduced:
@@ -186,11 +198,11 @@ introduced:
 The smoothness weighting factor $\lambda$ can be used to determine how strong
 the hatching pattern $H$ will show through in the result.
 
-The hatching texture $T$ is then calculated as the pixelwise exponentiation
+The hatching texture $T$ is then calculated as pixelwise exponentiation
 \begin{align*}
   T = H^{\beta}
 \end{align*}
-\autoref{fig:texture-result} shows the result for the minion.
+\autoref{fig:texture-result} shows the result for the minion picture.
 
 \begin{figure}[htb]
   \centering
@@ -211,14 +223,14 @@ pixelwise:
 
 If desired it is also possible to create colored pencil drawings using the $YUV$
 decomposed image $I_{yuv}$ from the beginning and replace the $Y$ channel with
-$R$. The resulting RGB-image can then easily be calculated by a color space
-transformation.
+$R$. The resulting RGB-image can then easily be calculated with another color
+space transformation.
 
 In \autoref{fig:final-result} both, grayscale and colored results are shown.
 
 \begin{figure}[htb]
   \centering
   \includegraphics[width=0.5\textwidth]{images/final-result.png}
-  \caption{combination of the results from the line drawing and shading.}
+  \caption{Combination of the line drawing and shading.}
   \label{fig:final-result}
 \end{figure}
