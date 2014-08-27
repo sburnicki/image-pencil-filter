@@ -1,5 +1,30 @@
 \section{GPU Implementation} \label{gpu-implementation}
-Pipeline (Andreas)
+
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=0.5\textwidth]{images/pipeline.png}
+  \caption{GPU and CPU pipeline of the implementation}
+  \label{fig:pipeline}
+\end{figure}
+
+\autoref{fig:pipeline} displays the GPU and CPU pipeline of the implementation.
+The first step loads the image, which happens on the CPU.  The conversion of
+the image from RGB to YUV on the GPU is run in parallel with the loading of the
+pencil textures on the CPU.  The next kernel extracts the gray-scale version of
+the image from the RGB to YUV result.  The gray-scale version is used for the
+gradient calculation, which is then applied to the convolution filter.  This
+accomplishes the line drawing step.  In preparation for the tone drawing step,
+the CPU is computing the target histogram.  The histogram calculation in the
+tone drawing step receives the gray-scale version as the input image.  The
+result is being passed to the histogram mapping, together with the computed
+target histogram.  Another kernel receives the loaded pencil textures and
+expands them to the image size.  The expanded textures and the histogram
+mapping are being used for the texture calculation.  The last kernel in the
+tone drawing, the texture rendering kernel, computes the result of the tone
+drawing.  The last two kernels represent the merge.  One kernel combines the
+results of the line drawing and the tone drawing step and generates the final
+image.  The last kernel applies the coloring if requested and converts the YUV
+back to RGB.  The CPU takes care of saving the image.
 
 \subsection{Sketch Filter}
 Calculating the grayscale image $I_g$ and Gradient $G$ on the GPU is no big
