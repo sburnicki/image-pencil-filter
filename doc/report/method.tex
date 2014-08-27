@@ -25,9 +25,10 @@ In the center of \autoref{fig:sketch-steps} you can see how $G$ looks like.
 Given just the gradient magnitudes $G$ for each line direction $i \in
 \lbrace 1,\cdots,N\rbrace$ where $N$ is the total number of lines, the convolution between
 $G$ and each line segment $\mathscr{L}_i$ is calculated.
-\begin{align*}
+\begin{align}
   G_i = \mathscr{L}_i * G
-\end{align*}
+  \label{eq:Gi}
+\end{align}
 
 The value $G_i(p)$ of pixel $p$ will be very big, if that pixel lies directly on
 a line in $G$ (edge) and if $\mathscr{L}_i$ is following this line, such that only big
@@ -39,9 +40,10 @@ follow the direction of $\mathscr{L}_i$ show up and slightly overshoot in $G_i$.
 
 Now to actually draw the lines, each pixel selects its maximum value from all
 $G_i$:
-\begin{align*}
+\begin{align}
  L = \max(\lbrace G_i\rbrace) \quad \forall i \in  \lbrace1,\cdots,N\rbrace
-\end{align*}
+ \label{eq:L}
+\end{align}
 
 In a final step $L$ is inverted, such that the lines are dark and the rest is
 white. The result can be seen on the right side in \autoref{fig:sketch-steps}.

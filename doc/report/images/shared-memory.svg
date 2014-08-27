@@ -1,0 +1,789 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="622.3421"
+   height="622.20056"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.48.4 r9939"
+   sodipodi:docname="shared-memory.svg"
+   inkscape:export-filename="/home/rider/Arbeitsfläche/image-pencil-filter/doc/report/images/shared-memory.png"
+   inkscape:export-xdpi="300"
+   inkscape:export-ydpi="300">
+  <defs
+     id="defs4">
+    <marker
+       inkscape:stockid="Arrow1Mend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Mend"
+       style="overflow:visible">
+      <path
+         id="path3798"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt"
+         transform="matrix(-0.4,0,0,-0.4,-4,0)"
+         inkscape:connector-curvature="0" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Mstart"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Mstart"
+       style="overflow:visible">
+      <path
+         id="path3795"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt"
+         transform="matrix(0.4,0,0,0.4,4,0)"
+         inkscape:connector-curvature="0" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Lstart"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Lstart"
+       style="overflow:visible">
+      <path
+         id="path3789"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt"
+         transform="matrix(0.8,0,0,0.8,10,0)"
+         inkscape:connector-curvature="0" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Mstart"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Mstart-0"
+       style="overflow:visible">
+      <path
+         inkscape:connector-curvature="0"
+         id="path3795-2"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt"
+         transform="matrix(0.4,0,0,0.4,4,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Mend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Mend-5"
+       style="overflow:visible">
+      <path
+         inkscape:connector-curvature="0"
+         id="path3798-2"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt"
+         transform="matrix(-0.4,0,0,-0.4,-4,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Mstart"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Mstart-0-9"
+       style="overflow:visible">
+      <path
+         inkscape:connector-curvature="0"
+         id="path3795-2-1"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt"
+         transform="matrix(0.4,0,0,0.4,4,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Mend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Mend-5-3"
+       style="overflow:visible">
+      <path
+         inkscape:connector-curvature="0"
+         id="path3798-2-0"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt"
+         transform="matrix(-0.4,0,0,-0.4,-4,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Mstart"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Mstart-0-2"
+       style="overflow:visible">
+      <path
+         inkscape:connector-curvature="0"
+         id="path3795-2-2"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt"
+         transform="matrix(0.4,0,0,0.4,4,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Mend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Mend-5-7"
+       style="overflow:visible">
+      <path
+         inkscape:connector-curvature="0"
+         id="path3798-2-5"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt"
+         transform="matrix(-0.4,0,0,-0.4,-4,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Mstart"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="marker5953"
+       style="overflow:visible">
+      <path
+         inkscape:connector-curvature="0"
+         id="path5955"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt"
+         transform="matrix(0.4,0,0,0.4,4,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Mend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="marker5957"
+       style="overflow:visible">
+      <path
+         inkscape:connector-curvature="0"
+         id="path5959"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt"
+         transform="matrix(-0.4,0,0,-0.4,-4,0)" />
+    </marker>
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.98994949"
+     inkscape:cx="195.92405"
+     inkscape:cy="281.34202"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer2"
+     showgrid="false"
+     inkscape:window-width="1855"
+     inkscape:window-height="1056"
+     inkscape:window-x="65"
+     inkscape:window-y="24"
+     inkscape:window-maximized="1"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0" />
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Ebene 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-83.876618,-47.799423)"
+     style="display:inline">
+    <rect
+       style="color:#000000;fill:#00be00;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       id="rect2989"
+       width="620"
+       height="620"
+       x="85.714287"
+       y="49.505043" />
+    <rect
+       style="color:#000000;fill:#0077be;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:0.67141575;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       id="rect2989-9"
+       width="416.27777"
+       height="416.27777"
+       x="187.57541"
+       y="151.36617" />
+    <text
+       xml:space="preserve"
+       style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:TG Pagella Math;-inkscape-font-specification:TG Pagella Math"
+       x="255.56859"
+       y="390.30637"
+       id="text6575"
+       sodipodi:linespacing="125%"
+       transform="translate(85.214287,48.380043)"><tspan
+         sodipodi:role="line"
+         id="tspan6577"
+         x="255.56859"
+         y="390.30637"
+         style="font-size:40px;font-weight:bold;-inkscape-font-specification:TG Pagella Math Bold">Active</tspan><tspan
+         sodipodi:role="line"
+         x="255.56859"
+         y="440.30637"
+         id="tspan6579"
+         style="font-size:40px;font-weight:bold;-inkscape-font-specification:TG Pagella Math Bold">    Area</tspan></text>
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="Hide"
+     style="display:inline"
+     transform="translate(1.337669,1.20562)">
+    <g
+       transform="translate(-85.214287,-49.005046)"
+       id="g5229">
+      <path
+         style="font-size:medium;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:normal;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;baseline-shift:baseline;color:#000000;fill:#000000;fill-opacity:1;stroke:none;stroke-width:5;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Sans;-inkscape-font-specification:Sans"
+         d="m 194.96875,339.71875 0,5 402.03125,0 0,-5 -402.03125,0 z"
+         id="path3783"
+         inkscape:connector-curvature="0" />
+      <path
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:2pt"
+         d="m 214.95944,342.22494 10,-10 -35,10 35,10 -10,-10 z"
+         id="path5235"
+         inkscape:connector-curvature="0" />
+      <path
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:2pt"
+         d="m 577.00016,342.22494 -10,10 35,-10 -35,-10 10,10 z"
+         id="path5237"
+         inkscape:connector-curvature="0" />
+    </g>
+    <g
+       transform="translate(-85.214287,-49.005046)"
+       id="g5219">
+      <path
+         style="font-size:medium;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:normal;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;baseline-shift:baseline;color:#000000;fill:#000000;fill-opacity:1;stroke:none;stroke-width:5;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Sans;-inkscape-font-specification:Sans"
+         d="m 279.34375,159.375 0,402.0625 5,0 0,-402.0625 -5,0 z"
+         id="path3783-3"
+         inkscape:connector-curvature="0" />
+      <path
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:2pt"
+         d="m 281.83256,179.38733 10,10 -10,-35 -10,35 10,-10 z"
+         id="path5225"
+         inkscape:connector-curvature="0" />
+      <path
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:2pt"
+         d="m 281.83256,541.42805 -10,-10 10,35 10,-35 -10,10 z"
+         id="path5227"
+         inkscape:connector-curvature="0" />
+    </g>
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:TG Pagella Math;-inkscape-font-specification:TG Pagella Math"
+       x="214.80101"
+       y="273.01685"
+       id="text5191"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan5193"
+         x="214.80101"
+         y="273.01685">32</tspan></text>
+    <path
+       style="fill:none;stroke:#000000;stroke-width:5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-start:url(#Arrow1Mstart-0);marker-mid:none;marker-end:url(#Arrow1Mend-5)"
+       d="m 46.953253,8.35688 0,603.06106"
+       id="path5305"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-start:url(#Arrow1Mstart-0);marker-mid:none;marker-end:url(#Arrow1Mend-5)"
+       d="m 611.28589,61.894964 -603.061059,0"
+       id="path5305-9"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc" />
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:TG Pagella Math;-inkscape-font-specification:TG Pagella Math"
+       x="74.389824"
+       y="40.681759"
+       id="text5907"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan5909"
+         x="74.389824"
+         y="40.681759"
+         style="font-size:40px">32 + 2*line_length</tspan></text>
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer3"
+     inkscape:label="grid"
+     style="display:none"
+     transform="translate(1.337669,1.20562)">
+    <path
+       d="m 44.200001,0 0,206.83746 M 88.400002,0 l 0,206.83746 M 132.6,0 l 0,206.83746 M 176.8,0 l 0,206.83746 M 221,0 221,206.83746 M 265.2,0 l 0,206.83746 M 309.40001,0 l 0,206.83746 M 353.60001,0 l 0,206.83746 M 397.80001,0 l 0,206.83746 M 442.00001,0 l 0,206.83746 M 486.20001,0 l 0,206.83746 M 0,0 524.02536,0 M 0,44.200001 l 524.02536,0 M 0,88.400002 l 524.02536,0 M 0,132.6 l 524.02536,0 M 0,176.8 l 524.02536,0"
+       style="fill:none;stroke:#000000;stroke-width:1pt;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       id="path6069"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cccccccccccccccccccccccccccccccc"
+       inkscape:export-filename="/home/rider/Arbeitsfläche/image-pencil-filter/doc/report/images/shared-copy.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <text
+       xml:space="preserve"
+       style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:TG Pagella Math;-inkscape-font-specification:TG Pagella Math"
+       x="17.857143"
+       y="31"
+       id="text6071"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/rider/Arbeitsfläche/image-pencil-filter/doc/report/images/shared-copy.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300"><tspan
+         sodipodi:role="line"
+         id="tspan6073"
+         x="17.857143"
+         y="31">1</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:TG Pagella Math;-inkscape-font-specification:TG Pagella Math"
+       x="57.857143"
+       y="31"
+       id="text6071-3"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/rider/Arbeitsfläche/image-pencil-filter/doc/report/images/shared-copy.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300"><tspan
+         sodipodi:role="line"
+         id="tspan6073-5"
+         x="57.857143"
+         y="31">2</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:TG Pagella Math;-inkscape-font-specification:TG Pagella Math"
+       x="103.85715"
+       y="31"
+       id="text6071-6"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/rider/Arbeitsfläche/image-pencil-filter/doc/report/images/shared-copy.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300"><tspan
+         sodipodi:role="line"
+         id="tspan6073-4"
+         x="103.85715"
+         y="31">3</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:TG Pagella Math;-inkscape-font-specification:TG Pagella Math"
+       x="143.85715"
+       y="31"
+       id="text6071-6-8"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/rider/Arbeitsfläche/image-pencil-filter/doc/report/images/shared-copy.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300"><tspan
+         sodipodi:role="line"
+         id="tspan6073-4-3"
+         x="143.85715"
+         y="31">...</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:TG Pagella Math;-inkscape-font-specification:TG Pagella Math"
+       x="228.78113"
+       y="118.19101"
+       id="text6071-6-83"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/rider/Arbeitsfläche/image-pencil-filter/doc/report/images/shared-copy.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300"><tspan
+         sodipodi:role="line"
+         id="tspan6073-4-5"
+         x="228.78113"
+         y="118.19101">32<tspan
+   style="font-size:65.00091553%;baseline-shift:super"
+   id="tspan6508">2</tspan></tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:TG Pagella Math;-inkscape-font-specification:TG Pagella Math"
+       x="278.92398"
+       y="119.6196"
+       id="text6071-6-85"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/rider/Arbeitsfläche/image-pencil-filter/doc/report/images/shared-copy.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300"><tspan
+         sodipodi:role="line"
+         id="tspan6073-4-8"
+         x="278.92398"
+         y="119.6196"
+         style="fill:#fd4e00;fill-opacity:1;stroke:none">1</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:TG Pagella Math;-inkscape-font-specification:TG Pagella Math"
+       x="322.92398"
+       y="119.6196"
+       id="text6071-6-85-0"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/rider/Arbeitsfläche/image-pencil-filter/doc/report/images/shared-copy.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300"><tspan
+         sodipodi:role="line"
+         id="tspan6073-4-8-8"
+         x="322.92398"
+         y="119.6196">2</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:TG Pagella Math;-inkscape-font-specification:TG Pagella Math"
+       x="366.92398"
+       y="119.6196"
+       id="text6071-6-85-4"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/rider/Arbeitsfläche/image-pencil-filter/doc/report/images/shared-copy.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300"><tspan
+         sodipodi:role="line"
+         id="tspan6073-4-8-80"
+         x="366.92398"
+         y="119.6196">3</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:TG Pagella Math;-inkscape-font-specification:TG Pagella Math"
+       x="411.194"
+       y="120.41818"
+       id="text6071-6-8-2"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/rider/Arbeitsfläche/image-pencil-filter/doc/report/images/shared-copy.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300"><tspan
+         sodipodi:role="line"
+         id="tspan6073-4-3-8"
+         x="411.194"
+         y="120.41818">...</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:TG Pagella Math;-inkscape-font-specification:TG Pagella Math"
+       x="41.527866"
+       y="602.57068"
+       id="text6071-6-83-8"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan6073-4-5-3"
+         x="41.527866"
+         y="602.57068">32*32</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:TG Pagella Math;-inkscape-font-specification:TG Pagella Math"
+       x="103.67072"
+       y="603.99927"
+       id="text6071-6-85-1"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan6073-4-8-3"
+         x="103.67072"
+         y="603.99927">1</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:TG Pagella Math;-inkscape-font-specification:TG Pagella Math"
+       x="147.67068"
+       y="603.99927"
+       id="text6071-6-85-0-6"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan6073-4-8-8-1"
+         x="147.67068"
+         y="603.99927">2</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:TG Pagella Math;-inkscape-font-specification:TG Pagella Math"
+       x="191.67072"
+       y="603.99927"
+       id="text6071-6-85-4-6"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan6073-4-8-80-0"
+         x="191.67072"
+         y="603.99927">3</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:TG Pagella Math;-inkscape-font-specification:TG Pagella Math"
+       x="235.9407"
+       y="604.79785"
+       id="text6071-6-8-2-0"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan6073-4-3-8-1"
+         x="235.9407"
+         y="604.79785">...</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:TG Pagella Math;-inkscape-font-specification:TG Pagella Math"
+       x="504.64734"
+       y="27.080151"
+       id="text6071-6-8-2-2"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/rider/Arbeitsfläche/image-pencil-filter/doc/report/images/shared-copy.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300"><tspan
+         sodipodi:role="line"
+         id="tspan6073-4-3-8-5"
+         x="504.64734"
+         y="27.080151">...</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:TG Pagella Math;-inkscape-font-specification:TG Pagella Math"
+       x="501.61688"
+       y="73.547165"
+       id="text6071-6-8-2-7"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/rider/Arbeitsfläche/image-pencil-filter/doc/report/images/shared-copy.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300"><tspan
+         sodipodi:role="line"
+         id="tspan6073-4-3-8-9"
+         x="501.61688"
+         y="73.547165">...</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:TG Pagella Math;-inkscape-font-specification:TG Pagella Math"
+       x="498.58643"
+       y="120.01418"
+       id="text6071-6-8-2-3"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/rider/Arbeitsfläche/image-pencil-filter/doc/report/images/shared-copy.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300"><tspan
+         sodipodi:role="line"
+         id="tspan6073-4-3-8-3"
+         x="498.58643"
+         y="120.01418">...</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:TG Pagella Math;-inkscape-font-specification:TG Pagella Math"
+       x="502.62704"
+       y="166.4812"
+       id="text6071-6-8-2-76"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/rider/Arbeitsfläche/image-pencil-filter/doc/report/images/shared-copy.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300"><tspan
+         sodipodi:role="line"
+         id="tspan6073-4-3-8-32"
+         x="502.62704"
+         y="166.4812">...</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:TG Pagella Math;-inkscape-font-specification:TG Pagella Math"
+       x="501.61688"
+       y="198.80608"
+       id="text6071-6-8-2-22"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/rider/Arbeitsfläche/image-pencil-filter/doc/report/images/shared-copy.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300"><tspan
+         sodipodi:role="line"
+         id="tspan6073-4-3-8-8"
+         x="501.61688"
+         y="198.80608">...</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:TG Pagella Math;-inkscape-font-specification:TG Pagella Math"
+       x="13.713203"
+       y="202.84669"
+       id="text6071-6-8-2-02"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/rider/Arbeitsfläche/image-pencil-filter/doc/report/images/shared-copy.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300"><tspan
+         sodipodi:role="line"
+         id="tspan6073-4-3-8-6"
+         x="13.713203"
+         y="202.84669">...</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:TG Pagella Math;-inkscape-font-specification:TG Pagella Math"
+       x="59.170067"
+       y="201.83655"
+       id="text6071-6-8-2-6"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/rider/Arbeitsfläche/image-pencil-filter/doc/report/images/shared-copy.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300"><tspan
+         sodipodi:role="line"
+         id="tspan6073-4-3-8-2"
+         x="59.170067"
+         y="201.83655">...</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:TG Pagella Math;-inkscape-font-specification:TG Pagella Math"
+       x="100.58632"
+       y="202.84669"
+       id="text6071-6-8-2-60"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/rider/Arbeitsfläche/image-pencil-filter/doc/report/images/shared-copy.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300"><tspan
+         sodipodi:role="line"
+         id="tspan6073-4-3-8-26"
+         x="100.58632"
+         y="202.84669">...</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:TG Pagella Math;-inkscape-font-specification:TG Pagella Math"
+       x="144.02289"
+       y="198.80608"
+       id="text6071-6-8-2-4"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/rider/Arbeitsfläche/image-pencil-filter/doc/report/images/shared-copy.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300"><tspan
+         sodipodi:role="line"
+         id="tspan6073-4-3-8-4"
+         x="144.02289"
+         y="198.80608">...</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:TG Pagella Math;-inkscape-font-specification:TG Pagella Math"
+       x="183.41884"
+       y="198.80608"
+       id="text6071-6-8-2-025"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/rider/Arbeitsfläche/image-pencil-filter/doc/report/images/shared-copy.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300"><tspan
+         sodipodi:role="line"
+         id="tspan6073-4-3-8-82"
+         x="183.41884"
+         y="198.80608">...</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:TG Pagella Math;-inkscape-font-specification:TG Pagella Math"
+       x="238.97722"
+       y="197.79593"
+       id="text6071-6-8-2-71"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/rider/Arbeitsfläche/image-pencil-filter/doc/report/images/shared-copy.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300"><tspan
+         sodipodi:role="line"
+         id="tspan6073-4-3-8-42"
+         x="238.97722"
+         y="197.79593">...</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:TG Pagella Math;-inkscape-font-specification:TG Pagella Math"
+       x="281.40363"
+       y="199.81624"
+       id="text6071-6-8-2-8"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/rider/Arbeitsfläche/image-pencil-filter/doc/report/images/shared-copy.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300"><tspan
+         sodipodi:role="line"
+         id="tspan6073-4-3-8-47"
+         x="281.40363"
+         y="199.81624">...</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:TG Pagella Math;-inkscape-font-specification:TG Pagella Math"
+       x="323.83005"
+       y="198.80608"
+       id="text6071-6-8-2-1"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/rider/Arbeitsfläche/image-pencil-filter/doc/report/images/shared-copy.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300"><tspan
+         sodipodi:role="line"
+         id="tspan6073-4-3-8-34"
+         x="323.83005"
+         y="198.80608">...</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:TG Pagella Math;-inkscape-font-specification:TG Pagella Math"
+       x="362.21582"
+       y="199.81624"
+       id="text6071-6-8-2-5"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/rider/Arbeitsfläche/image-pencil-filter/doc/report/images/shared-copy.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300"><tspan
+         sodipodi:role="line"
+         id="tspan6073-4-3-8-68"
+         x="362.21582"
+         y="199.81624">...</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:TG Pagella Math;-inkscape-font-specification:TG Pagella Math"
+       x="407.6727"
+       y="200.82639"
+       id="text6071-6-8-2-768"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/rider/Arbeitsfläche/image-pencil-filter/doc/report/images/shared-copy.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300"><tspan
+         sodipodi:role="line"
+         id="tspan6073-4-3-8-14"
+         x="407.6727"
+         y="200.82639">...</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:TG Pagella Math;-inkscape-font-specification:TG Pagella Math"
+       x="453.12955"
+       y="198.80608"
+       id="text6071-6-8-2-64"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/rider/Arbeitsfläche/image-pencil-filter/doc/report/images/shared-copy.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300"><tspan
+         sodipodi:role="line"
+         id="tspan6073-4-3-8-0"
+         x="453.12955"
+         y="198.80608">...</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:TG Pagella Math;-inkscape-font-specification:TG Pagella Math"
+       x="186.78113"
+       y="106.19101"
+       id="text6071-6-83-9"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/rider/Arbeitsfläche/image-pencil-filter/doc/report/images/shared-copy.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300"><tspan
+         sodipodi:role="line"
+         id="tspan6073-4-5-2"
+         x="186.78113"
+         y="106.19101">32<tspan
+   style="font-size:65.00091553%;baseline-shift:super"
+   id="tspan6508-2">2</tspan></tspan><tspan
+         sodipodi:role="line"
+         x="186.78113"
+         y="131.19101"
+         id="tspan6534">-1</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:TG Pagella Math;-inkscape-font-specification:TG Pagella Math"
+       x="143.07144"
+       y="120.04661"
+       id="text6071-6-8-2-9"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/rider/Arbeitsfläche/image-pencil-filter/doc/report/images/shared-copy.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300"><tspan
+         sodipodi:role="line"
+         id="tspan6073-4-3-8-69"
+         x="143.07144"
+         y="120.04661">...</tspan></text>
+  </g>
+</svg>
