@@ -6,18 +6,18 @@ The quality of our line sketch filter for example could be boosted by getting
 rid of the blurriness, which would require one further processing step which is
 described in \cite{mainPaper}.
 
-As mentioned before it would be nice if there was a way to construct matrix
+As mentioned before, it would be nice if there was a way to construct matrix
 $A^*$ and vector $b^*$ directly on the GPU with the data, that is already
 there. This might be possible with the use of \texttt{cusp}s LinearOperator
 classes.
 
-Currently the parameters of the filter have all have to be set manually. It
-would be helpful to create some parameter presets, which can be
-selected and adapted on the fly. Those presets could be created on the fly
-and saved to disk or learned from real pencil drawings as in \cite{mainPaper}.
+Currently the parameters of the filter all have to be set manually. It would be
+helpful to create some parameter presets, which can be selected and adapted on
+the fly. Those presets could be created by the user on the fly and saved to disk
+or learned from real pencil drawings as described in \cite{mainPaper}.
 
 For this a GUI with realtime response would be great to immediately see the
-response. 
+response to parameter changes. 
 
 If one could find a way to enforce temporal consistency in real time the filter
 could be used to stylize entire video sequences. It might be worth it to take a
