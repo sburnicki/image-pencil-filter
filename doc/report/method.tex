@@ -1,10 +1,11 @@
 \section{Method} \label{method}
-The filter considers \textit{line scetching} and \textit{shading} separately.
-The following subsections shed some light on how both stages work precisely.
+As already mentioned, the filter considers \textit{line sketching} and
+\textit{shading} separately.
+The following subsections shed some light on how both stages work in detail.
 
 The input for the filter is a regular RGB-image $I_{rgb}$. In the first step a
 grayscale image $I_g$ is calculated using the $Y$-channel of the
-$YUV$-transformed image $I_{yuv}$. $I_g$ now serves as input for all coming
+$YUV$-transformed image $I_{yuv}$. $I_g$ now serves as input for all upcoming
 steps.
 
 \subsection{Line Sketching}
@@ -48,7 +49,7 @@ $G_i$:
 In a final step $L$ is inverted, such that the lines are dark and the rest is
 white. The result can be seen on the right side in \autoref{fig:sketch-steps}.
 The blurriness comes from the fact that pixels close to edges collect some
-brightness from the Lines that intersect the edge. See \autoref{future-work} for
+brightness from the lines that intersect the edge. See \autoref{future-work} for
 more information on that issue.
 
 \begin{figure}[htb]
@@ -62,7 +63,7 @@ more information on that issue.
 \subsection{Shading}
 The other important step in creating a believable pencil sketch image from a
 natural image, is to produce a hatching texture to create the shading. This is
-done in two steps. First the histogram of the input image $I_g$ is matched to a
+done in two steps: First the histogram of the input image $I_g$ is matched to a
 histogram model that was derived in \cite{mainPaper}. This way the tone
 distribution is forced to correspond to tone distributions that were measured in
 real pencil sketch images. Then the image of a given hatching pattern is used to
@@ -70,7 +71,7 @@ render the hatching texture for the input image.
 
 \paragraph{Histogram Matching}
 Tones in natural images do not follow any specific pattern. In pencil drawings
-however the tones are basically created only from two basic tones, namely the
+however, the tones are basically created only from two basic tones, namely the
 white paper and the graphite strokes in different strengths. Heavy strokes are
 used in very dark areas, mid tone strokes are used to produce impression of 3D
 layered information and in bright areas the paper is just left white.
@@ -89,7 +90,7 @@ the white paper, that was just left blank.
 \end{figure}
 
 \cite{mainPaper} used this observation to create a parametric histogram model
-for pencil drawings which consists of three functions, which represent those
+for pencil drawings which consists of three functions representing those
 three tone levels:
 
 For the bright part of the histogram they use a Laplacian distribution with a
@@ -119,8 +120,8 @@ gray levels.
 The controlling parameters for this function are the range boundaries $u_d$
 and $u_b$.
 
-Finally the dark region which shows up as bell shaped peak in the dark
-regions in \autoref{fig:real-histograms} is represented as a Gauss-curve. The
+Finally the dark region,which shows up as bell shaped peak in the lower
+regions in \autoref{fig:real-histograms},is represented as a Gauss-curve. The
 position and shape of the dark regions depend on the maximum pressure an artist is using,
 and the softness of the pencil that is used.
 
@@ -156,7 +157,7 @@ In \cite{mainPaper} they learned the parameters for those functions from a set
 of different styled pencil sketches using Maximum Likelihood Estimation. We skipped this part and left those
 parameters to be controlled by the user.
 
-Histogram Matching is used to apply the tone distribution from \autoref{eq:p} to
+Histogram Matching is then  used to apply the tone distribution from \autoref{eq:p} to
 the input image. The result $J$ of the Histogram Matching is then used as input
 for the calculation of the hatching texture.  $J$ can be seen on the right side
 of \autoref{fig:hist-result}.
@@ -196,7 +197,7 @@ introduced:
   \label{eq:beta}
 \end{align}
 The smoothness weighting factor $\lambda$ can be used to determine how strong
-the hatching pattern $H$ will show through in the result.
+the hatching pattern $H$ will show through in the resulting image.
 
 The hatching texture $T$ is then calculated as pixelwise exponentiation
 \begin{align*}
@@ -226,7 +227,7 @@ decomposed image $I_{yuv}$ from the beginning and replace the $Y$ channel with
 $R$. The resulting RGB-image can then easily be calculated with another color
 space transformation.
 
-In \autoref{fig:final-result} both, grayscale and colored results are shown.
+In \autoref{fig:final-result} both the grayscale and the colored results are shown.
 
 \begin{figure}[htb]
   \centering
