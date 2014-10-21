@@ -14,6 +14,14 @@
     \frame{\titlepage}
 
     \section{Introduction}
+      \subsection{Spoiler}
+        \frame{
+            \frametitle{Spoiler}
+            \begin{figure}[htbp]
+                \centering
+                \includegraphics[scale = 0.2]{img/spoiler.jpg}
+            \end{figure}
+        }
       \subsection{Table of Contents}
         \frame{
             \frametitle{Table of Contents}
@@ -138,7 +146,7 @@
         	\frametitle{Profiling Results}
             \begin{figure}[htbp]
                 \centering
-                \includegraphics[scale = 0.23]{img/profiling_all.png}
+                \includegraphics[scale = 0.35]{img/profiling_all.png}
             \end{figure}
         }
     \section{Live Demonstration}
@@ -186,6 +194,8 @@
                     \item Successful GPU implementation of the sketch filter as described in the paper
                     % TODO: How much faster?
                     \item Our GPU implementation is faster than the version of the paper
+                    \item Speedup of 72.1 compared to CPU implementation
+                    of the original paper ($27.73 ms$ at $600 \times 600$ pixels)
                     \item 30 ms per frame in DVD quality
                     \item 60 ms per frame in HD Ready
                     \item 130 ms per frame in Full HD quality
