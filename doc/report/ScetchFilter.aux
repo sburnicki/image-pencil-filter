@@ -36,13 +36,13 @@
 \@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces The intermediate results when calculating the line sketches. Left: input image, Center: Gradient image, Right: result $L$.}}{2}{figure.2}}
 \newlabel{fig:sketch-steps}{{2}{2}{The intermediate results when calculating the line sketches. Left: input image, Center: Gradient image, Right: result $L$}{figure.2}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Shading}{2}{subsection.3.2}}
-\@writefile{toc}{\contentsline {paragraph}{Histogram Matching}{2}{section*.4}}
 \citation{mainPaper}
 \citation{mainPaper}
 \citation{mainPaper}
 \citation{mainPaper}
 \citation{mainPaper}
 \citation{mainPaper}
+\@writefile{toc}{\contentsline {paragraph}{Histogram Matching}{3}{section*.4}}
 \@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Examples for real pencil sketches and their measured tone distributions. Note: This image was taken from \cite  {mainPaper}}}{3}{figure.3}}
 \newlabel{fig:real-histograms}{{3}{3}{Examples for real pencil sketches and their measured tone distributions. Note: This image was taken from \cite {mainPaper}}{figure.3}{}}
 \newlabel{eq:p_1}{{3}{3}{Histogram Matching}{equation.3.3}{}}
@@ -51,34 +51,46 @@
 \@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Plots of the three functions $p_i$. Note: picture taken from \cite  {mainPaper}.}}{3}{figure.4}}
 \newlabel{fig:p}{{4}{3}{Plots of the three functions $p_i$. Note: picture taken from \cite {mainPaper}}{figure.4}{}}
 \newlabel{eq:p}{{6}{3}{Histogram Matching}{equation.3.6}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces Left input. Right: Result of Histogram matching for minions.}}{3}{figure.5}}
-\newlabel{fig:hist-result}{{5}{3}{Left input. Right: Result of Histogram matching for minions}{figure.5}{}}
-\@writefile{toc}{\contentsline {paragraph}{Texturing}{4}{section*.5}}
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces Left input. Right: Result of Histogram matching for minions.}}{4}{figure.5}}
+\newlabel{fig:hist-result}{{5}{4}{Left input. Right: Result of Histogram matching for minions}{figure.5}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces A possible men made pencil hatching pattern $H$.}}{4}{figure.6}}
+\newlabel{fig:hatching-pattern}{{6}{4}{A possible men made pencil hatching pattern $H$}{figure.6}{}}
+\@writefile{toc}{\contentsline {paragraph}{Texturing}{4}{figure.6}}
 \newlabel{eq:beta}{{7}{4}{Texturing}{equation.3.7}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces Left: $J$. Right: Result of texture rendering $T$.}}{4}{figure.6}}
-\newlabel{fig:texture-result}{{6}{4}{Left: $J$. Right: Result of texture rendering $T$}{figure.6}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {7}{\ignorespaces Left: $J$. Right: Result of texture rendering $T$.}}{4}{figure.7}}
+\newlabel{fig:texture-result}{{7}{4}{Left: $J$. Right: Result of texture rendering $T$}{figure.7}{}}
 \@writefile{toc}{\contentsline {paragraph}{Combining Results}{4}{section*.6}}
-\@writefile{lof}{\contentsline {figure}{\numberline {7}{\ignorespaces combination of the results from the line drawing and shading.}}{4}{figure.7}}
-\newlabel{fig:final-result}{{7}{4}{combination of the results from the line drawing and shading}{figure.7}{}}
 \@writefile{toc}{\contentsline {section}{\numberline {4}GPU Implementation}{4}{section.4}}
 \newlabel{gpu-implementation}{{4}{4}{GPU Implementation}{section.4}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Sketch Filter}{4}{subsection.4.1}}
-\@writefile{toc}{\contentsline {paragraph}{Compute the line convolutions}{4}{section*.7}}
-\@writefile{toc}{\contentsline {paragraph}{Shared Memory}{5}{section*.8}}
-\@writefile{lof}{\contentsline {figure}{\numberline {8}{\ignorespaces Block and shared memory dimensions}}{5}{figure.8}}
-\newlabel{fig:shared-memory}{{8}{5}{Block and shared memory dimensions}{figure.8}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {9}{\ignorespaces Thread number assignment when copying the data from $G$ to shared memory.}}{5}{figure.9}}
-\newlabel{fig:shared-copy}{{9}{5}{Thread number assignment when copying the data from $G$ to shared memory}{figure.9}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Histogram}{5}{subsection.4.2}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}Histogram Matching}{5}{subsection.4.3}}
+\@writefile{lof}{\contentsline {figure}{\numberline {8}{\ignorespaces Combination of the line drawing and shading.}}{5}{figure.8}}
+\newlabel{fig:final-result}{{8}{5}{Combination of the line drawing and shading}{figure.8}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Sketch Filter}{5}{subsection.4.1}}
+\@writefile{lof}{\contentsline {figure}{\numberline {9}{\ignorespaces GPU and CPU pipeline of the implementation}}{5}{figure.9}}
+\newlabel{fig:pipeline}{{9}{5}{GPU and CPU pipeline of the implementation}{figure.9}{}}
+\@writefile{toc}{\contentsline {paragraph}{Compute the line convolutions}{5}{section*.7}}
+\@writefile{toc}{\contentsline {paragraph}{Shared Memory}{6}{section*.8}}
+\@writefile{lof}{\contentsline {figure}{\numberline {10}{\ignorespaces Block dimension (blue) and shared memory dimension (green)}}{6}{figure.10}}
+\newlabel{fig:shared-memory}{{10}{6}{Block dimension (blue) and shared memory dimension (green)}{figure.10}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Histogram}{6}{subsection.4.2}}
+\@writefile{lof}{\contentsline {figure}{\numberline {11}{\ignorespaces Thread number assignment when copying the data from $G$ to shared memory.}}{6}{figure.11}}
+\newlabel{fig:shared-copy}{{11}{6}{Thread number assignment when copying the data from $G$ to shared memory}{figure.11}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}Histogram Matching}{6}{subsection.4.3}}
+\citation{mainPaper}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.4}Texturing}{7}{subsection.4.4}}
+\newlabel{eq:tikhonov}{{8}{7}{Texturing}{equation.4.8}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {12}{\ignorespaces Closed form for Matrix $A^*$. Substitute $a = \lambda + \qopname  \relax o{ln}(H(i))^2$ and substitute $b = 2\lambda + \qopname  \relax o{ln}(H(i))^2$ with $i$ being the line in the matrix.}}{7}{figure.12}}
+\newlabel{fig:matrix-mult}{{12}{7}{Closed form for Matrix $A^*$. Substitute $a = \lambda + \ln (H(i))^2$ and substitute $b = 2\lambda + \ln (H(i))^2$ with $i$ being the line in the matrix}{figure.12}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {5}Performance}{7}{section.5}}
+\newlabel{performance}{{5}{7}{Performance}{section.5}{}}
+\citation{mainPaper}
+\citation{mainPaper}
+\citation{temporal-consistency}
 \bibstyle{alpha}
 \bibdata{bibliography}
 \bibcite{Benard:2012:ASC}{BLC{$^{+}$}12}
 \bibcite{Lu:2010:IPS}{LSF10}
+\bibcite{temporal-consistency}{LWA{$^{+}$}12}
 \bibcite{mainPaper}{LXJ12}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.4}Texturing}{6}{subsection.4.4}}
-\@writefile{toc}{\contentsline {section}{\numberline {5}Performance}{6}{section.5}}
-\newlabel{performance}{{5}{6}{Performance}{section.5}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {6}Future Work}{6}{section.6}}
-\newlabel{future-work}{{6}{6}{Future Work}{section.6}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {7}Conclusion}{6}{section.7}}
+\@writefile{toc}{\contentsline {section}{\numberline {6}Future Work}{8}{section.6}}
+\newlabel{future-work}{{6}{8}{Future Work}{section.6}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {7}Conclusion}{8}{section.7}}
