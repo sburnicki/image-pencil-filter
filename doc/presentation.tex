@@ -112,6 +112,12 @@
             \end{figure}
             \begin{itemize}
                 \item Pencil Texture rendering
+                \item $
+                  \beta = \arg \min_{\beta}\|\beta\ln(H) - \ln(J)\|_2^2 + \lambda
+                  \|\nabla \beta\|_2^2
+                $
+                \item Solved with conjugent gradient with Tikhonov
+                regularization using cuda sparse library (cusp)
             \end{itemize}
         }
       \subsection{Merge of Line and Tone Drawing}
