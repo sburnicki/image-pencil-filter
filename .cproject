@@ -134,6 +134,7 @@
 					<sass major="3" minor="0"/>
 					<ptx major="3" minor="0"/>
 				</executable>
+				<editor-arch major="3" minor="0"/>
 			</storageModule>
 		</cconfiguration>
 		<cconfiguration id="com.nvidia.cuda.ide.configuration.debug.1036644720.499504584">
@@ -231,10 +232,10 @@
 		<scannerConfigBuildInfo instanceId="com.nvidia.cuda.ide.configuration.debug.1036644720.499504584;com.nvidia.cuda.ide.configuration.debug.1036644720.499504584.;nvcc.compiler.base.1330119847;nvcc.compiler.input.c.1682834648">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="com.nvidia.cuda.ide.build.NVCCPerProjectProfile"/>
 		</scannerConfigBuildInfo>
-		<scannerConfigBuildInfo instanceId="com.nvidia.cuda.ide.configuration.release.1774194117;com.nvidia.cuda.ide.configuration.release.1774194117.;nvcc.compiler.base.368915024;nvcc.compiler.input.cu.939371314">
+		<scannerConfigBuildInfo instanceId="com.nvidia.cuda.ide.configuration.debug.1036644720;com.nvidia.cuda.ide.configuration.debug.1036644720.;nvcc.compiler.base.660831489;nvcc.compiler.input.cu.1322103100">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="com.nvidia.cuda.ide.build.NVCCPerProjectProfile"/>
 		</scannerConfigBuildInfo>
-		<scannerConfigBuildInfo instanceId="com.nvidia.cuda.ide.configuration.debug.1036644720;com.nvidia.cuda.ide.configuration.debug.1036644720.;nvcc.compiler.base.660831489;nvcc.compiler.input.cu.1322103100">
+		<scannerConfigBuildInfo instanceId="com.nvidia.cuda.ide.configuration.release.1774194117;com.nvidia.cuda.ide.configuration.release.1774194117.;nvcc.compiler.base.368915024;nvcc.compiler.input.cu.939371314">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="com.nvidia.cuda.ide.build.NVCCPerProjectProfile"/>
 		</scannerConfigBuildInfo>
 		<scannerConfigBuildInfo instanceId="com.nvidia.cuda.ide.configuration.release.1774194117;com.nvidia.cuda.ide.configuration.release.1774194117.;nvcc.compiler.base.368915024;nvcc.compiler.input.c.366511450">
