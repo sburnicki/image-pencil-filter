@@ -69,8 +69,58 @@
                 \caption{Line drawing with strokes}
             \end{figure}
             \begin{itemize}
-                \item Computation of the response map with $G_i = L_i * G$, where $L_i$ is a line segment at direction $i$ (implemented in the convolution kernel) and $*$ the convolution operator
-                \item Selection of the response for the pixel $p$ with the maximum value by $C_i \left ( p \right ) = \left \{ \begin{matrix} G \left ( p \right ) & if \: argmin_i \left \{ G_i \left ( p \right ) \right \} = i \\ 0 & otherwise \end{matrix} \right.$
+                \item Computation of the response map $G_i = L_i * G$, where $L_i$ is a line segment at direction $i$ (implemented in the convolution kernel) and $*$ the convolution operator
+                \item Selection of the maximum response $L$ for the pixel $p$:  $L = \max(\lbrace G_i \rbrace)$ 
+            \end{itemize}
+        }
+        \frame{
+            \begin{figure}[htbp]
+                \centering
+                \includegraphics[scale = 0.2]{img/shared.png}
+            \end{figure}
+            \begin{itemize}
+                \item Use Shared Memory for convolution implementation
+                \item Final stroke map $S$ obtained by inverting pixels of $L$ and mapping them to $[0, 1]$
+            \end{itemize}
+        }
+        \frame{
+            \begin{figure}[htbp]
+                \centering
+                \includegraphics[scale = 0.2]{img/shared0.png}
+            \end{figure}
+            \begin{itemize}
+                \item Use Shared Memory for convolution implementation
+                \item Final stroke map $S$ obtained by inverting pixels of $L$ and mapping them to $[0, 1]$
+            \end{itemize}
+        }
+        \frame{
+            \begin{figure}[htbp]
+                \centering
+                \includegraphics[scale = 0.2]{img/shared1.png}
+            \end{figure}
+            \begin{itemize}
+                \item Use Shared Memory for convolution implementation
+                \item Final stroke map $S$ obtained by inverting pixels of $L$ and mapping them to $[0, 1]$
+            \end{itemize}
+        }
+        \frame{
+            \begin{figure}[htbp]
+                \centering
+                \includegraphics[scale = 0.2]{img/shared2.png}
+            \end{figure}
+            \begin{itemize}
+                \item Use Shared Memory for convolution implementation
+                \item Final stroke map $S$ obtained by inverting pixels of $L$ and mapping them to $[0, 1]$
+            \end{itemize}
+        }
+        \frame{
+            \begin{figure}[htbp]
+                \centering
+                \includegraphics[scale = 0.2]{img/shared3.png}
+            \end{figure}
+            \begin{itemize}
+                \item Use Shared Memory for convolution implementation
+                \item Final stroke map $S$ obtained by inverting pixels of $L$ and mapping them to $[0, 1]$
             \end{itemize}
         }
         \frame{
@@ -79,7 +129,7 @@
                 \includegraphics[scale = 0.2]{img/minions-2-convolution.png}
             \end{figure}
             \begin{itemize}
-                \item Line Generation at each pixel with $S' = \sum \limits_{i = 1}^{8} \left ( L_i \otimes C_i \right )$
+                \item Use Shared Memory for convolution implementation
                 \item Final stroke map $S$ obtained by inverting pixels of $S'$ and mapping them to $[0, 1]$
             \end{itemize}
         }
@@ -108,16 +158,25 @@
         \frame{
             \begin{figure}[htbp]
                 \centering
-                \includegraphics[scale = 0.2]{img/minions-4-potential.png}
+                \includegraphics[width=\textwidth]{img/pencil_texture.png}
             \end{figure}
+        }
+        \frame{
             \begin{itemize}
-                \item Pencil Texture rendering
-                \item $
-                  \beta = \arg \min_{\beta}\|\beta\ln(H) - \ln(J)\|_2^2 + \lambda
+                \item Simulate preasure of pencil: $T = H^\beta$ 
+                \item We need: $H(x)^{\beta(x)} \approx J(x)$ with a smooth $\beta$
+                \item Solve in $\log$-space:
+                  $\beta = \arg \min_{\beta}\|\beta\ln(H) - \ln(J)\|_2^2 + \lambda
                   \|\nabla \beta\|_2^2
                 $
-                \item Solved with conjugent gradient with Tikhonov
-                regularization using cuda sparse library (cusp)
+            \end{itemize}
+            \begin{figure}[htbp]
+                \centering
+                \includegraphics[scale = 0.1]{img/minions-4-potential.png}
+            \end{figure}
+            \begin{itemize}
+              \item Tikhonov regularization can be reformulated as Linear System
+              \item Solved with conjugent gradient using cuda sparse library (\texttt{cusp})
             \end{itemize}
         }
       \subsection{Merge of Line and Tone Drawing}
